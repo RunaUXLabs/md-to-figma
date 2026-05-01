@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MD to Figma</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 13px;
+      color: #333;
+      background: #fff;
+      padding: 20px;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      margin-bottom: 16px;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .template-section {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .btn-template {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 12px;
+      background: #f0f7ff;
+      border: 1px solid #c2dcf7;
+      border-radius: 8px;
+      color: #1a73e8;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .btn-template:hover {
+      background: #e3f0ff;
+      border-color: #a8c9f0;
+    }
+
+    .textarea-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 12px;
+      min-height: 0;
+    }
+
+    .textarea-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      flex: 1;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d0d0d0;
+      border-radius: 8px;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 11px;
+      resize: none;
+      line-height: 1.5;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #18a0fb;
+      box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
+    }
+
+    .options-section {
+      padding: 12px;
+      background: #f8f8f8;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .options-group {
+      margin-bottom: 12px;
+    }
+
+    .options-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .options-divider {
+      height: 1px;
+      background: #e0e0e0;
+      margin: 12px 0;
+    }
+
+    .options-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .option-item input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+      accent-color: #18a0fb;
+    }
+
+    .button-section {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .btn-primary {
+      background: #18a0fb;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0d8de5;
+    }
+
+    .btn-primary:disabled {
+      background: #c0c0c0;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 420px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .log-container {
+      flex: 1;
+      background: #1e1e1e;
+      margin: 16px;
+      border-radius: 8px;
+      padding: 12px;
+      overflow-y: auto;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      max-height: 280px;
+      min-height: 200px;
+    }
+
+    .log-entry {
+      margin-bottom: 2px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .log-entry.info {
+      color: #9da5b4;
+    }
+
+    .log-entry.success {
+      color: #98c379;
+    }
+
+    .log-entry.warning {
+      color: #e5c07b;
+    }
+
+    .log-entry.error {
+      color: #e06c75;
+    }
+
+    .error-box {
+      background: #2d1f1f;
+      border: 1px solid #e06c75;
+      border-radius: 6px;
+      padding: 10px;
+      margin-top: 8px;
+    }
+
+    .error-box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+      gap: 8px;
+    }
+
+    .error-box-title {
+      color: #e06c75;
+      font-weight: 600;
+      font-size: 11px;
+      flex: 1;
+    }
+
+    .error-box-copy {
+      padding: 4px 8px;
+      font-size: 10px;
+      background: #e06c75;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .error-box-content {
+      color: #abb2bf;
+      font-size: 10px;
+      white-space: pre-wrap;
+    }
+
+    .result-summary {
+      background: #1a3a1a;
+      border: 1px solid #98c379;
+      border-radius: 6px;
+      padding: 10px;
+      margin-top: 8px;
+    }
+
+    .result-summary-title {
+      color: #98c379;
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      color: #abb2bf;
+      font-size: 10px;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 8px;
+      padding: 16px 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .status-badge.running {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-badge.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-badge.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .spinner {
+      width: 12px;
+      height: 12px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .copy-modal {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .copy-modal textarea {
+      width: 100%;
+      height: 200px;
+      padding: 10px;
+      border: 1px solid #d0d0d0;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 11px;
+      margin-bottom: 12px;
+      resize: none;
+      background: #f8f8f8;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 3000;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <h1>📦 MD to Figma</h1>
+  </div>
+
+  <div class="template-section">
+    <button class="btn-template" id="downloadTemplateBtn">📥 템플릿 다운로드</button>
+    <button class="btn-template" id="downloadGuideBtn">📖 AI 프롬프트 가이드</button>
+  </div>
+
+  <div class="textarea-section">
+    <div class="textarea-label">제공된 템플릿을 다운로드 받으세요.<br>AI에게 제공하고 여러분의 디자인 시스템 데이터를 맵핑해달라고 요청하세요.<br>맵핑한 DESIGN.md 내용을
+      아래에 붙여넣으세요.</div>
+    <textarea id="mdContent" placeholder="# Design System
+
+## Colors
+
+### Primitive
+| Token | Value | Description |
+|-------|-------|-------------|
+| rausch/500 | #ff385c | 브랜드 레드 |
+
+### Semantic
+| Token | Light | Dark | Description |
+|-------|-------|------|-------------|
+| brand/primary | rausch/500 | rausch/500 | 메인 컬러 |
+
+## Spacing
+
+### Primitive
+| space-16 | 16px | 기본 단위 |
+
+### Semantic
+| base | space-16 | - |"></textarea>
+  </div>
+
+  <div class="options-section">
+    <div class="options-group">
+      <div class="options-title">📦 Variables (4개 컬렉션으로 분리 생성)</div>
+      <div class="options-grid">
+        <div class="option-item"><input type="checkbox" id="optVarColors" checked><label
+            for="optVarColors">Colors</label></div>
+        <div class="option-item"><input type="checkbox" id="optVarSpacing" checked><label
+            for="optVarSpacing">Spacing</label></div>
+        <div class="option-item"><input type="checkbox" id="optVarRadius" checked><label
+            for="optVarRadius">Radius</label></div>
+        <div class="option-item"><input type="checkbox" id="optVarTypography" checked><label
+            for="optVarTypography">Typography</label></div>
+      </div>
+    </div>
+    <div class="options-divider"></div>
+    <div class="options-group">
+      <div class="options-title">🎨 Styles (Variable 연동 지원)</div>
+      <div class="options-grid">
+        <div class="option-item"><input type="checkbox" id="optColorStyles"><label for="optColorStyles">Color
+            Styles</label></div>
+        <div class="option-item"><input type="checkbox" id="optTextStyles" checked><label for="optTextStyles">Text
+            Styles</label></div>
+        <div class="option-item"><input type="checkbox" id="optEffectStyles" checked><label for="optEffectStyles">Effect
+            Styles</label></div>
+        <div class="option-item"><input type="checkbox" id="optGridStyles" checked><label for="optGridStyles">Grid
+            Styles</label></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="button-section">
+    <button class="btn btn-primary" id="generateBtn">🚀 생성하기</button>
+    <button class="btn btn-secondary" id="cancelBtn">닫기</button>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">실행 로그</span>
+        <span class="status-badge running" id="statusBadge"><span class="spinner"></span>진행 중</span>
+      </div>
+      <div class="modal-body">
+        <div class="log-container" id="logContainer"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="copyLogBtn">📋 로그 복사</button>
+        <button class="btn btn-primary" id="closeModalBtn" disabled>확인</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="copyModalOverlay">
+    <div class="copy-modal">
+      <div class="copy-modal-header"><span>📋 아래 내용을 복사하세요</span></div>
+      <textarea id="copyTextarea" readonly></textarea>
+      <button class="btn btn-primary" id="closeCopyModalBtn" style="width:100%">닫기</button>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var TEMPLATE_MD = `# Design System
+
+<!--
+📌 작성 규칙
+
+[형식]
+- 컬러: HEX 6자리 (#ffffff) 또는 rgba(0,0,0,0.1)
+- 크기: 숫자+px 필수 (16px, -1.5px)
+- LineHeight: 소수점 (1.5) 또는 퍼센트 (150%)
+- 빈 값: - 로 표기
+
+[토큰 구조]
+- Primitive: 기본 색상 팔레트 (원시값, 모드 무관)
+- Semantic: 용도별 색상 (Light/Dark 모드별 Alias 지정)
+
+[다크모드 규칙]
+⚠️ 중요: Primitive에 Light/Dark 모두에서 사용할 모든 원시 컬러를 먼저 정의
+
+1. Primitive 정의 (원시값)
+   - Light 모드에서 사용할 컬러 정의
+   - Dark 모드에서 사용할 컬러도 함께 정의
+
+2. Semantic 정의 (Alias)
+   - Light 컬럼: Light 모드에서 사용할 Primitive 토큰명
+   - Dark 컬럼: Dark 모드에서 사용할 Primitive 토큰명
+   - ⚠️ HEX 직접 입력 금지 — 반드시 Primitive 토큰명(Alias) 사용
+
+[다크모드 추론 가이드]
+원본에 다크모드가 없으면 아래 패턴으로 추론:
+- surface/canvas: Light=white → Dark=gray-900
+- surface/card: Light=white → Dark=gray-800
+- surface/elevated: Light=gray-50 → Dark=gray-700
+- text/default: Light=gray-900 → Dark=gray-50
+- text/muted: Light=gray-500 → Dark=gray-400
+- border/default: Light=gray-200 → Dark=gray-700
+- brand/primary: 보통 동일하게 유지
+- feedback/*: 동일하거나 밝기 +10~20%
+
+[네이밍]
+- 허용: 영문, 숫자, /, -, _
+- 금지: 공백, 괄호, 특수문자
+- ⚠️ 숫자로 시작 금지
+- 경로 구분: / 사용 (group/token)
+
+[Typography 그룹핑]
+- ### 그룹명 으로 그룹 구분 (예: ### Display)
+- 예: ### Display 아래 xl → display/xl
+-->
+
+
+## Colors
+
+### Primitive
+
+| Token | Value | Description |
+|-------|-------|-------------|
+| coral/500 | #cc785c | 코랄 기본 |
+| coral/600 | #a9583e | 코랄 어두움 |
+| coral/300 | #e8a990 | 코랄 밝음 |
+| navy/900 | #181715 | 네이비 가장 어두움 |
+| navy/800 | #2a2825 | 네이비 어두움 |
+| cream/50 | #fffcf7 | 크림 가장 밝음 |
+| cream/100 | #faf6f0 | 크림 밝음 |
+| cream/200 | #f0e9df | 크림 중간 |
+| neutral/white | #ffffff | 화이트 |
+| neutral/black | #000000 | 블랙 |
+| neutral/gray-50 | #fafafa | 그레이 가장 밝음 |
+| neutral/gray-100 | #f5f5f5 | 그레이 밝음 |
+| neutral/gray-200 | #e5e5e5 | 그레이 |
+| neutral/gray-300 | #d4d4d4 | 그레이 중간 |
+| neutral/gray-400 | #a3a3a3 | 그레이 어두움 |
+| neutral/gray-500 | #737373 | 그레이 더 어두움 |
+| neutral/gray-600 | #525252 | 그레이 매우 어두움 |
+| neutral/gray-700 | #404040 | 다크 그레이 |
+| neutral/gray-800 | #262626 | 다크 그레이 어두움 |
+| neutral/gray-900 | #171717 | 다크 그레이 가장 어두움 |
+| green/500 | #22c55e | 그린 |
+| green/400 | #4ade80 | 그린 밝음 |
+| amber/500 | #f59e0b | 앰버 |
+| amber/400 | #fbbf24 | 앰버 밝음 |
+| red/500 | #ef4444 | 레드 |
+| red/400 | #f87171 | 레드 밝음 |
+
+### Semantic
+
+| Token | Light | Dark | Description |
+|-------|-------|------|-------------|
+| brand/primary | coral/500 | coral/500 | 메인 브랜드 |
+| brand/primary-active | coral/600 | coral/600 | 버튼 눌림 |
+| brand/primary-disabled | coral/300 | coral/300 | 비활성화 |
+| surface/canvas | neutral/white | neutral/gray-900 | 기본 배경 |
+| surface/card | neutral/white | neutral/gray-800 | 카드 배경 |
+| surface/elevated | neutral/gray-50 | neutral/gray-700 | 부유 요소 배경 |
+| surface/muted | neutral/gray-100 | neutral/gray-800 | 비활성 배경 |
+| text/default | neutral/gray-900 | neutral/gray-50 | 기본 텍스트 |
+| text/muted | neutral/gray-500 | neutral/gray-400 | 보조 텍스트 |
+| text/disabled | neutral/gray-300 | neutral/gray-600 | 비활성 텍스트 |
+| text/on-primary | neutral/white | neutral/white | primary 위 텍스트 |
+| text/on-dark | cream/50 | cream/50 | 다크 위 텍스트 |
+| border/default | neutral/gray-200 | neutral/gray-700 | 기본 테두리 |
+| border/strong | neutral/gray-300 | neutral/gray-600 | 강조 테두리 |
+| border/focus | coral/500 | coral/500 | 포커스 테두리 |
+| feedback/success | green/500 | green/400 | 성공 |
+| feedback/warning | amber/500 | amber/400 | 경고 |
+| feedback/error | red/500 | red/400 | 에러 |
+
+
+## Spacing
+
+### Primitive
+
+| Token | Value | Description |
+|-------|-------|-------------|
+| space-2 | 2px | 최소 단위 |
+| space-4 | 4px | - |
+| space-8 | 8px | - |
+| space-12 | 12px | - |
+| space-16 | 16px | 기본 단위 |
+| space-24 | 24px | - |
+| space-32 | 32px | - |
+| space-48 | 48px | - |
+| space-64 | 64px | - |
+| space-96 | 96px | 섹션 단위 |
+
+### Semantic
+
+| Token | Alias | Description |
+|-------|-------|-------------|
+| xxs | space-2 | 가장 작은 |
+| xs | space-4 | 아주 작은 |
+| sm | space-8 | 작은 |
+| md | space-16 | 중간 |
+| lg | space-24 | 큰 |
+| xl | space-32 | 아주 큰 |
+| xxl | space-48 | 매우 큰 |
+| section | space-96 | 섹션 간격 |
+
+
+## Radius
+
+### Primitive
+
+| Token | Value | Description |
+|-------|-------|-------------|
+| radius-0 | 0px | 각진 |
+| radius-4 | 4px | - |
+| radius-6 | 6px | - |
+| radius-8 | 8px | - |
+| radius-12 | 12px | - |
+| radius-16 | 16px | - |
+| radius-24 | 24px | - |
+| radius-full | 9999px | 완전 둥글게 |
+
+### Semantic
+
+| Token | Alias | Description |
+|-------|-------|-------------|
+| none | radius-0 | 각진 |
+| sm | radius-4 | 작은 |
+| md | radius-8 | 중간 |
+| lg | radius-12 | 큰 |
+| xl | radius-16 | 아주 큰 |
+| xxl | radius-24 | 매우 큰 |
+| pill | radius-full | 알약 형태 |
+| full | radius-full | 원형 |
+
+
+## Typography
+
+### Display
+
+| Token | Font | Size | Weight | LineHeight | LetterSpacing |
+|-------|------|------|--------|------------|---------------|
+| xl | Inter | 64px | 700 | 105% | -1.5px |
+| lg | Inter | 48px | 700 | 110% | -1px |
+| md | Inter | 36px | 700 | 115% | -0.5px |
+| sm | Inter | 28px | 600 | 120% | -0.3px |
+
+### Title
+
+| Token | Font | Size | Weight | LineHeight | LetterSpacing |
+|-------|------|------|--------|------------|---------------|
+| lg | Inter | 22px | 600 | 130% | 0px |
+| md | Inter | 18px | 600 | 140% | 0px |
+| sm | Inter | 16px | 600 | 140% | 0px |
+
+### Body
+
+| Token | Font | Size | Weight | LineHeight | LetterSpacing |
+|-------|------|------|--------|------------|---------------|
+| lg | Inter | 18px | 400 | 160% | 0px |
+| md | Inter | 16px | 400 | 155% | 0px |
+| sm | Inter | 14px | 400 | 155% | 0px |
+
+### Caption
+
+| Token | Font | Size | Weight | LineHeight | LetterSpacing |
+|-------|------|------|--------|------------|---------------|
+| md | Inter | 13px | 500 | 140% | 0px |
+| sm | Inter | 12px | 500 | 140% | 0.2px |
+| uppercase | Inter | 11px | 600 | 140% | 1.5px |
+
+### Code
+
+| Token | Font | Size | Weight | LineHeight | LetterSpacing |
+|-------|------|------|--------|------------|---------------|
+| md | JetBrains Mono | 14px | 400 | 160% | 0px |
+| sm | JetBrains Mono | 12px | 400 | 160% | 0px |
+
+### UI
+
+| Token | Font | Size | Weight | LineHeight | LetterSpacing |
+|-------|------|------|--------|------------|---------------|
+| button | Inter | 14px | 600 | 100% | 0px |
+| label | Inter | 12px | 500 | 100% | 0.2px |
+| input | Inter | 14px | 400 | 140% | 0px |
+
+
+## Effects
+
+| Token | Type | Color | X | Y | Blur | Spread |
+|-------|------|-------|---|---|------|--------|
+| shadow-sm | drop-shadow | rgba(0,0,0,0.08) | 0 | 1px | 2px | 0 |
+| shadow-md | drop-shadow | rgba(0,0,0,0.12) | 0 | 4px | 8px | 0 |
+| shadow-lg | drop-shadow | rgba(0,0,0,0.16) | 0 | 8px | 24px | 0 |
+| shadow-xl | drop-shadow | rgba(0,0,0,0.20) | 0 | 16px | 48px | 0 |
+
+
+## Grid
+
+| Token | Type | Count | Width | Gutter | Margin | Alignment |
+|-------|------|-------|-------|--------|--------|-----------|
+| columns-2 | columns | 2 | auto | 24px | 48px | stretch |
+| columns-3 | columns | 3 | auto | 24px | 48px | stretch |
+| columns-4 | columns | 4 | auto | 24px | 48px | stretch |
+| columns-6 | columns | 6 | auto | 24px | 48px | stretch |
+| columns-12 | columns | 12 | auto | 24px | 48px | stretch |
+| rows-2 | rows | 2 | auto | 16px | 8px | stretch |
+| rows-3 | rows | 3 | auto | 16px | 8px | stretch |
+| rows-4 | rows | 4 | auto | 16px | 8px | stretch |
+| grid-4 | grid | 4px | - | - | - | - |
+| grid-8 | grid | 8px | - | - | - | - |`;
+
+    var AI_PROMPT_GUIDE = '# AI 프롬프트 가이드\n\nAI에게 다음과 같이 요청하세요:\n"제공한 템플릿 구조에 맞춰 디자인 시스템을 DESIGN.md로 작성해줘. \n특히 Colors 섹션에서 Semantic 컬러는 반드시 앞서 정의한 Primitive 토큰 이름을 참조(Alias)하도록 작성해야 해. \nHEX 값을 Semantic에 직접 쓰지 마."';
+
+    var mdContent = document.getElementById('mdContent');
+    var generateBtn = document.getElementById('generateBtn');
+    var cancelBtn = document.getElementById('cancelBtn');
+    var modalOverlay = document.getElementById('modalOverlay');
+    var logContainer = document.getElementById('logContainer');
+    var copyLogBtn = document.getElementById('copyLogBtn');
+    var closeModalBtn = document.getElementById('closeModalBtn');
+    var statusBadge = document.getElementById('statusBadge');
+    var toast = document.getElementById('toast');
+    var downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+    var downloadGuideBtn = document.getElementById('downloadGuideBtn');
+    var copyModalOverlay = document.getElementById('copyModalOverlay');
+    var copyTextarea = document.getElementById('copyTextarea');
+    var closeCopyModalBtn = document.getElementById('closeCopyModalBtn');
+    var logText = '';
+
+    downloadTemplateBtn.onclick = function () { downloadFile('DESIGN-TEMPLATE.md', TEMPLATE_MD); showToast('📥 템플릿 다운로드 완료!'); };
+    downloadGuideBtn.onclick = function () { downloadFile('AI-PROMPT-GUIDE.md', AI_PROMPT_GUIDE); showToast('📥 AI 가이드 다운로드 완료!'); };
+
+    function downloadFile(filename, content) {
+      var blob = new Blob([content], { type: 'text/markdown' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a); URL.revokeObjectURL(url);
+    }
+
+    generateBtn.onclick = function () {
+      var content = mdContent.value.trim();
+      if (!content) { showToast('⚠️ 내용을 붙여넣으세요'); return; }
+      openModal();
+      generateBtn.disabled = true;
+      var options = {
+        variables: {
+          colors: document.getElementById('optVarColors').checked,
+          spacing: document.getElementById('optVarSpacing').checked,
+          radius: document.getElementById('optVarRadius').checked,
+          typography: document.getElementById('optVarTypography').checked
+        },
+        styles: {
+          color: document.getElementById('optColorStyles').checked,
+          text: document.getElementById('optTextStyles').checked,
+          effect: document.getElementById('optEffectStyles').checked,
+          grid: document.getElementById('optGridStyles').checked
+        }
+      };
+      parent.postMessage({ pluginMessage: { type: 'generate', content: content, options: options } }, '*');
+    };
+
+    cancelBtn.onclick = function () { parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*'); };
+
+    function openModal() {
+      logContainer.innerHTML = '<div class="log-entry info">🚀 생성을 시작합니다...</div>';
+      logText = '🚀 생성을 시작합니다...\n';
+      closeModalBtn.disabled = true;
+      statusBadge.className = 'status-badge running';
+      statusBadge.innerHTML = '<span class="spinner"></span>진행 중';
+      modalOverlay.classList.add('show');
+    }
+
+    function addLog(type, message) {
+      var entry = document.createElement('div');
+      entry.className = 'log-entry ' + type;
+      entry.textContent = message;
+      logContainer.appendChild(entry);
+      logContainer.scrollTop = logContainer.scrollHeight;
+      logText += message + '\n';
+    }
+
+    function addErrorBox(message, detail, copyable) {
+      var box = document.createElement('div');
+      box.className = 'error-box';
+      box.innerHTML = '<div class="error-box-header"><span class="error-box-title">❌ ' + message + '</span></div>' +
+        '<div class="error-box-content">' + detail + '</div>';
+      logContainer.appendChild(box);
+      logContainer.scrollTop = logContainer.scrollHeight;
+      setStatus('error');
+    }
+
+    function addResultSummary(results) {
+      var box = document.createElement('div');
+      box.className = 'result-summary';
+      box.innerHTML = '<div class="result-summary-title">🎉 생성 완료!</div>' +
+        '<div class="result-grid">' +
+        '<div>Colors: ' + results.variables.colors + '개</div>' +
+        '<div>Spacing: ' + results.variables.spacing + '개</div>' +
+        '<div>Radius: ' + results.variables.radius + '개</div>' +
+        '<div>Typography: ' + results.variables.typography + '개</div>' +
+        '<div>Color Styles: ' + results.styles.color + '개</div>' +
+        '<div>Text Styles: ' + results.styles.text + '개</div>' +
+        '<div>Effect Styles: ' + results.styles.effect + '개</div>' +
+        '<div>Grid Styles: ' + results.styles.grid + '개</div>' +
+        '</div>';
+      logContainer.appendChild(box);
+      logContainer.scrollTop = logContainer.scrollHeight;
+      setStatus('success');
+    }
+
+    function setStatus(status) {
+      closeModalBtn.disabled = false;
+      if (status === 'success') { statusBadge.className = 'status-badge success'; statusBadge.innerHTML = '✅ 완료'; }
+      else { statusBadge.className = 'status-badge error'; statusBadge.innerHTML = '❌ 오류 발생'; }
+    }
+
+    function showToast(message) {
+      toast.textContent = message; toast.classList.add('show');
+      setTimeout(function () { toast.classList.remove('show'); }, 2500);
+    }
+
+    closeModalBtn.onclick = function () { modalOverlay.classList.remove('show'); generateBtn.disabled = false; };
+    copyLogBtn.onclick = function () { copyTextarea.value = logText; copyModalOverlay.classList.add('show'); copyTextarea.select(); };
+    closeCopyModalBtn.onclick = function () { copyModalOverlay.classList.remove('show'); };
+
+    window.onmessage = function (event) {
+      var msg = event.data.pluginMessage;
+      if (!msg) return;
+      if (msg.type === 'log') addLog(msg.logType, msg.message);
+      else if (msg.type === 'error') addErrorBox(msg.message, msg.detail, msg.copyable);
+      else if (msg.type === 'complete') addResultSummary(msg.results);
+    };
+  </script>
+</body>
+
+</html>
