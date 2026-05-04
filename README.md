@@ -12,6 +12,32 @@ Figma plugin that reads a structured Markdown file and generates your entire tok
 
 ---
 
+## 💡 Why MD to Figma
+
+If you're using Claude or any AI with Figma MCP to build a design system, you've probably noticed how many tokens it takes to register Variables and Styles directly through MCP.
+
+Once your AI has produced a DESIGN.md, MD to Figma handles the entire Figma registration for free — no extra API calls, no token cost.
+
+```
+AI + Figma MCP  →  DESIGN.md  →  MD to Figma  →  Figma Variables & Styles
+                                  (free, instant)
+```
+
+---
+
+## 💡 MD to Figma를 쓰는 이유
+
+Claude 등 AI를 Figma MCP와 연결해 디자인 시스템을 구축하다 보면, Variables와 Styles를 MCP를 통해 직접 등록할 때 토큰 소모가 상당하다는 걸 느끼게 됩니다.
+
+AI가 DESIGN.md를 만들어냈다면, 그 이후 Figma 등록은 MD to Figma로 무료로 처리하세요. 추가 API 호출도, 토큰 낭비도 없습니다.
+
+```
+AI + Figma MCP  →  DESIGN.md  →  MD to Figma  →  Figma Variables & Styles
+                                  (무료, 즉시)
+```
+
+---
+
 ## ✨ What Gets Generated
 
 ### Variables — 4 Collections
