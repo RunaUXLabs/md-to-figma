@@ -63,6 +63,14 @@ const parseRgbaColor = (colorStr) => {
   return null;
 };
 
+const parseLineHeightValue = (value) => {
+  const raw = String(value || '').trim();
+  const num = parseFloat(raw);
+  if (Number.isNaN(num)) return 100;
+  if (raw.endsWith('%')) return num;
+  return num <= 10 ? num * 100 : num;
+};
+
 /**
  * 자연스러운 정렬 (숫자 인식: 2, 4, 12, 100)
  */
@@ -419,7 +427,8 @@ async function processTypographyVariables(data, col, existingMap) {
         variable = figma.variables.createVariable(name, col, 'FLOAT');
         count++;
       }
-      variable.setValueForMode(modeId, parseFloat(val));
+      const parsedValue = sub === 'lineHeight' ? parseLineHeightValue(val) : parseFloat(val);
+      variable.setValueForMode(modeId, parsedValue);
     };
     addVar('fontSize', item.size);
     addVar('lineHeight', item.lineHeight);
@@ -520,16 +529,14 @@ async function createTextStyles(parsed, varMap) {
     const font = await loadFontWithFallback(item.font, weightMap[item.weight] || 'Regular');
     style.fontName = font.fontName;
     style.fontSize = parseFloat(item.size);
-    const lh = parseFloat(item.lineHeight);
-    style.lineHeight = { value: lh <= 10 ? lh * 100 : lh, unit: 'PERCENT' };
+    const lh = parseLineHeightValue(item.lineHeight);
+    style.lineHeight = { value: lh, unit: 'PERCENT' };
     style.letterSpacing = { value: parseFloat(item.letterSpacing) || 0, unit: 'PIXELS' };
 
     const fv = varMap.get(name + "/fontSize");
-    const lv = varMap.get(name + "/lineHeight");
     const sv = varMap.get(name + "/letterSpacing");
     try {
       if (fv) style.setBoundVariable('fontSize', fv);
-      if (lv) style.setBoundVariable('lineHeight', lv);
       if (sv) style.setBoundVariable('letterSpacing', sv);
     } catch (e) { }
   }
