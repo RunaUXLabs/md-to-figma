@@ -162,17 +162,25 @@ Then replace `YOUR_PLUGIN_ID` in `manifest.json` with your actual Figma plugin I
 
 ---
 
-## 📋 Changelog
+## v1.5.2 릴리즈 노트
 
-### v1.5.0 (2025-05-01)
-- 4 separate Variable collections: Color / Spacing / Radius / Typography
-- Semantic color alias enforcement (HEX direct input blocked)
-- Partial Sync: Styles-only generation with auto Variable linking
-- Natural numeric sorting for all collections
-- Font fallback chain (requested → Regular → Inter → Inter Regular)
-- Live execution log with copy support
-- Selective generation via checkboxes
-- Built-in template and AI prompt guide download
+### 🐛 버그 수정 및 개선
+
+#### **타이포그래피 line-height 렌더링 수정**
+- `lineHeight` 값이 텍스트 스타일에서 퍼센트 단위로 제대로 표시되지 않던 문제 수정
+- **이전**: 변수 바인딩된 line-height가 `140`처럼 숫자로만 표시됨
+- **현재**: `lineHeight`가 Figma 텍스트 스타일에서 올바르게 `140%`로 적용됨
+- `parseLineHeightValue()` 유틸을 추가해 line-height 값을 일관되게 정규화하도록 개선
+
+#### **기술적 변경**
+- 텍스트 스타일에서 `lineHeight` 변수 바인딩 제거
+- `lineHeight`를 직접 퍼센트 값으로 적용하도록 변경
+- 입력값이 `1.4`, `140%`, `140` 형태여도 정상적으로 퍼센트로 변환되어 적용됨
+
+### ✨ 효과
+- 디자인 시스템 값과 Figma 표현 간 일관성 향상
+- 마크다운 템플릿에서 퍼센트 기반 line-height를 안정적으로 사용 가능
+- 타이포그래피 스타일 일관성 개선
 
 ---
 
