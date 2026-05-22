@@ -7,6 +7,7 @@
 - 컬러: HEX 6자리 (#ffffff) 또는 rgba(0,0,0,0.1)
 - 크기: 숫자+px 필수 (16px, -1.5px)
 - LineHeight: 소수점 (1.5) 또는 퍼센트 (150%)
+- Weight: 숫자(400, 700) 또는 이름(Regular, Bold, SemiBold). 피그마 스타일명과 일치 권장.
 - 빈 값: - 로 표기
 
 [토큰 구조]
