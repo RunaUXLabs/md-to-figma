@@ -1,5 +1,5 @@
 /**
- * MD to Figma - v1.5.0 Optimized Main Plugin Code (Full Fix + Partial Sync Support)
+ * MD to Figma - v1.6.0 Optimized Main Plugin Code (Full Fix + Partial Sync Support)
  * 
  * Improvements:
  * 1. 4 Separate Collections: Color, Spacing, Radius, Typography.
@@ -70,6 +70,20 @@ const parseLineHeightValue = (value) => {
   if (raw.endsWith('%')) return num;
   return num <= 10 ? num * 100 : num;
 };
+
+const weightMap = {
+  '100': 'Thin', 'thin': 'Thin',
+  '200': 'ExtraLight', 'extralight': 'ExtraLight', 'extra-light': 'ExtraLight',
+  '300': 'Light', 'light': 'Light',
+  '400': 'Regular', 'regular': 'Regular', 'normal': 'Regular',
+  '500': 'Medium', 'medium': 'Medium', 'midium': 'Medium',
+  '600': 'SemiBold', 'semibold': 'SemiBold', 'semi-bold': 'SemiBold',
+  '700': 'Bold', 'bold': 'Bold',
+  '800': 'ExtraBold', 'extrabold': 'ExtraBold', 'extra-bold': 'ExtraBold',
+  '900': 'Black', 'black': 'Black', 'heavy': 'Black'
+};
+
+const resolveFontStyle = (w) => weightMap[String(w || '').trim().toLowerCase()] || 'Regular';
 
 /**
  * 자연스러운 정렬 (숫자 인식: 2, 4, 12, 100)
@@ -416,23 +430,54 @@ async function processNumberVariables(data, col, prefix, existingMap) {
 async function processTypographyVariables(data, col, existingMap) {
   let count = 0;
   const modeId = col.modes[0].modeId;
+
+  const createFontVariable = (family) => {
+    if (!family) return null;
+    const name = "fontFamily/" + family;
+    let variable = existingMap.get(name);
+    if (!variable) {
+      variable = figma.variables.createVariable(name, col, 'STRING');
+      existingMap.set(name, variable);
+      count++;
+    }
+    variable.setValueForMode(modeId, family);
+    return variable;
+  };
+
+  const createWeightVariable = (weight) => {
+    if (!weight) return null;
+    const resolvedStyle = resolveFontStyle(weight);
+    const name = "fontStyle/" + resolvedStyle;
+    let variable = existingMap.get(name);
+    if (!variable) {
+      variable = figma.variables.createVariable(name, col, 'STRING');
+      existingMap.set(name, variable);
+      count++;
+    }
+    variable.setValueForMode(modeId, resolvedStyle);
+    return variable;
+  };
+
   for (let i = 0; i < data.length; i++) {
     const item = data[i];
     const group = item.group ? item.group + "/" : "";
     const basePath = group + item.token;
-    const addVar = (sub, val) => {
+    const addVar = (sub, val, type) => {
       const name = basePath + "/" + sub;
       let variable = existingMap.get(name);
       if (!variable) {
-        variable = figma.variables.createVariable(name, col, 'FLOAT');
+        variable = figma.variables.createVariable(name, col, type);
+        existingMap.set(name, variable);
         count++;
       }
       const parsedValue = sub === 'lineHeight' ? parseLineHeightValue(val) : parseFloat(val);
       variable.setValueForMode(modeId, parsedValue);
     };
-    addVar('fontSize', item.size);
-    addVar('lineHeight', item.lineHeight);
-    if (item.letterSpacing && item.letterSpacing !== '0' && item.letterSpacing !== '0px') addVar('letterSpacing', item.letterSpacing);
+    addVar('fontSize', item.size, 'FLOAT');
+    addVar('lineHeight', item.lineHeight, 'FLOAT');
+    if (item.letterSpacing && item.letterSpacing !== '0' && item.letterSpacing !== '0px') addVar('letterSpacing', item.letterSpacing, 'FLOAT');
+    createFontVariable(item.font);
+    createWeightVariable(item.weight);
   }
   return count;
 }
@@ -518,7 +563,6 @@ async function createTextStyles(parsed, varMap) {
   let count = 0;
   const styles = await figma.getLocalTextStylesAsync();
   const styleMap = createStyleMap(styles);
-  const weightMap = { '100': 'Thin', '200': 'ExtraLight', '300': 'Light', '400': 'Regular', '500': 'Medium', '600': 'SemiBold', '700': 'Bold', '800': 'ExtraBold', '900': 'Black' };
 
   for (let i = 0; i < parsed.typography.length; i++) {
     const item = parsed.typography[i];
@@ -526,7 +570,8 @@ async function createTextStyles(parsed, varMap) {
     let style = styleMap.get(name);
     if (!style) { style = figma.createTextStyle(); style.name = name; count++; }
 
-    const font = await loadFontWithFallback(item.font, weightMap[item.weight] || 'Regular');
+    const fontStyle = resolveFontStyle(item.weight);
+    const font = await loadFontWithFallback(item.font, fontStyle);
     style.fontName = font.fontName;
     style.fontSize = parseFloat(item.size);
     const lh = parseLineHeightValue(item.lineHeight);
@@ -535,10 +580,16 @@ async function createTextStyles(parsed, varMap) {
 
     const fv = varMap.get(name + "/fontSize");
     const sv = varMap.get(name + "/letterSpacing");
+    const ff = varMap.get("fontFamily/" + item.font);
+    const fw = varMap.get("fontStyle/" + fontStyle);
     try {
       if (fv) style.setBoundVariable('fontSize', fv);
       if (sv) style.setBoundVariable('letterSpacing', sv);
-    } catch (e) { }
+      if (ff) style.setBoundVariable('fontFamily', ff);
+      if (fw) style.setBoundVariable('fontStyle', fw);
+    } catch (e) {
+      sendLog('warn', `Typography binding failed for ${name}: ${e.message || e}`);
+    }
   }
   return count;
 }
