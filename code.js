@@ -85,18 +85,20 @@ function parseMD(content) {
       if (c.length < 2 || c[0].toLowerCase() === 'token') continue;
       
       if (sec === 'colors') {
-        if (sub === 'primitive') res.colors.primitive.push({ token: c[0], value: c[1], desc: c[2] || '' });
-        else if (sub === 'semantic') res.colors.semantic.push({ token: c[0], light: c[1], dark: c[2] || c[1], desc: c[3] || '' });
+        if (sub === 'primitive') res.colors.primitive.push({ token: c[0], value: c[1] || '#000000', desc: c[2] || '' });
+        else if (sub === 'semantic') res.colors.semantic.push({ token: c[0], light: c[1] || '', dark: c[2] || c[1] || '', desc: c[3] || '' });
       } else if (sec === 'spacing' || sec === 'radius') {
         const target = res[sec][sub];
-        if (sub === 'primitive') target.push({ token: c[0], value: c[1], desc: c[2] || '' });
-        else if (sub === 'semantic') target.push({ token: c[0], alias: c[1], desc: c[2] || '' });
+        if (target) {
+          if (sub === 'primitive') target.push({ token: c[0], value: c[1] || '0px', desc: c[2] || '' });
+          else if (sub === 'semantic') target.push({ token: c[0], alias: c[1] || '', desc: c[2] || '' });
+        }
       } else if (sec === 'typography') {
-        res.typography.push({ token: c[0], font: c[1], size: c[2], weight: c[3], lineHeight: c[4], ls: c[5] || '0', group: typoGroup });
+        res.typography.push({ token: c[0], font: c[1] || 'Inter', size: c[2] || '16px', weight: c[3] || 'Regular', lineHeight: c[4] || '100%', ls: c[5] || '0', group: typoGroup });
       } else if (sec === 'effects') {
-        res.effects.push({ token: c[0], type: c[1], color: c[2], x: c[3], y: c[4], blur: c[5], spread: c[6] || '0' });
+        res.effects.push({ token: c[0], type: c[1] || 'drop-shadow', color: c[2] || 'rgba(0,0,0,0.1)', x: c[3] || '0', y: c[4] || '0', blur: c[5] || '0', spread: c[6] || '0' });
       } else if (sec === 'grid') {
-        res.grid.push({ token: c[0], type: c[1], count: c[2], width: c[3], gutter: c[4], margin: c[5], align: c[6] || 'stretch' });
+        res.grid.push({ token: c[0], type: c[1] || 'columns', count: c[2] || '1', width: c[3] || 'auto', gutter: c[4] || '0', margin: c[5] || '0', align: c[6] || 'stretch' });
       }
     }
   }
@@ -176,6 +178,17 @@ async function createAllVariables(parsed, options) {
     const fontMapVar = new Map();
     const weightMapVar = new Map();
 
+    const ensureDefault = (sub, val) => {
+      const fName = sub + "/" + val;
+      if (!existingMap.has(col.id + ":" + fName)) {
+        let v = figma.variables.createVariable(fName, col, 'STRING');
+        v.setValueForMode(mId, val);
+        results.typography++;
+      }
+    };
+    ensureDefault("fontFamily", "Inter");
+    ensureDefault("fontStyle", "Regular");
+
     for (let t of parsed.typography) {
       const base = (t.group ? t.group + "/" : "") + t.token;
       if (t.font && !fontMapVar.has(t.font)) {
@@ -230,9 +243,11 @@ async function createStyles(parsed, options) {
       const fStyle = resolveFontStyle(t.weight);
       let family = t.font;
       let style = fStyle;
+      let isFontLoaded = true;
       await figma.loadFontAsync({ family, style }).catch(async () => {
         family = 'Inter'; style = 'Regular';
         await figma.loadFontAsync({ family, style });
+        isFontLoaded = false;
         sendQA(`Font fallback: '${t.font} ${fStyle}' not found, used 'Inter Regular'.`);
       });
       s.fontName = { family, style };
@@ -247,11 +262,20 @@ async function createStyles(parsed, options) {
         const sv = varMap.get(name + "/letterSpacing");
         const ff = varMap.get("fontFamily/" + t.font);
         const fw = varMap.get("fontStyle/" + fStyle);
+
         if (fv) s.setBoundVariable('fontSize', fv);
         if (lv && lhObj.unit === 'PIXELS') s.setBoundVariable('lineHeight', lv);
         if (sv) s.setBoundVariable('letterSpacing', sv);
-        if (ff) s.setBoundVariable('fontFamily', ff);
-        if (fw) s.setBoundVariable('fontStyle', fw);
+        
+        if (isFontLoaded) {
+          if (ff) s.setBoundVariable('fontFamily', ff);
+          if (fw) s.setBoundVariable('fontStyle', fw);
+        } else {
+          const ffInter = varMap.get("fontFamily/Inter");
+          const fwRegular = varMap.get("fontStyle/Regular");
+          if (ffInter) s.setBoundVariable('fontFamily', ffInter);
+          if (fwRegular) s.setBoundVariable('fontStyle', fwRegular);
+        }
       } catch (e) {}
       results.text++;
     }
