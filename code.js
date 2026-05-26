@@ -1,5 +1,6 @@
 /**
- * MD to Figma - v2.4.0 Legacy-Compatible Engine
+ * MD to Figma - v2.0.0 Official Stable Release
+ * The Complete Bidirectional Semantic Design System Engine
  */
 
 figma.showUI(__html__, { width: 500, height: 650 });
@@ -28,6 +29,12 @@ const rgbaToString = (color) => {
 const parseRgbaColor = (str) => {
   const m = str.match(/rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)/i);
   return m ? { r: parseInt(m[1])/255, g: parseInt(m[2])/255, b: parseInt(m[3])/255, a: m[4] ? parseFloat(m[4]) : 1 } : null;
+};
+
+// Helper for clean numbers in MD
+const roundVal = (v) => {
+  var n = parseFloat(v);
+  return isNaN(n) ? "0" : Math.round(n * 100) / 100;
 };
 
 const parseLineHeightValue = (value) => {
@@ -112,7 +119,8 @@ function parseMD(content) {
 async function getOrCreateCollection(name) {
   const cols = await figma.variables.getLocalVariableCollectionsAsync();
   for (var i = 0; i < cols.length; i++) {
-    if (cols[i].name.toLowerCase() === name.toLowerCase()) return cols[i];
+    const c = cols[i];
+    if (c.name.toLowerCase() === name.toLowerCase()) return c;
   }
   return figma.variables.createVariableCollection(name);
 }
@@ -150,8 +158,11 @@ async function createAllVariables(parsed, options) {
     for (var i = 0; i < parsed.colors.semantic.length; i++) {
       const s = parsed.colors.semantic[i];
       const name = "semantic/" + s.token;
-      const lightVar = primMap.get(s.light);
-      const lightAlias = lightVar ? { type: "VARIABLE_ALIAS", id: lightVar.id } : null;
+      const getAlias = (ref) => {
+        const targetVar = primMap.get(ref);
+        return targetVar ? { type: "VARIABLE_ALIAS", id: targetVar.id } : null;
+      };
+      const lightAlias = getAlias(s.light);
       if (lightAlias) {
         const v = safeSet(col, name, "COLOR", lId, lightAlias, col.id + ":" + name);
         if (dId) {
@@ -201,7 +212,6 @@ async function createAllVariables(parsed, options) {
       if (uniqueFonts.indexOf(parsed.typography[i].font) === -1) uniqueFonts.push(parsed.typography[i].font);
     }
     
-    // Primary: 원래 의도 폰트 보존 / Secondary: Inter 고정
     safeSet(col, "fontFamily/primary", "STRING", mId, uniqueFonts[0] || "Inter", col.id + ":fontFamily/primary");
     safeSet(col, "fontFamily/secondary", "STRING", mId, "Inter", col.id + ":fontFamily/secondary");
 
@@ -268,7 +278,6 @@ async function createStyles(parsed, options) {
         const lv = varMap.get(name + "/LineHeight");
         const sv = varMap.get(name + "/LetterSpacing");
         
-        // 지능형 바인딩: 폰트 로드 성공 여부에 따라 변수 선택
         const ffVar = isFontLoaded ? varMap.get("fontFamily/primary") : varMap.get("fontFamily/secondary");
         const semanticName = getSemanticWeightName(t.weight);
         const fwVar = varMap.get("fontWeight/" + semanticName);
@@ -323,22 +332,35 @@ async function createStyles(parsed, options) {
 
   if (options.grid) {
     sendLog('info', "Creating Grid styles...");
-    const existingGridStyles = await figma.getLocalGridStylesAsync();
-    const gridStyleMap = new Map();
-    existingGridStyles.forEach(s => gridStyleMap.set(s.name, s));
+    var existingGridStyles = await figma.getLocalGridStylesAsync();
+    var gridStyleMap = new Map();
+    for (var i = 0; i < existingGridStyles.length; i++) {
+      gridStyleMap.set(existingGridStyles[i].name, existingGridStyles[i]);
+    }
     for (var i = 0; i < parsed.grid.length; i++) {
-      const g = parsed.grid[i];
-      let gs = gridStyleMap.get(g.token) || figma.createGridStyle();
+      var g = parsed.grid[i];
+      var gs = gridStyleMap.get(g.token) || figma.createGridStyle();
       gs.name = g.token;
-      let grid;
+      var grid = null;
       if (g.type === "grid") {
-        grid = { pattern: "GRID", sectionSize: parseFloat(g.count), color: { r: 1, g: 0, b: 0, a: 0.1 } };
+        grid = { 
+          pattern: "GRID", 
+          sectionSize: parseFloat(g.count) || 8, 
+          color: { r: 1, g: 0, b: 0, a: 0.1 } 
+        };
       } else {
+        var rawAlign = String(g.align || 'stretch').toUpperCase();
+        var validAlign = (rawAlign === 'CENTER' || rawAlign === 'MIN' || rawAlign === 'MAX' || rawAlign === 'STRETCH') ? rawAlign : 'STRETCH';
         grid = {
-          pattern: g.type.toUpperCase(), count: parseInt(g.count) || 12, gutterSize: parseFloat(g.gutter), offset: parseFloat(g.margin), alignment: "STRETCH", color: { r: 1, g: 0, b: 0, a: 0.1 }
+          pattern: g.type.toUpperCase() === 'ROWS' ? 'ROWS' : 'COLUMNS',
+          count: parseInt(g.count) || 12,
+          gutterSize: parseFloat(g.gutter) || 0,
+          offset: parseFloat(g.margin) || 0,
+          alignment: validAlign,
+          color: { r: 1, g: 0, b: 0, a: 0.1 }
         };
       }
-      gs.layoutGrids = [grid];
+      if (grid) gs.layoutGrids = [grid];
       results.grid++;
     }
   }
@@ -431,8 +453,8 @@ async function generateExportMD() {
       const g = parts.length > 1 ? parts[0] : "default";
       const t = parts.length > 1 ? parts.slice(1).join("/") : s.name;
       if (!gs[g]) gs[g] = [];
-      const lh = s.lineHeight.unit === "PERCENT" ? Math.round(s.lineHeight.value) + "%" : s.lineHeight.value + "px";
-      const ls = s.letterSpacing.value + (s.letterSpacing.unit === "PIXELS" ? "px" : "%");
+      const lh = s.lineHeight.unit === "PERCENT" ? Math.round(s.lineHeight.value) + "%" : roundVal(s.lineHeight.value) + "px";
+      const ls = roundVal(s.letterSpacing.value) + (s.letterSpacing.unit === "PIXELS" ? "px" : "%");
       
       const normalizedStyle = s.fontName.style.toLowerCase().replace(/[\s\-_]/g, "");
       const semanticWeight = revWeightMap[normalizedStyle] || s.fontName.style;
@@ -442,12 +464,12 @@ async function generateExportMD() {
         const boundVarId = s.boundVariables.fontFamily.id;
         if (ffPrimaryVar && boundVarId === ffPrimaryVar.id && primaryFontValue) {
           exportedFontFamily = primaryFontValue;
-        } else if (ffSecondaryVar && boundVarId === ffSecondaryVar.id && secondaryFontValue) {
-          exportedFontFamily = secondaryFontValue;
+        } else if (ffSecondaryVar && boundVarId === ffSecondaryVar.id) {
+          exportedFontFamily = primaryFontValue || secondaryFontValue;
         }
       }
 
-      gs[g].push("| " + t + " | " + exportedFontFamily + " | " + s.fontSize + "px | " + semanticWeight + " | " + lh + " | " + ls + " |");
+      gs[g].push("| " + t + " | " + exportedFontFamily + " | " + roundVal(s.fontSize) + "px | " + semanticWeight + " | " + lh + " | " + ls + " |");
     });
     const groups = Object.keys(gs);
     for (var i = 0; i < groups.length; i++) {
@@ -463,7 +485,7 @@ async function generateExportMD() {
       if (s.effects.length > 0) {
         const e = s.effects[0];
         if (e.type === "DROP_SHADOW" || e.type === "INNER_SHADOW") {
-          md += "| " + s.name + " | " + (e.type === "DROP_SHADOW" ? "drop-shadow" : "inner-shadow") + " | " + rgbaToString(e.color) + " | " + e.offset.x + "px | " + e.offset.y + "px | " + e.radius + "px | " + e.spread + "px |\n";
+          md += "| " + s.name + " | " + (e.type === "DROP_SHADOW" ? "drop-shadow" : "inner-shadow") + " | " + rgbaToString(e.color) + " | " + roundVal(e.offset.x) + "px | " + roundVal(e.offset.y) + "px | " + roundVal(e.radius) + "px | " + roundVal(e.spread) + "px |\n";
         }
       }
     });
@@ -476,8 +498,11 @@ async function generateExportMD() {
     gStyles.forEach(s => {
       if (s.layoutGrids.length > 0) {
         const g = s.layoutGrids[0];
-        if (g.pattern === "GRID") md += "| " + s.name + " | grid | " + g.sectionSize + "px | - | - | - | - |\n";
-        else md += "| " + s.name + " | " + g.pattern.toLowerCase() + " | " + g.count + " | auto | " + g.gutterSize + "px | " + g.offset + "px | " + g.alignment.toLowerCase() + " |\n";
+        if (g.pattern === "GRID") {
+          md += "| " + s.name + " | grid | " + roundVal(g.sectionSize) + "px | - | - | - | - |\n";
+        } else {
+          md += "| " + s.name + " | " + g.pattern.toLowerCase() + " | " + g.count + " | auto | " + roundVal(g.gutterSize) + "px | " + roundVal(g.offset) + "px | " + g.alignment.toLowerCase() + " |\n";
+        }
       }
     });
     md += "\n";

@@ -510,7 +510,7 @@
     var TEMPLATE_MD = `# Design System
 
 <!--
-📌 작성 규칙 (v2.3.1)
+📌 작성 규칙 (v2.0.0 Official Release)
 
 [형식]
 - 컬러: HEX 6자리 (#ffffff) 또는 rgba(0,0,0,0.1)
@@ -522,10 +522,10 @@
 - 빈 값: - 로 표기
 
 [시멘틱 타이포그래피 규칙]
-- FontFamily 배리어블은 'fontFamily/primary', 'fontFamily/secondary' 이름으로 자동 생성됩니다.
-- FontWeight 배리어블은 'fontWeight/400', 'fontWeight/700' 처럼 입력된 값을 이름으로 생성하며 스타일명이 값으로 할당됩니다.
-- MD에 적힌 폰트명이 이 변수의 '값'으로 할당됩니다.
-- 폰트가 시스템에 없을 경우 변수의 '값'만 'Inter'로 자동 업데이트되어 일괄 반영됩니다.
+- FontFamily 배리어블은 'fontFamily/primary'(의도), 'fontFamily/secondary'(실제 폴백) 이름으로 자동 생성됩니다.
+- MD에 적힌 폰트명이 primary 변수의 '값'으로 할당되어 디자인 의도를 보존합니다.
+- 폰트가 시스템에 없을 경우 secondary(Inter)로 지능적 바인딩 전환이 일어나 취소선 없는 환경을 구축합니다.
+- FontWeight 배리어블은 'fontWeight/400' 처럼 입력 수치를 이름으로 생성하며 스타일명(Regular 등)이 값으로 할당됩니다.
 
 [토큰 구조]
 - Primitive: 기본 색상 팔레트 (원시값, 모드 무관)
@@ -619,9 +619,9 @@
 |-------|------|-------|-------|--------|--------|-----------|
 | columns-12 | columns | 12 | auto | 24px | 48px | stretch |`;
 
-    var AI_PROMPT_GUIDE = `# 🚀 MD to Figma: Global AI Prompt Guide (v2.3.1)
+    var AI_PROMPT_GUIDE = `# 🚀 MD to Figma: Global AI Prompt Guide (v2.0.0)
 
-Register your entire design system into Figma Variables & Styles in seconds. This guide helps you bridge the gap between your documentation and Figma using the power of AI.
+    Register your entire design system into Figma Variables & Styles in seconds. This guide helps you bridge the gap between your documentation and Figma using the power of AI.
 
 ---
 
@@ -650,12 +650,12 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
 > 
 > **CRITICAL COMPLIANCE RULES:**
 > 1. **Color Aliasing**: In the 'Semantic' table, values MUST reference names from the 'Primitive' table (e.g., \`blue/500\`). **Never use HEX codes in Semantic tables.**
-2. \`LineHeight Smart Units\`: 
-    - Use \`%\` (e.g., \`150%\`) or unitless decimals (e.g., \`1.5\`) for flexible web-based styles. These will be entered as raw percentages in Figma Styles to preserve precision.
-    - Use \`px\` (e.g., \`24px\`) ONLY if fixed pixel height and Variable Binding are required.
-3. \`Grid Inference\`: If grid data is missing or insufficient, please infer a standard layout system (Columns: 2/4/12, Gutter: 16/24px, Margin: auto) and baseline grids (4px/8px) based on the template.
-4. \`Typography Grouping\`: Use \`### Heading\` syntax to group typography tokens (e.g., \`### Display\`).
-> 4. **Font Safety**: If specifying a custom font, don't worry if it's not installed. The plugin will automatically fallback to 'Inter Regular' and link it to an auto-generated 'fontFamily/Inter' variable for a clean, error-free system.
+> 2. **LineHeight Smart Units**: 
+>    - Use \`%\` (e.g., \`150%\`) or unitless decimals (e.g., \`1.5\`) for flexible web-based styles. These will be entered as raw percentages in Figma Styles to preserve precision.
+>    - Use \`px\` (e.g., \`24px\`) ONLY if fixed pixel height and Variable Binding are required.
+> 3. **Grid Inference**: If grid data is missing or insufficient, please infer a standard layout system (Columns: 2/4/12, Gutter: 16/24px, Margin: auto) and baseline grids (4px/8px) based on the template.
+> 4. **Typography Grouping**: Use \`### Heading\` syntax to group typography tokens (e.g., \`### Display\`).
+> 5. **Font Safety**: If specifying a custom font, don't worry if it's not installed. The plugin will automatically fallback to 'Inter Regular' and link it to an auto-generated 'fontFamily/secondary' variable for a clean, error-free system while preserving your intent in 'fontFamily/primary'.
 > 
 > Output the result as a single, complete Markdown code block."
 
@@ -684,8 +684,8 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
     var errorLogs = [];
     var qaLogs = [];
 
-    document.getElementById('downloadTemplateBtn').onclick = () => downloadFile('DESIGN-TEMPLATE.md', TEMPLATE_MD);
-    document.getElementById('downloadGuideBtn').onclick = () => downloadFile('AI-PROMPT-GUIDE.md', AI_PROMPT_GUIDE);
+    document.getElementById('downloadTemplateBtn').onclick = function () { downloadFile('DESIGN-TEMPLATE.md', TEMPLATE_MD); };
+    document.getElementById('downloadGuideBtn').onclick = function () { downloadFile('AI-PROMPT-GUIDE.md', AI_PROMPT_GUIDE); };
 
     function downloadFile(filename, content) {
       var blob = new Blob([content], { type: 'text/markdown' });
@@ -839,9 +839,9 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
           copyQABtn.style.display = 'block';
         } else if (msg.type === 'complete') {
           document.getElementById('modalTitle').textContent = '🎉 등록 완료';
-          var summary = `\n--- [등록 요약] ---\n`;
-          summary += `• 배리어블: Color(${msg.results.variables.colors}), Spacing(${msg.results.variables.spacing}), Radius(${msg.results.variables.radius}), Typography(${msg.results.variables.typography})\n`;
-          summary += `• 스타일: Color(${msg.results.styles.color}), Text(${msg.results.styles.text}), Effect(${msg.results.styles.effect}), Grid(${msg.results.styles.grid})\n`;
+          var summary = "\n--- [등록 요약] ---\n";
+          summary += "• 배리어블: Color(" + msg.results.variables.colors + "), Spacing(" + msg.results.variables.spacing + "), Radius(" + msg.results.variables.radius + "), Typography(" + msg.results.variables.typography + ")\n";
+          summary += "• 스타일: Color(" + msg.results.styles.color + "), Text(" + msg.results.styles.text + "), Effect(" + msg.results.styles.effect + "), Grid(" + msg.results.styles.grid + ")\n";
           
           qaLogs.push(summary);
           var entry = document.createElement('div');

@@ -1,57 +1,44 @@
 # 📦 MD to Figma
 
-**Paste the template-generated DESIGN.md — and get Variables, Styles, and bindings all at once!!**
+**The Complete Bidirectional Design System Engine — Variables, Styles, and Data Extraction at Once!!**
 
-Figma plugin that reads a structured Markdown file and generates your entire token system automatically.
-4 separate Variable collections, Styles bound to those Variables, and natural numeric sorting — from a single paste.
+Figma plugin that synchronizes your entire design system between Markdown and Figma. 
+Create Variables & Styles from MD, or export your existing Figma system back to MD — with smart bindings and zero configuration.
 
 [![Figma Plugin](https://img.shields.io/badge/Figma-Plugin-blue?logo=figma)](https://www.figma.com/community/plugin/YOUR_PLUGIN_ID)
-![Version](https://img.shields.io/badge/version-1.6.0-brightgreen)
+![Version](https://img.shields.io/badge/version-2.0.0-brightgreen)
 
 ![cover](./resources/cover_v2.png)
 
 ---
 
-## 💡 MD to Figma를 쓰는 이유
+## 💡 MD to Figma를 쓰는 이유 (v2.0.0 Major Update)
 
-Claude 등 AI를 Figma MCP와 연결해 디자인 시스템을 구축하다 보면, Variables와 Styles를 MCP를 통해 직접 등록할 때 토큰 소모가 상당하다는 걸 느끼게 됩니다.
-
-AI가 DESIGN.md를 만들어냈다면, 그 이후 Figma 등록은 MD to Figma로 무료로 처리하세요. 추가 API 호출도, 토큰 낭비도 없습니다.
+1. **AI 워크플로우 최적화**: AI가 생성한 `DESIGN.md`를 피그마에 즉시 무료로 이식합니다. MCP의 토큰 낭비 없이 대규모 시스템을 구축하세요.
+2. **양방향 동기화 (Bidirectional)**: 피그마에 구축된 복잡한 변수와 스타일을 다시 마크다운 문서로 정밀하게 추출(Export)할 수 있습니다.
+3. **시멘틱 디자인 보존**: 폰트가 시스템에 없더라도 사용자의 원래 '디자인 의도'는 배리어블에 영구 보존하고, 화면은 안전한 폴백 폰트로 렌더링합니다.
 
 ```
-AI + Figma MCP  →  DESIGN.md  →  MD to Figma  →  Figma Variables & Styles
-                                  (무료, 즉시)
+AI / Documentation  ⇄  DESIGN.md  ⇄  MD to Figma  ⇄  Figma Variables & Styles
+                                   (양방향, 자동화)
 ```
 
 ---
 
-## ✨ What Gets Generated
+## ✨ Key Features (v2.0.0)
 
-### Variables — 4 Collections
+### 🔄 1. The Bidirectional Engine
+- **MD → Figma (Generate)**: 마크다운 테이블을 분석하여 변수(Variables)와 스타일(Styles)을 완벽한 계층 구조로 자동 생성합니다.
+- **Figma → MD (Export)**: 피그마의 기존 변수와 스타일을 다시 깨끗한 마크다운 문서로 추출합니다. 참조가 끊긴 데이터는 `recovered/` 토큰으로 지능적으로 자동 복구합니다.
 
-| Collection | Contents |
-|---|---|
-| **Colors** | Primitive palette + Semantic aliases (Light & Dark mode). Semantic tokens are strictly alias-bound. |
-| **Spacing** | Primitive scale + Semantic aliases |
-| **Radius** | Primitive scale + Semantic aliases |
-| **Typography** | fontSize / lineHeight / letterSpacing, grouped by section (Display, Body, Caption, etc.) |
+### 🏛️ 2. Semantic Typography Architecture
+- **의도 vs 구현 분리**: `fontFamily/primary`에는 사용자의 고유 폰트(디자인 의도)를, `fontFamily/secondary`에는 `Inter`(안전망)를 자동 할당합니다.
+- **지능형 바인딩**: 폰트가 없을 경우 취소선(Missing Font) 에러를 방지하기 위해 자동으로 `secondary` 폴백 변수에 스타일을 바인딩합니다.
+- **Smart LineHeight**: `%`와 `px`의 차이를 구분하여, 웹 호환성이 필요한 퍼센트 수치는 바인딩을 풀고 직접 주입하여 정밀도를 100% 보존합니다.
 
-### Styles — all bound to Variables
-
-| Style | Binding |
-|---|---|
-| Color Styles | → Semantic Color Variables |
-| Text Styles | → Typography Variables (fontSize / lineHeight / letterSpacing) |
-| Effect Styles | → Spacing Variables (drop shadow blur) |
-| Grid Styles | → Spacing Variables (gutter / margin) |
-
-### Other Features
-
-- **Selective Generation** — Checkbox per collection and style type. Update only what you need.
-- **Partial Sync** — Already have Variables? Generate Styles only and auto-link to existing ones.
-- **Natural Numeric Sorting** — `space-4`, `space-8`, `space-16` sorted by value, not alphabetically.
-- **Font Fallback** — Auto fallback chain: requested style → Regular → Inter → Inter Regular.
-- **Live Execution Log** — Real-time log panel with copy support.
+### 🚀 3. Professional Tools
+- **Agentic QA Reporting**: 에러(Error)와 시스템 현황(QA)을 분리한 듀얼 탭 모달을 제공합니다. 클릭 한 번으로 AI에게 전달할 완벽한 브리핑 텍스트를 복사할 수 있습니다.
+- **Map-based Overwrite**: 대규모 데이터 처리 시 중복 생성을 원천 차단하고 기존 데이터를 정확히 덮어쓰도록(Overwrite) 캐싱 엔진을 최적화했습니다.
 
 ---
 
@@ -60,23 +47,23 @@ AI + Figma MCP  →  DESIGN.md  →  MD to Figma  →  Figma Variables & Styles
 | UI | Error Log |
 |---|---|
 | ![UI](./resources/UI.png) | ![ErrorLog](./resources/ErrorLog.png) |
-| Initial screen — paste DESIGN.md and select options | Generation complete with variable & style counts |
+| Intuitive dashboard with Export/Generate support | Error handling with AI briefing copy |
 
 | QA Log | Figma Output |
 |---|---|
 | ![Log](./resources/QALog.png) | ![Output](./resources/Variables&Styles.png) |
-| Execution log — copy and paste directly into AI for debugging | Variables & Styles registered in Figma |
+| Execution summary & Smart Fallback alerts | Perfectly bound Variables & Styles in Figma |
 
 ---
 
 ## 🚀 How It Works
 
-1. **Collect** your design system data — from a Figma file, brand guidelines, website, or any source
-2. **Download** the DESIGN.md template from the plugin (or from [`resources/`](./resources/))
-3. **Hand both to any AI** (Claude, ChatGPT, etc.) — the AI uses the template as a pattern reference to organize your data, infer missing values, and output a complete, structured DESIGN.md
-4. **Paste** the AI-generated DESIGN.md into the plugin
-5. **Select** which Variables and Styles to generate
-6. **Click Generate** — done
+1. **Collect** your design system data — from a Figma file, brand guidelines, website, or any source.
+2. **Download** the `DESIGN-TEMPLATE.md` from the plugin.
+3. **Hand both to any AI** (Claude, ChatGPT, etc.) — the AI uses the template as a pattern reference to organize your data.
+4. **Paste** the AI-generated DESIGN.md into the plugin.
+5. **Select** which Variables and Styles to generate.
+6. **Click Generate** — done. (Use **Export** to extract it back later!)
 
 ---
 
@@ -98,24 +85,22 @@ AI + Figma MCP  →  DESIGN.md  →  MD to Figma  →  Figma Variables & Styles
 
 ```
 md-to-figma/
-├── code.js                      # Plugin main logic
-├── ui.html                      # Plugin UI
+├── code.js                      # Plugin main logic (ES6 Standard)
+├── ui.html                      # Plugin UI & Modals
 ├── manifest.example.json        # Manifest template (rename and fill in your plugin ID)
 ├── .gitignore                   # manifest.json excluded
 ├── README.md
 └── resources/
-    ├── DESIGN-TEMPLATE.md       # DESIGN.md template
-    ├── AI-PROMPT-GUIDE.md       # AI prompt guide
+    ├── DESIGN-TEMPLATE.md       # DESIGN.md template (v2.0.0)
+    ├── AI-PROMPT-GUIDE.md       # AI prompt guide (v2.0.0)
     ├── TEMPLATED-SAMPLE.md      # Sample output generated from the template
     ├── cover_v2.png             # Plugin cover image
     ├── Icon_v2.png              # Plugin icon
-    ├── Frame2.png               # Screenshot: initial UI
-    ├── Frame3.png               # Screenshot: generation complete
-    ├── Frame4.png               # Screenshot: log modal
-    └── Frame5.png               # Screenshot: Figma output
+    ├── UI.png                   # Screenshot: Main UI
+    ├── ErrorLog.png             # Screenshot: Error Modal
+    ├── QALog.png                # Screenshot: QA Log Modal
+    └── Variables&Styles.png     # Screenshot: Figma output
 ```
-
-> `manifest.json` is excluded from version control to protect the plugin ID.
 
 ---
 
@@ -144,32 +129,25 @@ Then replace `YOUR_PLUGIN_ID` in `manifest.json` with your actual Figma plugin I
 3. Plugins & Widgets → MD to Figma → ··· → **Publish new version**
 4. Write release notes and submit
 
-> `manifest.json`의 `"api"` 필드는 Figma API 버전이므로 수정하지 않습니다.
-> 플러그인 버전은 `code.js` 상단 주석으로 관리합니다.
-
 ---
 
-## v2.2.1 릴리즈 노트 (Latest)
+## v2.0.0 릴리즈 노트 (Latest)
 
-### 🚀 대규모 업데이트: Bidirectional Stable Engine
-이번 업데이트는 플러그인의 아키텍처를 전면 재구축하여 **완전한 양방향 디자인 시스템 관리**를 지원합니다.
+### 🚀 대규모 업데이트: The Bidirectional Semantic Engine
+v1.6.0 이후의 모든 개발 성과를 집약한 대규모 메이저 업데이트입니다. 텍스트 등록을 넘어선 디자인 시스템의 완전한 관리를 지향합니다.
 
 #### **1. 양방향 엔진 (Figma ⇄ Markdown)**
-- **추출(Export) 기능 추가**: 이제 피그마에 등록된 변수와 스타일을 단 한 번의 클릭으로 완벽한 마크다운 문서로 추출할 수 있습니다.
-- **무결성 복구**: 참조가 끊긴 변수는 `recovered/` 토큰으로 자동 생성하여 디자인 시스템의 연속성을 보장합니다.
+- **추출(Export) 기능**: 피그마에 구축된 변수와 스타일을 100% 정규화된 마크다운으로 추출합니다.
+- **무결성 보존**: 디자이너의 수정 사항을 실시간으로 추적하여 추출하며, 참조가 끊긴 데이터는 자동 복구합니다.
 
-#### **2. 스마트 타이포그래피 시스템**
-- **LineHeight 지능형 바인딩**: 단위(`px`, `%`, `배수`)를 스스로 분석하여, 피그마 UI가 깨지지 않도록 바인딩 여부를 지능적으로 결정합니다.
-- **Inter 자동 폴백 배리어블**: 에어비앤비 폰트 등이 없는 환경에서도 플러그인이 `Inter` 변수를 자동 생성하고 스타일과 연결하여 취소선(Missing Font) 없는 깨끗한 시스템을 구축합니다.
+#### **2. 시멘틱 타이포그래피 아키텍처**
+- **의도 보존 시스템**: `fontFamily/primary`(디자인 의도)와 `secondary`(실제 폴백)를 분리하여 폰트 부재 시에도 시스템을 보호합니다.
+- **스마트 매핑**: `fontWeight/400`과 같은 수치 네이밍과 `Regular`라는 피그마 스타일값을 시멘틱 토큰으로 완벽하게 연결했습니다.
+- **지능형 바인딩**: 단위(`px`, `%`)를 스스로 판단하여 피그마 UI가 깨지지 않는 최적의 방식으로 자동 바인딩합니다.
 
-#### **3. 전문가용 QA 리포팅 모달**
-- **에러 & QA 탭 분리**: 단순 로그를 넘어, 시스템 개선 사항을 제안하는 QA 탭이 추가되었습니다.
-- **AI 브리핑 복사**: 리포트 내용을 AI(ChatGPT, Claude)에게 즉시 전달할 수 있는 전용 프롬프트 복사 버튼을 제공합니다.
-
-#### **4. 성능 및 안정성 강화**
-- **Map 캐싱 엔진**: 대규모 데이터 처리 시 중복 생성을 100% 방지하고 기존 데이터를 정확히 덮어쓰도록(Overwrite) 최적화되었습니다.
-- **인코딩 안정화**: 특수 문자 및 이모지로 인한 플러그인 로딩 실패 문제를 해결했습니다.
-
+#### **3. 전문가용 QA & 리포팅**
+- **에러/QA 분리**: 단순 로그가 아닌, AI에게 전달할 수 있는 전문적인 시스템 분석 리포트를 제공합니다.
+- **안정성**: 모든 수치를 소수점 둘째 자리에서 정규화하고, 런타임 크래시를 방지하는 강력한 ES6 표준 방어 로직을 탑재했습니다.
 
 ---
 
@@ -179,8 +157,6 @@ Then replace `YOUR_PLUGIN_ID` in `manifest.json` with your actual Figma plugin I
 #### **Typography 변수 바인딩 완벽 지원 (Font Family & Weight)**
 - 텍스트 스타일 생성 시 폰트 속성이 변수에 정상적으로 바인딩되도록 개선되었습니다.
 - **스마트 Font Weight 매핑**: 마크다운 템플릿에 `600`, `semibold`, `midium`(오타) 등 다양한 형태로 두께를 입력하더라도, Figma 표준 명칭으로 자동 변환합니다.
-
-
 
 ---
 

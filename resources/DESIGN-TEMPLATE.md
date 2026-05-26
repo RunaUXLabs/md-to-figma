@@ -1,7 +1,7 @@
 # Design System
 
 <!--
-📌 작성 규칙 (v2.2.1)
+📌 작성 규칙 (v2.0.0 Official Release)
 
 [형식]
 - 컬러: HEX 6자리 (#ffffff) 또는 rgba(0,0,0,0.1)
@@ -12,18 +12,15 @@
 - Weight: 숫자(400, 700) 또는 이름(Regular, Bold). 피그마 스타일명과 일치 권장.
 - 빈 값: - 로 표기
 
-[폰트 폴백 규칙]
-- 지정한 폰트가 시스템에 없을 경우, 플러그인이 'Inter Regular'를 자동으로 불러와 대체합니다.
-- 이때 'fontFamily/Inter' 배리어블을 생성하여 스타일에 자동으로 바인딩하므로 취소선 없이 깨끗한 상태가 유지됩니다.
+[시멘틱 타이포그래피 규칙]
+- FontFamily 배리어블은 'fontFamily/primary'(의도), 'fontFamily/secondary'(실제 폴백) 이름으로 자동 생성됩니다.
+- MD에 적힌 폰트명이 primary 변수의 '값'으로 할당되어 디자인 의도를 보존합니다.
+- 폰트가 시스템에 없을 경우 secondary(Inter)로 지능적 바인딩 전환이 일어나 취소선 없는 환경을 구축합니다.
+- FontWeight 배리어블은 'fontWeight/400' 처럼 입력 수치를 이름으로 생성하며 스타일명(Regular 등)이 값으로 할당됩니다.
 
 [토큰 구조]
 - Primitive: 기본 색상 팔레트 (원시값, 모드 무관)
 - Semantic: 용도별 색상 (Light/Dark 모드별 Alias 지정)
-
-[다크모드 규칙]
-⚠️ 중요: Primitive에 Light/Dark 모두에서 사용할 모든 원시 컬러를 먼저 정의
-1. Primitive 정의 (원시값): 모든 모드에서 쓰일 컬러 나열
-2. Semantic 정의 (Alias): Light/Dark 컬럼에 Primitive 토큰명 기재 (HEX 직접 입력 금지)
 
 [Typography 그룹핑]
 - ### 그룹명 으로 그룹 구분 (예: ### Display)
