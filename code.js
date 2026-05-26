@@ -1,5 +1,5 @@
 /**
- * MD to Figma - v2.2.1 Stable Engine
+ * MD to Figma - v2.2.1 Stable Engine (Final Repair)
  */
 
 figma.showUI(__html__, { width: 500, height: 650 });
@@ -73,9 +73,10 @@ function parseMD(content) {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
+    if (!line) continue;
     if (line.startsWith('## ')) { sec = line.replace('## ', '').toLowerCase(); sub = ''; typoGroup = ''; continue; }
     if (line.startsWith('### ')) { 
-      const name = line.replace('### ', '');
+      const name = line.replace('### ', '').trim();
       if (sec === 'typography') typoGroup = name.toLowerCase();
       else sub = name.toLowerCase();
       continue;
@@ -88,7 +89,7 @@ function parseMD(content) {
         if (sub === 'primitive') res.colors.primitive.push({ token: c[0], value: c[1] || '#000000', desc: c[2] || '' });
         else if (sub === 'semantic') res.colors.semantic.push({ token: c[0], light: c[1] || '', dark: c[2] || c[1] || '', desc: c[3] || '' });
       } else if (sec === 'spacing' || sec === 'radius') {
-        const target = res[sec][sub];
+        const target = res[sec] ? res[sec][sub] : null;
         if (target) {
           if (sub === 'primitive') target.push({ token: c[0], value: c[1] || '0px', desc: c[2] || '' });
           else if (sub === 'semantic') target.push({ token: c[0], alias: c[1] || '', desc: c[2] || '' });
@@ -271,12 +272,24 @@ async function createStyles(parsed, options) {
           if (ff) s.setBoundVariable('fontFamily', ff);
           if (fw) s.setBoundVariable('fontStyle', fw);
         } else {
+          // 폰트가 없는 경우, 미리 생성된 'Inter' 변수들에 바인딩 시도
           const ffInter = varMap.get("fontFamily/Inter");
           const fwRegular = varMap.get("fontStyle/Regular");
           if (ffInter) s.setBoundVariable('fontFamily', ffInter);
           if (fwRegular) s.setBoundVariable('fontStyle', fwRegular);
+          
+          // 방금 생성되어 varMap에 없는 경우 (부분 동기화 시) 로컬에서 다시 찾기
+          if (!ffInter || !fwRegular) {
+             const allLocals = await figma.variables.getLocalVariablesAsync();
+             const ffDefault = allLocals.find(v => v.name === "fontFamily/Inter");
+             const fwDefault = allLocals.find(v => v.name === "fontStyle/Regular");
+             if (ffDefault) s.setBoundVariable('fontFamily', ffDefault);
+             if (fwDefault) s.setBoundVariable('fontStyle', fwDefault);
+          }
         }
-      } catch (e) {}
+      } catch (e) {
+        sendQA(`스타일 바인딩 에러 (${name}): ${e.message}`);
+      }
       results.text++;
     }
   }
