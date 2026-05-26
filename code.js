@@ -1,66 +1,35 @@
 /**
- * MD to Figma - v1.6.0 Optimized Main Plugin Code (Full Fix + Partial Sync Support)
- * 
- * Improvements:
- * 1. 4 Separate Collections: Color, Spacing, Radius, Typography.
- * 2. Partial Sync: Supports creating Styles only, auto-linking to existing Variables.
- * 3. Enforced Alias: Semantic colors MUST reference Primitive variables.
- * 4. High Compatibility: ZERO usage of ?. or ?? for older/restricted environments.
- * 5. Natural Sorting: Numeric-aware sorting for all collections.
+ * MD to Figma - v2.2.1 Stable Engine
  */
 
 figma.showUI(__html__, { width: 500, height: 650 });
 
 // ============================================
-// 로그 및 에러 전송 헬퍼
+// [1] Helpers & Utilities
 // ============================================
 
-const sendLog = (type, message) => {
-  figma.ui.postMessage({ type: 'log', logType: type, message: message });
+const sendLog = (type, message) => figma.ui.postMessage({ type: 'log', logType: type, message: message });
+const sendQA = (message) => figma.ui.postMessage({ type: 'qa_log', message: message });
+const sendError = (message, detail) => figma.ui.postMessage({ type: 'error', message: message, detail: detail || '' });
+
+const rgbToHex = (color) => {
+  const toHex = (c) => {
+    const hex = Math.round(c * 255).toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  };
+  return `#${toHex(color.r)}${toHex(color.g)}${toHex(color.b)}`;
 };
-
-const sendError = (message, detail) => {
-  figma.ui.postMessage({
-    type: 'error',
-    message: message,
-    detail: detail || '',
-    copyable: "[에러] " + message + "\n\n상세:\n" + (detail || '없음')
-  });
-};
-
-// ============================================
-// 데이터 비교 및 변환 유틸리티
-// ============================================
-
-const colorsEqual = (color1, color2) => {
-  if (!color1 || !color2) return false;
-  return Math.abs(color1.r - color2.r) < 0.001 &&
-    Math.abs(color1.g - color2.g) < 0.001 &&
-    Math.abs(color1.b - color2.b) < 0.001;
-};
-
-const numbersEqual = (num1, num2) => Math.abs(num1 - num2) < 0.001;
 
 const hexToRgb = (hex) => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-    r: parseInt(result[1], 16) / 255,
-    g: parseInt(result[2], 16) / 255,
-    b: parseInt(result[3], 16) / 255
-  } : { r: 0, g: 0, b: 0 };
+  return result ? { r: parseInt(result[1], 16) / 255, g: parseInt(result[2], 16) / 255, b: parseInt(result[3], 16) / 255 } : { r: 0, g: 0, b: 0 };
 };
 
-const parseRgbaColor = (colorStr) => {
-  const match = colorStr.match(/rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)/i);
-  if (match) {
-    return {
-      r: parseInt(match[1]) / 255,
-      g: parseInt(match[2]) / 255,
-      b: parseInt(match[3]) / 255,
-      a: match[4] ? parseFloat(match[4]) : 1
-    };
-  }
-  return null;
+const rgbaToString = (color) => `rgba(${Math.round(color.r * 255)}, ${Math.round(color.g * 255)}, ${Math.round(color.b * 255)}, ${(color.a || 1).toFixed(2)})`;
+
+const parseRgbaColor = (str) => {
+  const m = str.match(/rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)/i);
+  return m ? { r: parseInt(m[1])/255, g: parseInt(m[2])/255, b: parseInt(m[3])/255, a: m[4] ? parseFloat(m[4]) : 1 } : null;
 };
 
 const parseLineHeightValue = (value) => {
@@ -69,6 +38,15 @@ const parseLineHeightValue = (value) => {
   if (Number.isNaN(num)) return 100;
   if (raw.endsWith('%')) return num;
   return num <= 10 ? num * 100 : num;
+};
+
+const parseLineHeightObj = (v) => {
+  const raw = String(v || '').trim();
+  const num = parseFloat(raw);
+  if (isNaN(num)) return { value: 100, unit: 'PERCENT' };
+  if (raw.endsWith('%')) return { value: num, unit: 'PERCENT' };
+  if (raw.endsWith('px')) return { value: num, unit: 'PIXELS' };
+  return num <= 10 ? { value: num * 100, unit: 'PERCENT' } : { value: num, unit: 'PIXELS' };
 };
 
 const weightMap = {
@@ -82,586 +60,384 @@ const weightMap = {
   '800': 'ExtraBold', 'extrabold': 'ExtraBold', 'extra-bold': 'ExtraBold',
   '900': 'Black', 'black': 'Black', 'heavy': 'Black'
 };
-
 const resolveFontStyle = (w) => weightMap[String(w || '').trim().toLowerCase()] || 'Regular';
 
-/**
- * 자연스러운 정렬 (숫자 인식: 2, 4, 12, 100)
- */
-function naturalCompare(a, b) {
-  const re = /(\d+)|(\D+)/g;
-  const aParts = String(a).match(re) || [];
-  const bParts = String(b).match(re) || [];
-  const length = Math.min(aParts.length, bParts.length);
-  for (let i = 0; i < length; i++) {
-    const aPart = aParts[i];
-    const bPart = bParts[i];
-    const aIsNum = !isNaN(aPart);
-    const bIsNum = !isNaN(bPart);
-    if (aIsNum && bIsNum) {
-      const diff = parseInt(aPart) - parseInt(bPart);
-      if (diff !== 0) return diff;
-    } else if (aPart !== bPart) {
-      return aPart < bPart ? -1 : 1;
-    }
-  }
-  return aParts.length - bParts.length;
-}
-
 // ============================================
-// 맵 생성 헬퍼 (O(1) 검색용)
-// ============================================
-
-function createVariableMap(variables) {
-  const map = new Map();
-  if (!variables) return map;
-  for (let i = 0; i < variables.length; i++) {
-    const v = variables[i];
-    try {
-      if (v.name && v.id) map.set(v.name, v);
-    } catch (e) { continue; }
-  }
-  return map;
-}
-
-function createStyleMap(styles) {
-  const map = new Map();
-  if (!styles) return map;
-  for (let i = 0; i < styles.length; i++) {
-    const s = styles[i];
-    try {
-      if (s.name && s.id) map.set(s.name, s);
-    } catch (e) { continue; }
-  }
-  return map;
-}
-
-function allVariablesFilter(vars, type) {
-  const result = [];
-  if (!vars) return result;
-  for (let i = 0; i < vars.length; i++) {
-    if (vars[i].resolvedType === type) result.push(vars[i]);
-  }
-  return result;
-}
-
-// ============================================
-// UI 메시지 핸들러
-// ============================================
-
-figma.ui.onmessage = async (msg) => {
-  if (msg.type === 'generate') {
-    try {
-      sendLog('info', '📄 MD 파일 파싱 시작...');
-      const parsed = parseMD(msg.content);
-
-      let results = {
-        variables: { colors: 0, spacing: 0, radius: 0, typography: 0 },
-        styles: { text: 0, effect: 0, grid: 0, color: 0 }
-      };
-
-      // 1. 배리어블 생성
-      sendLog('info', '📦 컬렉션별 Variables 처리 시작...');
-      results.variables = await createAllVariables(parsed, msg.options.variables);
-
-      // 2. 스타일 생성 (부분 등록 지원)
-      const optS = msg.options.styles;
-      const isAnyStyleSelected = optS.color || optS.text || optS.effect || optS.grid;
-      if (isAnyStyleSelected) {
-        sendLog('info', '🎨 Styles 처리 시작...');
-        results.styles = await createStyles(parsed, msg.options.styles);
-      }
-
-      sendLog('success', '🎉 모든 작업이 완료되었습니다!');
-      figma.ui.postMessage({ type: 'complete', results: results });
-
-    } catch (e) {
-      sendError('프로세스 오류', e.message);
-    }
-  }
-
-  if (msg.type === 'cancel') {
-    figma.closePlugin();
-  }
-};
-
-// ============================================
-// MD 파서
+// [2] MD Parser
 // ============================================
 
 function parseMD(content) {
-  const result = {
-    colors: { primitive: [], semantic: [] },
-    spacing: { primitive: [], semantic: [] },
-    radius: { primitive: [], semantic: [] },
-    typography: [],
-    effects: [],
-    grid: []
-  };
-
+  const res = { colors: { primitive: [], semantic: [] }, spacing: { primitive: [], semantic: [] }, radius: { primitive: [], semantic: [] }, typography: [], effects: [], grid: [] };
   const lines = content.split('\n');
-  let currentSection = '';
-  let currentSubSection = '';
-  let currentTypographyGroup = '';
+  let sec = '', sub = '', typoGroup = '';
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    if (line.startsWith('## ')) {
-      currentSection = line.replace('## ', '').toLowerCase();
-      currentSubSection = '';
-      currentTypographyGroup = '';
-      continue;
-    }
-    if (line.startsWith('### ')) {
-      const subSection = line.replace('### ', '');
-      if (currentSection === 'typography') {
-        currentTypographyGroup = subSection.toLowerCase();
-      } else {
-        currentSubSection = subSection.toLowerCase();
-      }
+    if (line.startsWith('## ')) { sec = line.replace('## ', '').toLowerCase(); sub = ''; typoGroup = ''; continue; }
+    if (line.startsWith('### ')) { 
+      const name = line.replace('### ', '');
+      if (sec === 'typography') typoGroup = name.toLowerCase();
+      else sub = name.toLowerCase();
       continue;
     }
     if (line.startsWith('|') && !line.includes('---')) {
-      const rawCells = line.split('|');
-      const cells = [];
-      for (let j = 0; j < rawCells.length; j++) {
-        const c = rawCells[j].trim();
-        if (c) cells.push(c);
-      }
-      if (!cells || cells.length < 2) continue;
-      if (cells[0].toLowerCase() === 'token') continue;
-
-      if (currentSection === 'colors') {
-        if (currentSubSection === 'primitive') {
-          result.colors.primitive.push({ token: cells[0], value: cells[1], description: cells[2] || '' });
-        } else if (currentSubSection === 'semantic') {
-          const hasModes = cells.length >= 4 && cells[2] && cells[2] !== '-' && cells[2] !== '';
-          if (hasModes) {
-            result.colors.semantic.push({ token: cells[0], light: cells[1], dark: cells[2], description: cells[3] || '' });
-          } else {
-            result.colors.semantic.push({ token: cells[0], light: cells[1], dark: cells[1], alias: cells[1], description: cells[2] || '' });
-          }
-        }
-      } else if (currentSection === 'spacing' || currentSection === 'radius') {
-        const target = result[currentSection][currentSubSection];
-        if (currentSubSection === 'primitive') {
-          target.push({ token: cells[0], value: cells[1], description: cells[2] || '' });
-        } else if (currentSubSection === 'semantic') {
-          target.push({ token: cells[0], alias: cells[1], description: cells[2] || '' });
-        }
-      } else if (currentSection === 'typography') {
-        result.typography.push({
-          token: cells[0], font: cells[1], size: cells[2], weight: cells[3],
-          lineHeight: cells[4], letterSpacing: cells[5] || '0', group: currentTypographyGroup || ''
-        });
-      } else if (currentSection === 'effects') {
-        result.effects.push({
-          token: cells[0], type: cells[1], color: cells[2], x: cells[3], y: cells[4], blur: cells[5], spread: cells[6] || '0'
-        });
-      } else if (currentSection === 'grid') {
-        result.grid.push({
-          token: cells[0], type: cells[1], count: cells[2], width: cells[3], gutter: cells[4], margin: cells[5], alignment: cells[6] || 'stretch'
-        });
+      const c = line.split('|').map(x => x.trim()).filter(x => x !== '');
+      if (c.length < 2 || c[0].toLowerCase() === 'token') continue;
+      
+      if (sec === 'colors') {
+        if (sub === 'primitive') res.colors.primitive.push({ token: c[0], value: c[1], desc: c[2] || '' });
+        else if (sub === 'semantic') res.colors.semantic.push({ token: c[0], light: c[1], dark: c[2] || c[1], desc: c[3] || '' });
+      } else if (sec === 'spacing' || sec === 'radius') {
+        const target = res[sec][sub];
+        if (sub === 'primitive') target.push({ token: c[0], value: c[1], desc: c[2] || '' });
+        else if (sub === 'semantic') target.push({ token: c[0], alias: c[1], desc: c[2] || '' });
+      } else if (sec === 'typography') {
+        res.typography.push({ token: c[0], font: c[1], size: c[2], weight: c[3], lineHeight: c[4], ls: c[5] || '0', group: typoGroup });
+      } else if (sec === 'effects') {
+        res.effects.push({ token: c[0], type: c[1], color: c[2], x: c[3], y: c[4], blur: c[5], spread: c[6] || '0' });
+      } else if (sec === 'grid') {
+        res.grid.push({ token: c[0], type: c[1], count: c[2], width: c[3], gutter: c[4], margin: c[5], align: c[6] || 'stretch' });
       }
     }
   }
-  return result;
+  return res;
 }
 
 // ============================================
-// Variables 생성 및 컬렉션 관리
+// [3] Variables Creation
 // ============================================
 
 async function getOrCreateCollection(name) {
-  const collections = await figma.variables.getLocalVariableCollectionsAsync();
-  for (let i = 0; i < collections.length; i++) {
-    if (collections[i].name === name) return collections[i];
-  }
+  const cols = await figma.variables.getLocalVariableCollectionsAsync();
+  for (let c of cols) if (c.name.toLowerCase() === name.toLowerCase()) return c;
   return figma.variables.createVariableCollection(name);
 }
 
 async function createAllVariables(parsed, options) {
   const results = { colors: 0, spacing: 0, radius: 0, typography: 0 };
   const allExisting = await figma.variables.getLocalVariablesAsync();
-  const existingMap = createVariableMap(allExisting);
+  const existingMap = new Map();
+  allExisting.forEach(v => existingMap.set(v.variableCollectionId + ":" + v.name, v));
 
-  // 1. Color 컬렉션
   if (options.colors) {
-    sendLog('info', '   🎨 Color 컬렉션 동기화 중...');
     const col = await getOrCreateCollection('Color');
+    let hasDark = parsed.colors.semantic.some(s => s.dark && s.dark !== s.light);
+    let lId = col.modes[0].modeId;
+    let dId = col.modes.length > 1 ? col.modes[1].modeId : (hasDark ? col.addMode('Dark') : null);
+    if (!col.modes[0].name.toLowerCase().includes('light')) col.renameMode(lId, 'Light');
 
-    let hasDark = false;
-    for (let i = 0; i < parsed.colors.semantic.length; i++) {
-      const s = parsed.colors.semantic[i];
-      if (s.dark && s.dark !== s.light) {
-        hasDark = true; break;
-      }
+    const primMap = new Map();
+    for (let p of parsed.colors.primitive) {
+      const name = "primitive/" + p.token;
+      let v = existingMap.get(col.id + ":" + name) || figma.variables.createVariable(name, col, 'COLOR');
+      v.setValueForMode(lId, hexToRgb(p.value));
+      if (dId) v.setValueForMode(dId, hexToRgb(p.value));
+      primMap.set(p.token, v);
+      results.colors++;
     }
-
-    let lightModeId = null;
-    let darkModeId = null;
-    for (let i = 0; i < col.modes.length; i++) {
-      if (col.modes[i].name === 'Light') lightModeId = col.modes[i].modeId;
-      if (col.modes[i].name === 'Dark') darkModeId = col.modes[i].modeId;
+    for (let s of parsed.colors.semantic) {
+      const name = "semantic/" + s.token;
+      let v = existingMap.get(col.id + ":" + name) || figma.variables.createVariable(name, col, 'COLOR');
+      const getAlias = (ref) => primMap.get(ref) ? { type: 'VARIABLE_ALIAS', id: primMap.get(ref).id } : null;
+      if (getAlias(s.light)) v.setValueForMode(lId, getAlias(s.light));
+      if (dId) v.setValueForMode(dId, getAlias(s.dark) || getAlias(s.light));
+      results.colors++;
     }
-
-    if (!lightModeId) {
-      lightModeId = col.modes[0].modeId;
-      col.renameMode(lightModeId, 'Light');
-    }
-    if (hasDark && !darkModeId) {
-      darkModeId = col.addMode('Dark');
-      sendLog('info', '      🌓 Dark 모드 생성');
-    }
-
-    results.colors = await processColorVariables(parsed.colors, col, { light: lightModeId, dark: darkModeId }, existingMap);
-    await sortCollection(col);
   }
 
-  // 2. Spacing 컬렉션
-  if (options.spacing) {
-    sendLog('info', '   📏 Spacing 컬렉션 동기화 중...');
-    const col = await getOrCreateCollection('Spacing');
-    results.spacing = await processNumberVariables(parsed.spacing, col, 'spacing', existingMap);
-    await sortCollection(col);
-  }
+  const processNumCol = async (data, colName) => {
+    if (!data.primitive.length && !data.semantic.length) return 0;
+    const col = await getOrCreateCollection(colName);
+    const mId = col.modes[0].modeId;
+    const pMap = new Map();
+    let count = 0;
+    for (let p of data.primitive) {
+      const name = "primitive/" + p.token;
+      let v = existingMap.get(col.id + ":" + name) || figma.variables.createVariable(name, col, 'FLOAT');
+      v.setValueForMode(mId, parseFloat(p.value));
+      pMap.set(p.token, v);
+      count++;
+    }
+    for (let s of data.semantic) {
+      const name = "semantic/" + s.token;
+      let v = existingMap.get(col.id + ":" + name) || figma.variables.createVariable(name, col, 'FLOAT');
+      if (pMap.get(s.alias)) v.setValueForMode(mId, { type: 'VARIABLE_ALIAS', id: pMap.get(s.alias).id });
+      count++;
+    }
+    return count;
+  };
 
-  // 3. Radius 컬렉션
-  if (options.radius) {
-    sendLog('info', '   ⭕ Radius 컬렉션 동기화 중...');
-    const col = await getOrCreateCollection('Radius');
-    results.radius = await processNumberVariables(parsed.radius, col, 'radius', existingMap);
-    await sortCollection(col);
-  }
+  if (options.spacing) results.spacing = await processNumCol(parsed.spacing, 'Spacing');
+  if (options.radius) results.radius = await processNumCol(parsed.radius, 'Radius');
 
-  // 4. Typography 컬렉션
-  if (options.typography) {
-    sendLog('info', '   📝 Typography 컬렉션 동기화 중...');
+  if (options.typography && parsed.typography.length) {
     const col = await getOrCreateCollection('Typography');
-    results.typography = await processTypographyVariables(parsed.typography, col, existingMap);
-    await sortCollection(col);
-  }
+    const mId = col.modes[0].modeId;
+    const fontMapVar = new Map();
+    const weightMapVar = new Map();
 
+    for (let t of parsed.typography) {
+      const base = (t.group ? t.group + "/" : "") + t.token;
+      if (t.font && !fontMapVar.has(t.font)) {
+        const fName = "fontFamily/" + t.font;
+        let fv = existingMap.get(col.id + ":" + fName) || figma.variables.createVariable(fName, col, 'STRING');
+        fv.setValueForMode(mId, t.font);
+        fontMapVar.set(t.font, fv);
+        results.typography++;
+      }
+      const fStyle = resolveFontStyle(t.weight);
+      if (fStyle && !weightMapVar.has(fStyle)) {
+        const wName = "fontStyle/" + fStyle;
+        let wv = existingMap.get(col.id + ":" + wName) || figma.variables.createVariable(wName, col, 'STRING');
+        wv.setValueForMode(mId, fStyle);
+        weightMapVar.set(fStyle, wv);
+        results.typography++;
+      }
+      const add = (sub, val, type) => {
+        const name = base + "/" + sub;
+        let v = existingMap.get(col.id + ":" + name) || figma.variables.createVariable(name, col, type);
+        const parsedVal = sub === 'lineHeight' ? parseLineHeightValue(val) : parseFloat(val);
+        v.setValueForMode(mId, parsedVal);
+        results.typography++;
+      };
+      add('fontSize', t.size, 'FLOAT');
+      add('lineHeight', t.lineHeight, 'FLOAT');
+      if (t.ls && t.ls !== '0' && t.ls !== '0px') add('letterSpacing', t.ls, 'FLOAT');
+    }
+  }
   return results;
 }
 
-async function processColorVariables(data, col, modeIds, existingMap) {
-  let count = 0;
-  const primitiveRefMap = new Map();
-
-  for (let i = 0; i < data.primitive.length; i++) {
-    const item = data.primitive[i];
-    const name = "primitive/" + item.token;
-    const color = hexToRgb(item.value);
-    let variable = existingMap.get(name);
-
-    if (!variable) {
-      variable = figma.variables.createVariable(name, col, 'COLOR');
-      if (item.description) variable.description = item.description;
-      count++;
-    }
-    variable.setValueForMode(modeIds.light, color);
-    if (modeIds.dark) variable.setValueForMode(modeIds.dark, color);
-    primitiveRefMap.set(item.token, variable);
-  }
-
-  for (let i = 0; i < data.semantic.length; i++) {
-    const item = data.semantic[i];
-    const name = "semantic/" + item.token;
-    const lightRef = item.light || item.alias;
-    const darkRef = item.dark || lightRef;
-
-    const getAliasValue = (ref) => {
-      const target = primitiveRefMap.get(ref);
-      if (target) return { type: 'VARIABLE_ALIAS', id: target.id };
-      return null;
-    };
-
-    const lightVal = getAliasValue(lightRef);
-    if (!lightVal) continue;
-
-    let variable = existingMap.get(name);
-    if (!variable) {
-      variable = figma.variables.createVariable(name, col, 'COLOR');
-      if (item.description) variable.description = item.description;
-      count++;
-    }
-
-    variable.setValueForMode(modeIds.light, lightVal);
-    if (modeIds.dark) variable.setValueForMode(modeIds.dark, getAliasValue(darkRef) || lightVal);
-  }
-  return count;
-}
-
-async function processNumberVariables(data, col, prefix, existingMap) {
-  let count = 0;
-  const modeId = col.modes[0].modeId;
-  const primitiveRefMap = new Map();
-
-  for (let i = 0; i < data.primitive.length; i++) {
-    const item = data.primitive[i];
-    const name = "primitive/" + item.token;
-    const val = parseFloat(item.value);
-    let variable = existingMap.get(name);
-    if (!variable) {
-      variable = figma.variables.createVariable(name, col, 'FLOAT');
-      count++;
-    }
-    variable.setValueForMode(modeId, val);
-    primitiveRefMap.set(item.token, variable);
-  }
-
-  for (let i = 0; i < data.semantic.length; i++) {
-    const item = data.semantic[i];
-    const name = "semantic/" + item.token;
-    const target = primitiveRefMap.get(item.alias);
-    if (!target) continue;
-
-    let variable = existingMap.get(name);
-    if (!variable) {
-      variable = figma.variables.createVariable(name, col, 'FLOAT');
-      count++;
-    }
-    variable.setValueForMode(modeId, { type: 'VARIABLE_ALIAS', id: target.id });
-  }
-  return count;
-}
-
-async function processTypographyVariables(data, col, existingMap) {
-  let count = 0;
-  const modeId = col.modes[0].modeId;
-
-  const createFontVariable = (family) => {
-    if (!family) return null;
-    const name = "fontFamily/" + family;
-    let variable = existingMap.get(name);
-    if (!variable) {
-      variable = figma.variables.createVariable(name, col, 'STRING');
-      existingMap.set(name, variable);
-      count++;
-    }
-    variable.setValueForMode(modeId, family);
-    return variable;
-  };
-
-  const createWeightVariable = (weight) => {
-    if (!weight) return null;
-    const resolvedStyle = resolveFontStyle(weight);
-    const name = "fontStyle/" + resolvedStyle;
-    let variable = existingMap.get(name);
-    if (!variable) {
-      variable = figma.variables.createVariable(name, col, 'STRING');
-      existingMap.set(name, variable);
-      count++;
-    }
-    variable.setValueForMode(modeId, resolvedStyle);
-    return variable;
-  };
-
-  for (let i = 0; i < data.length; i++) {
-    const item = data[i];
-    const group = item.group ? item.group + "/" : "";
-    const basePath = group + item.token;
-    const addVar = (sub, val, type) => {
-      const name = basePath + "/" + sub;
-      let variable = existingMap.get(name);
-      if (!variable) {
-        variable = figma.variables.createVariable(name, col, type);
-        existingMap.set(name, variable);
-        count++;
-      }
-      const parsedValue = sub === 'lineHeight' ? parseLineHeightValue(val) : parseFloat(val);
-      variable.setValueForMode(modeId, parsedValue);
-    };
-    addVar('fontSize', item.size, 'FLOAT');
-    addVar('lineHeight', item.lineHeight, 'FLOAT');
-    if (item.letterSpacing && item.letterSpacing !== '0' && item.letterSpacing !== '0px') addVar('letterSpacing', item.letterSpacing, 'FLOAT');
-    createFontVariable(item.font);
-    createWeightVariable(item.weight);
-  }
-  return count;
-}
-
-async function sortCollection(col) {
-  if (!col || typeof col.setVariableOrder !== 'function') return;
-  try {
-    const allVars = await figma.variables.getLocalVariablesAsync();
-    const idMap = new Map();
-    for (let i = 0; i < allVars.length; i++) idMap.set(allVars[i].id, allVars[i].name);
-    const ids = [];
-    const currentIds = col.variableIds;
-    for (let i = 0; i < currentIds.length; i++) ids.push(currentIds[i]);
-    ids.sort((a, b) => naturalCompare(idMap.get(a) || "", idMap.get(b) || ""));
-    col.setVariableOrder(ids);
-  } catch (e) { }
-}
-
 // ============================================
-// Styles 생성 및 배리어블 연동
+// [4] Styles Creation
 // ============================================
 
 async function createStyles(parsed, options) {
   const results = { text: 0, effect: 0, grid: 0, color: 0 };
   const allVars = await figma.variables.getLocalVariablesAsync();
-  const varMap = createVariableMap(allVars);
+  const varMap = new Map();
+  allVars.forEach(v => varMap.set(v.name, v));
 
-  // Spacing 전용 맵 (Effect/Grid용)
-  const spacingMap = new Map();
-  for (let i = 0; i < allVars.length; i++) {
-    const v = allVars[i];
-    if (v.name.indexOf('/space-') !== -1 || v.name.indexOf('semantic/') !== -1) {
-      const mIds = Object.keys(v.valuesByMode);
-      const mId = mIds[0];
-      const val = v.valuesByMode[mId];
-      const nameParts = v.name.split('/');
-      const shortName = nameParts[nameParts.length - 1];
-      spacingMap.set(shortName, v);
-      if (typeof val === 'number') {
-        spacingMap.set(val + "px", v);
-        spacingMap.set(String(val), v);
-      }
+  if (options.text) {
+    const existingTextStyles = await figma.getLocalTextStylesAsync();
+    const textStyleMap = new Map();
+    existingTextStyles.forEach(s => textStyleMap.set(s.name, s));
+
+    for (let t of parsed.typography) {
+      const name = (t.group ? t.group + "/" : "") + t.token;
+      let s = textStyleMap.get(name) || figma.createTextStyle();
+      s.name = name;
+      const fStyle = resolveFontStyle(t.weight);
+      let family = t.font;
+      let style = fStyle;
+      await figma.loadFontAsync({ family, style }).catch(async () => {
+        family = 'Inter'; style = 'Regular';
+        await figma.loadFontAsync({ family, style });
+        sendQA(`Font fallback: '${t.font} ${fStyle}' not found, used 'Inter Regular'.`);
+      });
+      s.fontName = { family, style };
+      s.fontSize = parseFloat(t.size);
+      const lhObj = parseLineHeightObj(t.lineHeight);
+      s.lineHeight = lhObj;
+      s.letterSpacing = { value: parseFloat(t.ls) || 0, unit: 'PIXELS' };
+      
+      try {
+        const fv = varMap.get(name + "/fontSize");
+        const lv = varMap.get(name + "/lineHeight");
+        const sv = varMap.get(name + "/letterSpacing");
+        const ff = varMap.get("fontFamily/" + t.font);
+        const fw = varMap.get("fontStyle/" + fStyle);
+        if (fv) s.setBoundVariable('fontSize', fv);
+        if (lv && lhObj.unit === 'PIXELS') s.setBoundVariable('lineHeight', lv);
+        if (sv) s.setBoundVariable('letterSpacing', sv);
+        if (ff) s.setBoundVariable('fontFamily', ff);
+        if (fw) s.setBoundVariable('fontStyle', fw);
+      } catch (e) {}
+      results.text++;
     }
   }
 
-  if (options.color) results.color = await createColorStyles(parsed, varMap);
-  if (options.text) results.text = await createTextStyles(parsed, varMap);
-  if (options.effect) results.effect = await createEffectStyles(parsed, spacingMap);
-  if (options.grid) results.grid = await createGridStyles(parsed, spacingMap);
+  if (options.color) {
+    const existingPaintStyles = await figma.getLocalPaintStylesAsync();
+    const paintStyleMap = new Map();
+    existingPaintStyles.forEach(s => paintStyleMap.set(s.name, s));
+    for (let s of parsed.colors.semantic) {
+      let ps = paintStyleMap.get(s.token) || figma.createPaintStyle();
+      ps.name = s.token;
+      const v = varMap.get("semantic/" + s.token);
+      if (v) ps.paints = [figma.variables.setBoundVariableForPaint(figma.util.solidPaint('#000000'), 'color', v)];
+      else ps.paints = [{ type: 'SOLID', color: hexToRgb(s.light) }];
+      results.color++;
+    }
+  }
 
+  if (options.effect) {
+    const existingEffectStyles = await figma.getLocalEffectStylesAsync();
+    const effectStyleMap = new Map();
+    existingEffectStyles.forEach(s => effectStyleMap.set(s.name, s));
+    for (let e of parsed.effects) {
+      let es = effectStyleMap.get(e.token) || figma.createEffectStyle();
+      es.name = e.token;
+      const effect = {
+        type: 'DROP_SHADOW', color: parseRgbaColor(e.color) || {r:0,g:0,b:0,a:0.1},
+        offset: {x: parseFloat(e.x), y: parseFloat(e.y)}, radius: parseFloat(e.blur), spread: parseFloat(e.spread), visible: true, blendMode: 'NORMAL'
+      };
+      const bv = varMap.get("primitive/" + e.blur) || varMap.get("semantic/" + e.blur) || varMap.get("primitive/" + parseFloat(e.blur) + "px");
+      if (bv) effect.boundVariables = { radius: { type: 'VARIABLE_ALIAS', id: bv.id } };
+      es.effects = [effect];
+      results.effect++;
+    }
+  }
+
+  if (options.grid) {
+    const existingGridStyles = await figma.getLocalGridStylesAsync();
+    const gridStyleMap = new Map();
+    existingGridStyles.forEach(s => gridStyleMap.set(s.name, s));
+    for (let g of parsed.grid) {
+      let gs = gridStyleMap.get(g.token) || figma.createGridStyle();
+      gs.name = g.token;
+      let grid;
+      if (g.type === 'grid') {
+        grid = { pattern: 'GRID', sectionSize: parseFloat(g.count), color: { r: 1, g: 0, b: 0, a: 0.1 } };
+      } else {
+        grid = {
+          pattern: g.type.toUpperCase(), count: parseInt(g.count) || 12, gutterSize: parseFloat(g.gutter), offset: parseFloat(g.margin), alignment: 'STRETCH', color: { r: 1, g: 0, b: 0, a: 0.1 }
+        };
+      }
+      gs.layoutGrids = [grid];
+      results.grid++;
+    }
+  }
   return results;
 }
 
-async function createColorStyles(parsed, varMap) {
-  let count = 0;
-  const styles = await figma.getLocalPaintStylesAsync();
-  const styleMap = createStyleMap(styles);
+// ============================================
+// [5] Export Function (Figma -> MD)
+// ============================================
 
-  for (let i = 0; i < parsed.colors.semantic.length; i++) {
-    const item = parsed.colors.semantic[i];
-    const styleName = item.token;
-    const targetVar = varMap.get("semantic/" + item.token);
-    let style = styleMap.get(styleName);
+async function generateExportMD() {
+  const collections = await figma.variables.getLocalVariableCollectionsAsync();
+  const allVars = await figma.variables.getLocalVariablesAsync();
+  const varMapById = new Map();
+  allVars.forEach(v => varMapById.set(v.id, v));
 
-    if (!style) {
-      style = figma.createPaintStyle();
-      style.name = styleName;
-      count++;
-    }
+  let md = `<!-- [MD_TO_FIGMA_EXPORT_LOG] -->\n\n# Design System\n\n`;
 
-    if (targetVar) {
-      const paint = figma.variables.setBoundVariableForPaint(figma.util.solidPaint('#000000'), 'color', targetVar);
-      style.paints = [paint];
-    } else {
-      const hex = item.light || item.alias;
-      if (hex && hex.indexOf('#') === 0) style.paints = [{ type: 'SOLID', color: hexToRgb(hex) }];
+  const extractCol = (colName, mdName) => {
+    const col = collections.find(c => c.name.toLowerCase() === colName.toLowerCase());
+    if (!col) return "";
+    let sMd = `## ${mdName}\n\n### Primitive\n| Token | Value | Description |\n|---|---|---|\n`;
+    const vars = allVars.filter(v => v.variableCollectionId === col.id);
+    let pR = [], sR = [];
+    const mId = col.modes[0].modeId;
+    const dId = col.modes.length > 1 ? col.modes[1].modeId : null;
+
+    vars.forEach(v => {
+      const lV = v.valuesByMode[mId];
+      if (v.name.startsWith('primitive/')) {
+        const val = colName === 'Color' ? rgbToHex(lV) : lV + "px";
+        pR.push(`| ${v.name.replace('primitive/', '')} | ${val} | ${v.description || '-'} |`);
+      } else if (v.name.startsWith('semantic/')) {
+        const clean = v.name.replace('semantic/', '');
+        const getRef = (val, mN) => {
+          if (val.type === 'VARIABLE_ALIAS') return varMapById.get(val.id).name.replace('primitive/', '');
+          const recN = `recovered/${clean}-${mN}`;
+          const recV = colName === 'Color' ? rgbToHex(val) : val + "px";
+          pR.push(`| ${recN} | ${recV} | [Auto-Recovered] |`);
+          sendQA(`Recovery: ${mdName} '${v.name}' reference lost, created '${recN}'.`);
+          return recN;
+        };
+        if (colName === 'Color') {
+          const dV = dId ? v.valuesByMode[dId] : lV;
+          sR.push(`| ${clean} | ${getRef(lV, 'light')} | ${getRef(dV, 'dark')} | ${v.description || '-'} |`);
+        } else {
+          sR.push(`| ${clean} | ${getRef(lV, 'alias')} | ${v.description || '-'} |`);
+        }
+      }
+    });
+    if (!pR.length && !sR.length) return "";
+    sMd += pR.join('\n') + `\n\n### Semantic\n`;
+    if (colName === 'Color') sMd += `| Token | Light | Dark | Description |\n|---|---|---|---|\n`;
+    else sMd += `| Token | Alias | Description |\n|---|---|---|\n`;
+    sMd += sR.join('\n') + `\n\n`;
+    return sMd;
+  };
+
+  md += extractCol('Color', 'Colors');
+  md += extractCol('Spacing', 'Spacing');
+  md += extractCol('Radius', 'Radius');
+
+  const tStyles = await figma.getLocalTextStylesAsync();
+  if (tStyles.length) {
+    md += `## Typography\n\n`;
+    const gs = {};
+    tStyles.forEach(s => {
+      const parts = s.name.split('/');
+      const g = parts.length > 1 ? parts[0] : 'default';
+      const t = parts.length > 1 ? parts.slice(1).join('/') : s.name;
+      if (!gs[g]) gs[g] = [];
+      const lh = s.lineHeight.unit === 'PERCENT' ? Math.round(s.lineHeight.value) + "%" : s.lineHeight.value + "px";
+      const ls = s.letterSpacing.value + (s.letterSpacing.unit === 'PIXELS' ? "px" : "%");
+      gs[g].push(`| ${t} | ${s.fontName.family} | ${s.fontSize}px | ${s.fontName.style} | ${lh} | ${ls} |`);
+    });
+    for (let g in gs) {
+      md += `### ${g}\n| Token | Font | Size | Weight | LineHeight | LetterSpacing |\n|---|---|---|---|---|---|\n` + gs[g].join('\n') + `\n\n`;
     }
   }
-  return count;
+
+  const eStyles = await figma.getLocalEffectStylesAsync();
+  if (eStyles.length) {
+    md += `## Effects\n\n| Token | Type | Color | X | Y | Blur | Spread |\n|---|---|---|---|---|---|---|\n`;
+    eStyles.forEach(s => {
+      if (s.effects.length) {
+        const e = s.effects[0];
+        if (e.type === 'DROP_SHADOW' || e.type === 'INNER_SHADOW') {
+          md += `| ${s.name} | ${e.type === 'DROP_SHADOW' ? 'drop-shadow' : 'inner-shadow'} | ${rgbaToString(e.color)} | ${e.offset.x}px | ${e.offset.y}px | ${e.radius}px | ${e.spread}px |\n`;
+        }
+      }
+    });
+    md += `\n`;
+  }
+
+  const gStyles = await figma.getLocalGridStylesAsync();
+  if (gStyles.length) {
+    md += `## Grid\n\n| Token | Type | Count | Width | Gutter | Margin | Alignment |\n|---|---|---|---|---|---|---|\n`;
+    gStyles.forEach(s => {
+      if (s.layoutGrids.length) {
+        const g = s.layoutGrids[0];
+        if (g.pattern === 'GRID') md += `| ${s.name} | grid | ${g.sectionSize}px | - | - | - | - |\n`;
+        else md += `| ${s.name} | ${g.pattern.toLowerCase()} | ${g.count} | auto | ${g.gutterSize}px | ${g.offset}px | ${g.alignment.toLowerCase()} |\n`;
+      }
+    });
+    md += `\n`;
+  }
+
+  return { mdContent: md };
 }
 
-async function createTextStyles(parsed, varMap) {
-  let count = 0;
-  const styles = await figma.getLocalTextStylesAsync();
-  const styleMap = createStyleMap(styles);
+// ============================================
+// [6] Message Handler
+// ============================================
 
-  for (let i = 0; i < parsed.typography.length; i++) {
-    const item = parsed.typography[i];
-    const name = (item.group ? item.group + "/" : "") + item.token;
-    let style = styleMap.get(name);
-    if (!style) { style = figma.createTextStyle(); style.name = name; count++; }
-
-    const fontStyle = resolveFontStyle(item.weight);
-    const font = await loadFontWithFallback(item.font, fontStyle);
-    style.fontName = font.fontName;
-    style.fontSize = parseFloat(item.size);
-    const lh = parseLineHeightValue(item.lineHeight);
-    style.lineHeight = { value: lh, unit: 'PERCENT' };
-    style.letterSpacing = { value: parseFloat(item.letterSpacing) || 0, unit: 'PIXELS' };
-
-    const fv = varMap.get(name + "/fontSize");
-    const sv = varMap.get(name + "/letterSpacing");
-    const ff = varMap.get("fontFamily/" + item.font);
-    const fw = varMap.get("fontStyle/" + fontStyle);
+figma.ui.onmessage = async (msg) => {
+  if (msg.type === 'generate') {
     try {
-      if (fv) style.setBoundVariable('fontSize', fv);
-      if (sv) style.setBoundVariable('letterSpacing', sv);
-      if (ff) style.setBoundVariable('fontFamily', ff);
-      if (fw) style.setBoundVariable('fontStyle', fw);
-    } catch (e) {
-      sendLog('warn', `Typography binding failed for ${name}: ${e.message || e}`);
-    }
+      sendLog('info', 'MD parsing and generation started...');
+      const parsed = parseMD(msg.content);
+      const vRes = await createAllVariables(parsed, msg.options.variables);
+      const sRes = await createStyles(parsed, msg.options.styles);
+      figma.ui.postMessage({ type: 'complete', results: { variables: vRes, styles: sRes } });
+      sendLog('success', 'All systems synced successfully!');
+    } catch (e) { sendError('Sync failed', e.message); }
   }
-  return count;
-}
 
-async function createEffectStyles(parsed, spacingMap) {
-  let count = 0;
-  const styles = await figma.getLocalEffectStylesAsync();
-  const styleMap = createStyleMap(styles);
-  for (let i = 0; i < parsed.effects.length; i++) {
-    const item = parsed.effects[i];
-    const nameParts = item.token.split('/');
-    const name = nameParts[nameParts.length - 1];
-    let style = styleMap.get(name);
-    if (!style) { style = figma.createEffectStyle(); style.name = name; count++; }
-    const blurVal = parseFloat(item.blur) || 0;
-    const effect = {
-      type: 'DROP_SHADOW', color: parseRgbaColor(item.color) || { r: 0, g: 0, b: 0, a: 0.25 },
-      offset: { x: parseFloat(item.x) || 0, y: parseFloat(item.y) || 0 },
-      radius: blurVal, spread: parseFloat(item.spread) || 0, visible: true, blendMode: 'NORMAL'
-    };
-    const bv = spacingMap.get(item.blur) || spacingMap.get(blurVal + "px") || spacingMap.get(String(blurVal));
-    if (bv) effect.boundVariables = { radius: { type: 'VARIABLE_ALIAS', id: bv.id } };
-    style.effects = [effect];
+  if (msg.type === 'export') {
+    try {
+      sendLog('info', 'Analyzing and exporting Figma data...');
+      const exportData = await generateExportMD();
+      figma.ui.postMessage({ type: 'export_complete', mdContent: exportData.mdContent });
+    } catch (e) { sendError('Export failed', e.message); }
   }
-  return count;
-}
 
-async function createGridStyles(parsed, spacingMap) {
-  let count = 0;
-  const styles = await figma.getLocalGridStylesAsync();
-  const styleMap = createStyleMap(styles);
-  for (let i = 0; i < parsed.grid.length; i++) {
-    const item = parsed.grid[i];
-    const nameParts = item.token.split('/');
-    const name = nameParts[nameParts.length - 1];
-    let style = styleMap.get(name);
-    if (!style) { style = figma.createGridStyle(); style.name = name; count++; }
-    const gVal = parseFloat(item.gutter) || 20;
-    const mVal = parseFloat(item.margin) || 0;
-    const gv = spacingMap.get(item.gutter) || spacingMap.get(gVal + "px");
-    const mv = spacingMap.get(item.margin) || spacingMap.get(mVal + "px");
-    let grid;
-    if (item.type === 'grid') {
-      const sVal = parseFloat(item.count) || 8;
-      const sv = spacingMap.get(item.count) || spacingMap.get(sVal + "px");
-      grid = { pattern: 'GRID', sectionSize: sVal, color: { r: 1, g: 0, b: 0, a: 0.1 } };
-      if (sv) grid.boundVariables = { sectionSize: { type: 'VARIABLE_ALIAS', id: sv.id } };
-    } else {
-      grid = {
-        pattern: item.type === 'rows' ? 'ROWS' : 'COLUMNS',
-        count: parseInt(item.count) || 12, gutterSize: gVal, offset: mVal, alignment: 'STRETCH',
-        color: { r: 1, g: 0, b: 0, a: 0.1 }
-      };
-      const b = {};
-      if (gv) b.gutterSize = { type: 'VARIABLE_ALIAS', id: gv.id };
-      if (mv) b.offset = { type: 'VARIABLE_ALIAS', id: mv.id };
-      if (Object.keys(b).length > 0) grid.boundVariables = b;
-    }
-    style.layoutGrids = [grid];
-  }
-  return count;
-}
-
-// ============================================
-// 폰트 및 기타 헬퍼
-// ============================================
-
-async function loadFontWithFallback(family, style) {
-  const load = async (f, s) => { try { await figma.loadFontAsync({ family: f, style: s }); return true; } catch (e) { return false; } };
-  if (await load(family, style)) return { fontName: { family: family, style: style } };
-  if (await load(family, 'Regular')) return { fontName: { family: family, style: 'Regular' } };
-  if (await load('Inter', style)) return { fontName: { family: 'Inter', style: style } };
-  await figma.loadFontAsync({ family: 'Inter', style: 'Regular' });
-  return { fontName: { family: 'Inter', style: 'Regular' } };
-}
+  if (msg.type === 'cancel') figma.closePlugin();
+};

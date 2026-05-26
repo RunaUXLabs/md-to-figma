@@ -27,6 +27,9 @@
 
     .header {
       margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .header h1 {
@@ -34,12 +37,6 @@
       font-weight: 600;
       color: #1a1a1a;
       margin-bottom: 4px;
-    }
-
-    .header p {
-      font-size: 12px;
-      color: #666;
-      line-height: 1.5;
     }
 
     .template-section {
@@ -63,7 +60,6 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
-      font-family: 'Noto Sans KR', sans-serif;
     }
 
     .btn-template:hover {
@@ -84,6 +80,7 @@
       font-weight: 500;
       color: #333;
       margin-bottom: 8px;
+      line-height: 1.4;
     }
 
     textarea {
@@ -104,6 +101,7 @@
       box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
     }
 
+    /* 옵션 섹션 복구 */
     .options-section {
       padding: 12px;
       background: #f8f8f8;
@@ -166,7 +164,6 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
-      font-family: 'Noto Sans KR', sans-serif;
     }
 
     .btn-primary {
@@ -178,16 +175,16 @@
       background: #0d8de5;
     }
 
-    .btn-primary:disabled {
-      background: #c0c0c0;
-      cursor: not-allowed;
+    .btn-export {
+      background: #2c2c2c;
+      color: white;
     }
 
-    .btn-secondary {
-      background: #f0f0f0;
-      color: #666;
+    .btn-export:hover {
+      background: #000000;
     }
 
+    /* 새 모달 및 탭 UI */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -210,18 +207,24 @@
       border-radius: 12px;
       width: 90%;
       max-width: 420px;
-      max-height: 80vh;
+      max-height: 85vh;
       display: flex;
       flex-direction: column;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
     }
 
     .modal-header {
+      padding: 16px 20px 0 20px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .modal-title-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 20px;
-      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 12px;
     }
 
     .modal-title {
@@ -230,22 +233,75 @@
       color: #1a1a1a;
     }
 
-    .log-container {
+    .tabs {
+      display: flex;
+      gap: 16px;
+      border-bottom: 1px solid transparent;
+    }
+
+    .tab {
+      padding: 8px 4px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      position: relative;
+      top: 1px;
+    }
+
+    .tab.active {
+      color: #1a1a1a;
+      border-bottom-color: #1a1a1a;
+    }
+
+    .tab-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      margin-left: 4px;
+    }
+
+    .tab.active #badgeError {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .tab.active #badgeQA {
+      background: #e0e7ff;
+      color: #2563eb;
+    }
+
+    #badgeError {
+      background: #f3f4f6;
+      color: #9ca3af;
+    }
+
+    #badgeQA {
+      background: #f3f4f6;
+      color: #9ca3af;
+    }
+
+    .tab-content {
+      display: none;
       flex: 1;
-      background: #1e1e1e;
-      margin: 16px;
-      border-radius: 8px;
-      padding: 12px;
       overflow-y: auto;
+      background: #1e1e1e;
+      padding: 16px;
+      height: 300px;
       font-family: 'SF Mono', Monaco, monospace;
       font-size: 11px;
       line-height: 1.6;
-      max-height: 280px;
-      min-height: 200px;
+    }
+
+    .tab-content.active {
+      display: block;
     }
 
     .log-entry {
-      margin-bottom: 2px;
+      margin-bottom: 6px;
       white-space: pre-wrap;
       word-break: break-all;
     }
@@ -254,78 +310,18 @@
       color: #9da5b4;
     }
 
-    .log-entry.success {
-      color: #98c379;
-    }
-
-    .log-entry.warning {
-      color: #e5c07b;
+    .log-entry.qa {
+      color: #61afef;
+      padding-left: 12px;
+      border-left: 3px solid #61afef;
     }
 
     .log-entry.error {
       color: #e06c75;
-    }
-
-    .error-box {
       background: #2d1f1f;
+      padding: 8px;
+      border-radius: 6px;
       border: 1px solid #e06c75;
-      border-radius: 6px;
-      padding: 10px;
-      margin-top: 8px;
-    }
-
-    .error-box-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 6px;
-      gap: 8px;
-    }
-
-    .error-box-title {
-      color: #e06c75;
-      font-weight: 600;
-      font-size: 11px;
-      flex: 1;
-    }
-
-    .error-box-copy {
-      padding: 4px 8px;
-      font-size: 10px;
-      background: #e06c75;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .error-box-content {
-      color: #abb2bf;
-      font-size: 10px;
-      white-space: pre-wrap;
-    }
-
-    .result-summary {
-      background: #1a3a1a;
-      border: 1px solid #98c379;
-      border-radius: 6px;
-      padding: 10px;
-      margin-top: 8px;
-    }
-
-    .result-summary-title {
-      color: #98c379;
-      font-weight: 600;
-      font-size: 12px;
-      margin-bottom: 8px;
-    }
-
-    .result-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px;
-      color: #abb2bf;
-      font-size: 10px;
     }
 
     .modal-footer {
@@ -333,6 +329,47 @@
       gap: 8px;
       padding: 16px 20px;
       border-top: 1px solid #e0e0e0;
+      background: white;
+    }
+
+    .btn-copy-error {
+      background: #fee2e2;
+      color: #dc2626;
+      display: none;
+    }
+
+    .btn-copy-error:hover {
+      background: #fecaca;
+    }
+
+    .btn-copy-qa {
+      background: #e0e7ff;
+      color: #2563eb;
+      display: none;
+    }
+
+    .btn-copy-qa:hover {
+      background: #dbeafe;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 3000;
+    }
+
+    .toast.show {
+      opacity: 1;
     }
 
     .status-badge {
@@ -374,47 +411,6 @@
         transform: rotate(360deg);
       }
     }
-
-    .copy-modal {
-      background: white;
-      border-radius: 12px;
-      padding: 16px;
-      width: 90%;
-      max-width: 400px;
-    }
-
-    .copy-modal textarea {
-      width: 100%;
-      height: 200px;
-      padding: 10px;
-      border: 1px solid #d0d0d0;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 11px;
-      margin-bottom: 12px;
-      resize: none;
-      background: #f8f8f8;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #333;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-size: 12px;
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-      z-index: 3000;
-    }
-
-    .toast.show {
-      opacity: 1;
-    }
   </style>
 </head>
 
@@ -424,13 +420,12 @@
   </div>
 
   <div class="template-section">
-    <button class="btn-template" id="downloadTemplateBtn">📥 템플릿 다운로드</button>
-    <button class="btn-template" id="downloadGuideBtn">📖 AI 프롬프트 가이드</button>
+    <button class="btn-template" id="downloadTemplateBtn">📥 템플릿 받기</button>
+    <button class="btn-template" id="downloadGuideBtn">📖 AI 가이드</button>
   </div>
 
   <div class="textarea-section">
-    <div class="textarea-label">제공된 템플릿을 다운로드 받으세요.<br>AI에게 제공하고 여러분의 디자인 시스템 데이터를 맵핑해달라고 요청하세요.<br>맵핑한 DESIGN.md 내용을
-      아래에 붙여넣으세요.</div>
+    <div class="textarea-label">제공된 템플릿을 AI에게 제공하고 데이터를 맵핑해달라고 요청하세요.<br>그 결과인 DESIGN.md 내용을 아래에 붙여넣으세요.</div>
     <textarea id="mdContent" placeholder="# Design System
 
 ## Colors
@@ -444,19 +439,12 @@
 | Token | Light | Dark | Description |
 |-------|-------|------|-------------|
 | brand/primary | rausch/500 | rausch/500 | 메인 컬러 |
-
-## Spacing
-
-### Primitive
-| space-16 | 16px | 기본 단위 |
-
-### Semantic
-| base | space-16 | - |"></textarea>
+..."></textarea>
   </div>
 
   <div class="options-section">
     <div class="options-group">
-      <div class="options-title">📦 Variables (4개 컬렉션으로 분리 생성)</div>
+      <div class="options-title">📦 Variables (컬렉션 분리 생성)</div>
       <div class="options-grid">
         <div class="option-item"><input type="checkbox" id="optVarColors" checked><label
             for="optVarColors">Colors</label></div>
@@ -470,7 +458,7 @@
     </div>
     <div class="options-divider"></div>
     <div class="options-group">
-      <div class="options-title">🎨 Styles (Variable 연동 지원)</div>
+      <div class="options-title">🎨 Styles (Variable 연동)</div>
       <div class="options-grid">
         <div class="option-item"><input type="checkbox" id="optColorStyles"><label for="optColorStyles">Color
             Styles</label></div>
@@ -485,33 +473,34 @@
   </div>
 
   <div class="button-section">
-    <button class="btn btn-primary" id="generateBtn">🚀 생성하기</button>
-    <button class="btn btn-secondary" id="cancelBtn">닫기</button>
+    <button class="btn btn-primary" id="generateBtn">🚀 등록 (MD → Figma)</button>
+    <button class="btn btn-export" id="exportBtn">📤 추출 (Figma → MD)</button>
   </div>
 
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <div class="modal-header">
-        <span class="modal-title">실행 로그</span>
-        <span class="status-badge running" id="statusBadge"><span class="spinner"></span>진행 중</span>
+        <div class="modal-title-row">
+          <span class="modal-title" id="modalTitle">실행 리포트</span>
+          <span class="status-badge running" id="statusBadge"><span class="spinner"></span>작업 중</span>
+        </div>
+        <div class="tabs">
+          <div class="tab" id="tabError" onclick="switchTab('error')">🔴 해결 필요 <span class="tab-badge"
+              id="badgeError">0</span></div>
+          <div class="tab" id="tabQA" onclick="switchTab('qa')">🔵 QA 리포트 <span class="tab-badge" id="badgeQA">0</span>
+          </div>
+        </div>
       </div>
-      <div class="modal-body">
-        <div class="log-container" id="logContainer"></div>
-      </div>
+      <div class="tab-content" id="contentError"></div>
+      <div class="tab-content" id="contentQA"></div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" id="copyLogBtn">📋 로그 복사</button>
-        <button class="btn btn-primary" id="closeModalBtn" disabled>확인</button>
+        <button class="btn btn-copy-error" id="copyErrorBtn">📋 AI에게 에러 해결 브리핑 복사</button>
+        <button class="btn btn-copy-qa" id="copyQABtn">📋 AI에게 시스템 최적화 분석 복사</button>
+        <button class="btn" style="background:#f0f0f0; color:#666; flex: 0.5;" id="closeModalBtn" disabled>닫기</button>
       </div>
     </div>
   </div>
 
-  <div class="modal-overlay" id="copyModalOverlay">
-    <div class="copy-modal">
-      <div class="copy-modal-header"><span>📋 아래 내용을 복사하세요</span></div>
-      <textarea id="copyTextarea" readonly></textarea>
-      <button class="btn btn-primary" id="closeCopyModalBtn" style="width:100%">닫기</button>
-    </div>
-  </div>
   <div class="toast" id="toast"></div>
 
   <script>
@@ -805,27 +794,25 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
 - **Refinement**: If the AI makes a mistake, just say: *"Follow the alias rule for semantic colors and try again."*
 
 ---
-*Automate your design system workflow globally with MD to Figma!*
-`;
+*Automate your design system workflow globally with MD to Figma!*`;
 
     var mdContent = document.getElementById('mdContent');
-    var generateBtn = document.getElementById('generateBtn');
-    var cancelBtn = document.getElementById('cancelBtn');
     var modalOverlay = document.getElementById('modalOverlay');
-    var logContainer = document.getElementById('logContainer');
-    var copyLogBtn = document.getElementById('copyLogBtn');
+    var contentError = document.getElementById('contentError');
+    var contentQA = document.getElementById('contentQA');
+    var badgeError = document.getElementById('badgeError');
+    var badgeQA = document.getElementById('badgeQA');
+    var copyErrorBtn = document.getElementById('copyErrorBtn');
+    var copyQABtn = document.getElementById('copyQABtn');
     var closeModalBtn = document.getElementById('closeModalBtn');
     var statusBadge = document.getElementById('statusBadge');
     var toast = document.getElementById('toast');
-    var downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
-    var downloadGuideBtn = document.getElementById('downloadGuideBtn');
-    var copyModalOverlay = document.getElementById('copyModalOverlay');
-    var copyTextarea = document.getElementById('copyTextarea');
-    var closeCopyModalBtn = document.getElementById('closeCopyModalBtn');
-    var logText = '';
 
-    downloadTemplateBtn.onclick = function () { downloadFile('DESIGN-TEMPLATE.md', TEMPLATE_MD); showToast('📥 템플릿 다운로드 완료!'); };
-    downloadGuideBtn.onclick = function () { downloadFile('AI-PROMPT-GUIDE.md', AI_PROMPT_GUIDE); showToast('📥 AI 가이드 다운로드 완료!'); };
+    var errorLogs = [];
+    var qaLogs = [];
+
+    document.getElementById('downloadTemplateBtn').onclick = () => downloadFile('DESIGN-TEMPLATE.md', TEMPLATE_MD);
+    document.getElementById('downloadGuideBtn').onclick = () => downloadFile('AI-PROMPT-GUIDE.md', AI_PROMPT_GUIDE);
 
     function downloadFile(filename, content) {
       var blob = new Blob([content], { type: 'text/markdown' });
@@ -833,14 +820,15 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
       var a = document.createElement('a');
       a.href = url; a.download = filename;
       document.body.appendChild(a); a.click();
-      document.body.removeChild(a); URL.revokeObjectURL(url);
+      document.body.removeChild(a); showToast('📥 다운로드 완료!');
     }
 
-    generateBtn.onclick = function () {
+    document.getElementById('generateBtn').onclick = function () {
       var content = mdContent.value.trim();
       if (!content) { showToast('⚠️ 내용을 붙여넣으세요'); return; }
-      openModal();
-      generateBtn.disabled = true;
+      openModal('등록 중...');
+
+      // 체크박스 옵션 수집 (복구됨)
       var options = {
         variables: {
           colors: document.getElementById('optVarColors').checked,
@@ -858,64 +846,64 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
       parent.postMessage({ pluginMessage: { type: 'generate', content: content, options: options } }, '*');
     };
 
-    cancelBtn.onclick = function () { parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*'); };
+    document.getElementById('exportBtn').onclick = function () {
+      openModal('데이터 추출 및 무결성 검사 중...');
+      parent.postMessage({ pluginMessage: { type: 'export' } }, '*');
+    };
 
-    function openModal() {
-      logContainer.innerHTML = '<div class="log-entry info">🚀 생성을 시작합니다...</div>';
-      logText = '🚀 생성을 시작합니다...\n';
+    function openModal(title) {
+      document.getElementById('modalTitle').textContent = title;
+      errorLogs = []; qaLogs = [];
+      contentError.innerHTML = ''; contentQA.innerHTML = '';
+      updateBadges();
       closeModalBtn.disabled = true;
       statusBadge.className = 'status-badge running';
       statusBadge.innerHTML = '<span class="spinner"></span>진행 중';
       modalOverlay.classList.add('show');
+      switchTab('qa');
     }
 
-    function addLog(type, message) {
-      var entry = document.createElement('div');
-      entry.className = 'log-entry ' + type;
-      entry.textContent = message;
-      logContainer.appendChild(entry);
-      logContainer.scrollTop = logContainer.scrollHeight;
-      logText += message + '\n';
+    function switchTab(tabId) {
+      document.getElementById('tabError').classList.remove('active');
+      document.getElementById('tabQA').classList.remove('active');
+      contentError.classList.remove('active');
+      contentQA.classList.remove('active');
+      copyErrorBtn.style.display = 'none';
+      copyQABtn.style.display = 'none';
+
+      if (tabId === 'error') {
+        document.getElementById('tabError').classList.add('active');
+        contentError.classList.add('active');
+        copyErrorBtn.style.display = 'block';
+      } else {
+        document.getElementById('tabQA').classList.add('active');
+        contentQA.classList.add('active');
+        copyQABtn.style.display = 'block';
+      }
     }
 
-    function addErrorBox(message, detail, copyable) {
-      var box = document.createElement('div');
-      box.className = 'error-box';
-      box.innerHTML = '<div class="error-box-header"><span class="error-box-title">❌ ' + message + '</span></div>' +
-        '<div class="error-box-content">' + detail + '</div>';
-      logContainer.appendChild(box);
-      logContainer.scrollTop = logContainer.scrollHeight;
-      
-      // 로그 복사 텍스트에도 에러 정보 추가
-      logText += '\n[ERROR] ' + message + '\n';
-      if (detail) logText += '상세: ' + detail + '\n';
-      
-      setStatus('error');
+    function updateBadges() {
+      badgeError.textContent = errorLogs.length;
+      badgeQA.textContent = qaLogs.length;
+      if (errorLogs.length > 0) switchTab('error');
     }
 
-    function addResultSummary(results) {
-      var box = document.createElement('div');
-      box.className = 'result-summary';
-      box.innerHTML = '<div class="result-summary-title">🎉 생성 완료!</div>' +
-        '<div class="result-grid">' +
-        '<div>Colors: ' + results.variables.colors + '개</div>' +
-        '<div>Spacing: ' + results.variables.spacing + '개</div>' +
-        '<div>Radius: ' + results.variables.radius + '개</div>' +
-        '<div>Typography: ' + results.variables.typography + '개</div>' +
-        '<div>Color Styles: ' + results.styles.color + '개</div>' +
-        '<div>Text Styles: ' + results.styles.text + '개</div>' +
-        '<div>Effect Styles: ' + results.styles.effect + '개</div>' +
-        '<div>Grid Styles: ' + results.styles.grid + '개</div>' +
-        '</div>';
-      logContainer.appendChild(box);
-      logContainer.scrollTop = logContainer.scrollHeight;
-      setStatus('success');
-    }
+    copyErrorBtn.onclick = function () {
+      var prompt = "너는 디자인 시스템 전문가야. 아래는 MD to Figma 플러그인에서 발생한 치명적 등록 실패 리포트야. 이 에러들을 분석해서 원본 DESIGN.md 코드에서 어떤 부분이 틀렸는지 정확히 짚어주고, 수정된 전체 코드를 다시 작성해 줘.\n\n--- [에러 리포트] ---\n" + errorLogs.join('\n');
+      copyToClipboard(prompt, '🔴 에러 브리핑 복사 완료!');
+    };
 
-    function setStatus(status) {
-      closeModalBtn.disabled = false;
-      if (status === 'success') { statusBadge.className = 'status-badge success'; statusBadge.innerHTML = '✅ 완료'; }
-      else { statusBadge.className = 'status-badge error'; statusBadge.innerHTML = '❌ 오류 발생'; }
+    copyQABtn.onclick = function () {
+      var prompt = "너는 시니어 디자인 시스템 엔지니어 전문가야. 아래는 내 디자인 데이터를 피그마 플러그인이 자동으로 교정한 내역과 추출 시의 무결성 복구 리포트야. 이 내용을 바탕으로 내 디자인 시스템의 일관성을 높일 수 있는 가이드라인을 작성해 주고, 개선사항이 반영된 피드백을 줘.\n\n--- [QA 리포트] ---\n" + qaLogs.join('\n');
+      copyToClipboard(prompt, '🔵 QA 브리핑 복사 완료!');
+    };
+
+    function copyToClipboard(text, successMsg) {
+      navigator.clipboard.writeText(text).then(() => showToast(successMsg)).catch(err => {
+        const textarea = document.createElement('textarea');
+        textarea.value = text; document.body.appendChild(textarea); textarea.select();
+        document.execCommand('copy'); document.body.removeChild(textarea); showToast(successMsg);
+      });
     }
 
     function showToast(message) {
@@ -923,16 +911,64 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
       setTimeout(function () { toast.classList.remove('show'); }, 2500);
     }
 
-    closeModalBtn.onclick = function () { modalOverlay.classList.remove('show'); generateBtn.disabled = false; };
-    copyLogBtn.onclick = function () { copyTextarea.value = logText; copyModalOverlay.classList.add('show'); copyTextarea.select(); };
-    closeCopyModalBtn.onclick = function () { copyModalOverlay.classList.remove('show'); };
+    closeModalBtn.onclick = function () { modalOverlay.classList.remove('show'); };
 
     window.onmessage = function (event) {
       var msg = event.data.pluginMessage;
       if (!msg) return;
-      if (msg.type === 'log') addLog(msg.logType, msg.message);
-      else if (msg.type === 'error') addErrorBox(msg.message, msg.detail, msg.copyable);
-      else if (msg.type === 'complete') addResultSummary(msg.results);
+
+      if (msg.type === 'log') {
+        var entry = document.createElement('div');
+        entry.className = 'log-entry info';
+        entry.textContent = msg.message;
+        contentQA.appendChild(entry);
+        contentQA.scrollTop = contentQA.scrollHeight;
+      }
+      else if (msg.type === 'qa_log') {
+        qaLogs.push(msg.message);
+        var entry = document.createElement('div');
+        entry.className = 'log-entry qa';
+        entry.textContent = "ℹ️ " + msg.message;
+        contentQA.appendChild(entry);
+        contentQA.scrollTop = contentQA.scrollHeight;
+        updateBadges();
+      }
+      else if (msg.type === 'error') {
+        var fullError = msg.message + (msg.detail ? "\n상세: " + msg.detail : "");
+        errorLogs.push(fullError);
+        var entry = document.createElement('div');
+        entry.className = 'log-entry error';
+        entry.textContent = "❌ " + fullError;
+        contentError.appendChild(entry);
+        contentError.scrollTop = contentError.scrollHeight;
+        updateBadges();
+      }
+      else if (msg.type === 'complete' || msg.type === 'export_complete') {
+        closeModalBtn.disabled = false;
+        if (errorLogs.length === 0) {
+          statusBadge.className = 'status-badge success'; statusBadge.innerHTML = '✅ 완료';
+        } else {
+          statusBadge.className = 'status-badge error'; statusBadge.innerHTML = '⚠️ 에러 있음';
+        }
+
+        if (msg.type === 'export_complete') {
+          document.getElementById('modalTitle').textContent = '✅ 추출 및 다운로드 완료';
+          downloadFile('EXPORTED-DESIGN.md', msg.mdContent);
+          // Export 시에는 QA 탭에 추출된 내용을 뿌리지 않습니다.
+          var entry = document.createElement('div');
+          entry.className = 'log-entry success';
+          entry.textContent = "\n✅ 디자인 시스템 데이터 추출이 완료되어 다운로드가 시작되었습니다.";
+          contentQA.appendChild(entry);
+          contentQA.scrollTop = contentQA.scrollHeight;
+        } else if (msg.type === 'complete') {
+          document.getElementById('modalTitle').textContent = '🎉 등록 프로세스 완료';
+          var entry = document.createElement('div');
+          entry.className = 'log-entry success';
+          entry.textContent = "\n🎉 모든 시스템이 성공적으로 이식되었습니다!";
+          contentQA.appendChild(entry);
+          contentQA.scrollTop = contentQA.scrollHeight;
+        }
+      }
     };
   </script>
 </body>
