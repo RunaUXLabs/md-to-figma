@@ -29,10 +29,11 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
 > 
 > **CRITICAL COMPLIANCE RULES:**
 > 1. **Color Aliasing**: In the 'Semantic' table, values MUST reference names from the 'Primitive' table (e.g., `blue/500`). **Never use HEX codes in Semantic tables.**
-> 2. **LineHeight Smart Units**: 
->    - Use `%` (e.g., `150%`) or unitless decimals (e.g., `1.5`) for flexible web-based styles. These will be entered as raw percentages in Figma Styles to preserve precision.
->    - Use `px` (e.g., `24px`) ONLY if fixed pixel height and Variable Binding are required.
-> 3. **Typography Grouping**: Use `### Heading` syntax to group typography tokens (e.g., `### Display`).
+2. **LineHeight Smart Units**: 
+    - Use `%` (e.g., `150%`) or unitless decimals (e.g., `1.5`) for flexible web-based styles. These will be entered as raw percentages in Figma Styles to preserve precision.
+    - Use `px` (e.g., `24px`) ONLY if fixed pixel height and Variable Binding are required.
+3. **Grid Inference**: If grid data is missing or insufficient, please infer a standard layout system (Columns: 2/4/12, Gutter: 16/24px, Margin: auto) and baseline grids (4px/8px) based on the template.
+4. **Typography Grouping**: Use `### Heading` syntax to group typography tokens (e.g., `### Display`).
 > 4. **Font Safety**: If specifying a custom font, don't worry if it's not installed. The plugin will automatically fallback to 'Inter Regular' and link it to an auto-generated 'fontFamily/Inter' variable for a clean, error-free system.
 > 
 > Output the result as a single, complete Markdown code block."

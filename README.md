@@ -57,14 +57,14 @@ AI + Figma MCP  →  DESIGN.md  →  MD to Figma  →  Figma Variables & Styles
 
 ## 📸 Screenshots
 
-| UI | Result |
+| UI | Error Log |
 |---|---|
-| ![UI](./resources/Frame2.png) | ![Complete](./resources/Frame3.png) |
+| ![UI](./resources/UI.png) | ![ErrorLog](./resources/ErrorLog.png) |
 | Initial screen — paste DESIGN.md and select options | Generation complete with variable & style counts |
 
-| Log Modal | Figma Output |
+| QA Log | Figma Output |
 |---|---|
-| ![Log](./resources/Frame4.png) | ![Output](./resources/Frame5.png) |
+| ![Log](./resources/QALog.png) | ![Output](./resources/Variables&Styles.png) |
 | Execution log — copy and paste directly into AI for debugging | Variables & Styles registered in Figma |
 
 ---

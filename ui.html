@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MD to Figma</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -14,7 +13,7 @@
     }
 
     body {
-      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-size: 13px;
       color: #333;
       background: #fff;
@@ -101,7 +100,6 @@
       box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
     }
 
-    /* 옵션 섹션 복구 */
     .options-section {
       padding: 12px;
       background: #f8f8f8;
@@ -156,7 +154,6 @@
     }
 
     .btn {
-      flex: 1;
       padding: 12px 16px;
       border: none;
       border-radius: 8px;
@@ -167,6 +164,7 @@
     }
 
     .btn-primary {
+      flex: 1;
       background: #18a0fb;
       color: white;
     }
@@ -176,6 +174,7 @@
     }
 
     .btn-export {
+      flex: 1;
       background: #2c2c2c;
       color: white;
     }
@@ -184,7 +183,6 @@
       background: #000000;
     }
 
-    /* 새 모달 및 탭 UI */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -324,12 +322,23 @@
       border: 1px solid #e06c75;
     }
 
+    .log-entry.success {
+      color: #98c379;
+      font-weight: 600;
+    }
+
     .modal-footer {
       display: flex;
       gap: 8px;
       padding: 16px 20px;
       border-top: 1px solid #e0e0e0;
       background: white;
+      justify-content: flex-end;
+    }
+
+    .modal-footer .btn {
+      flex: none;
+      min-width: 80px;
     }
 
     .btn-copy-error {
@@ -350,6 +359,15 @@
 
     .btn-copy-qa:hover {
       background: #dbeafe;
+    }
+
+    .btn-close-modal {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    .btn-close-modal:hover {
+      background: #e5e5e5;
     }
 
     .toast {
@@ -426,20 +444,7 @@
 
   <div class="textarea-section">
     <div class="textarea-label">제공된 템플릿을 AI에게 제공하고 데이터를 맵핑해달라고 요청하세요.<br>그 결과인 DESIGN.md 내용을 아래에 붙여넣으세요.</div>
-    <textarea id="mdContent" placeholder="# Design System
-
-## Colors
-
-### Primitive
-| Token | Value | Description |
-|-------|-------|-------------|
-| rausch/500 | #ff385c | 브랜드 레드 |
-
-### Semantic
-| Token | Light | Dark | Description |
-|-------|-------|------|-------------|
-| brand/primary | rausch/500 | rausch/500 | 메인 컬러 |
-..."></textarea>
+    <textarea id="mdContent" placeholder="# Design System..."></textarea>
   </div>
 
   <div class="options-section">
@@ -485,18 +490,16 @@
           <span class="status-badge running" id="statusBadge"><span class="spinner"></span>작업 중</span>
         </div>
         <div class="tabs">
-          <div class="tab" id="tabError" onclick="switchTab('error')">🔴 해결 필요 <span class="tab-badge"
-              id="badgeError">0</span></div>
-          <div class="tab" id="tabQA" onclick="switchTab('qa')">🔵 QA 리포트 <span class="tab-badge" id="badgeQA">0</span>
-          </div>
+          <div class="tab" id="tabQA" onclick="switchTab('qa')">🔵 실행 로그/QA <span class="tab-badge" id="badgeQA">0</span></div>
+          <div class="tab" id="tabError" onclick="switchTab('error')">🔴 해결 필요 <span class="tab-badge" id="badgeError">0</span></div>
         </div>
       </div>
-      <div class="tab-content" id="contentError"></div>
       <div class="tab-content" id="contentQA"></div>
+      <div class="tab-content" id="contentError"></div>
       <div class="modal-footer">
-        <button class="btn btn-copy-error" id="copyErrorBtn">📋 AI에게 에러 해결 브리핑 복사</button>
-        <button class="btn btn-copy-qa" id="copyQABtn">📋 AI에게 시스템 최적화 분석 복사</button>
-        <button class="btn" style="background:#f0f0f0; color:#666; flex: 0.5;" id="closeModalBtn" disabled>닫기</button>
+        <button class="btn btn-copy-qa" id="copyQABtn">리포트 복사</button>
+        <button class="btn btn-copy-error" id="copyErrorBtn">브리핑 복사</button>
+        <button class="btn btn-close-modal" id="closeModalBtn" disabled>닫기</button>
       </div>
     </div>
   </div>
@@ -507,7 +510,7 @@
     var TEMPLATE_MD = `# Design System
 
 <!--
-📌 작성 규칙 (v2.2.1)
+📌 작성 규칙 (v2.3.1)
 
 [형식]
 - 컬러: HEX 6자리 (#ffffff) 또는 rgba(0,0,0,0.1)
@@ -518,18 +521,15 @@
 - Weight: 숫자(400, 700) 또는 이름(Regular, Bold). 피그마 스타일명과 일치 권장.
 - 빈 값: - 로 표기
 
-[폰트 폴백 규칙]
-- 지정한 폰트가 시스템에 없을 경우, 플러그인이 'Inter Regular'를 자동으로 불러와 대체합니다.
-- 이때 'fontFamily/Inter' 배리어블을 생성하여 스타일에 자동으로 바인딩하므로 취소선 없이 깨끗한 상태가 유지됩니다.
+[시멘틱 타이포그래피 규칙]
+- FontFamily 배리어블은 'fontFamily/primary', 'fontFamily/secondary' 이름으로 자동 생성됩니다.
+- FontWeight 배리어블은 'fontWeight/400', 'fontWeight/700' 처럼 입력된 값을 이름으로 생성하며 스타일명이 값으로 할당됩니다.
+- MD에 적힌 폰트명이 이 변수의 '값'으로 할당됩니다.
+- 폰트가 시스템에 없을 경우 변수의 '값'만 'Inter'로 자동 업데이트되어 일괄 반영됩니다.
 
 [토큰 구조]
 - Primitive: 기본 색상 팔레트 (원시값, 모드 무관)
 - Semantic: 용도별 색상 (Light/Dark 모드별 Alias 지정)
-
-[다크모드 규칙]
-⚠️ 중요: Primitive에 Light/Dark 모두에서 사용할 모든 원시 컬러를 먼저 정의
-1. Primitive 정의 (원시값): 모든 모드에서 쓰일 컬러 나열
-2. Semantic 정의 (Alias): Light/Dark 컬럼에 Primitive 토큰명 기재 (HEX 직접 입력 금지)
 
 [Typography 그룹핑]
 - ### 그룹명 으로 그룹 구분 (예: ### Display)
@@ -619,7 +619,7 @@
 |-------|------|-------|-------|--------|--------|-----------|
 | columns-12 | columns | 12 | auto | 24px | 48px | stretch |`;
 
-    var AI_PROMPT_GUIDE = `# 🚀 MD to Figma: Global AI Prompt Guide (v2.2.1)
+    var AI_PROMPT_GUIDE = `# 🚀 MD to Figma: Global AI Prompt Guide (v2.3.1)
 
 Register your entire design system into Figma Variables & Styles in seconds. This guide helps you bridge the gap between your documentation and Figma using the power of AI.
 
@@ -650,10 +650,11 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
 > 
 > **CRITICAL COMPLIANCE RULES:**
 > 1. **Color Aliasing**: In the 'Semantic' table, values MUST reference names from the 'Primitive' table (e.g., \`blue/500\`). **Never use HEX codes in Semantic tables.**
-> 2. **LineHeight Smart Units**: 
->    - Use \`%\` (e.g., \`150%\`) or unitless decimals (e.g., \`1.5\`) for flexible web-based styles. These will be entered as raw percentages in Figma Styles to preserve precision.
->    - Use \`px\` (e.g., \`24px\`) ONLY if fixed pixel height and Variable Binding are required.
-> 3. **Typography Grouping**: Use \`### Heading\` syntax to group typography tokens (e.g., \`### Display\`).
+2. \`LineHeight Smart Units\`: 
+    - Use \`%\` (e.g., \`150%\`) or unitless decimals (e.g., \`1.5\`) for flexible web-based styles. These will be entered as raw percentages in Figma Styles to preserve precision.
+    - Use \`px\` (e.g., \`24px\`) ONLY if fixed pixel height and Variable Binding are required.
+3. \`Grid Inference\`: If grid data is missing or insufficient, please infer a standard layout system (Columns: 2/4/12, Gutter: 16/24px, Margin: auto) and baseline grids (4px/8px) based on the template.
+4. \`Typography Grouping\`: Use \`### Heading\` syntax to group typography tokens (e.g., \`### Display\`).
 > 4. **Font Safety**: If specifying a custom font, don't worry if it's not installed. The plugin will automatically fallback to 'Inter Regular' and link it to an auto-generated 'fontFamily/Inter' variable for a clean, error-free system.
 > 
 > Output the result as a single, complete Markdown code block."
@@ -699,8 +700,6 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
       var content = mdContent.value.trim();
       if (!content) { showToast('⚠️ 내용을 붙여넣으세요'); return; }
       openModal('등록 중...');
-
-      // 체크박스 옵션 수집 (복구됨)
       var options = {
         variables: {
           colors: document.getElementById('optVarColors').checked,
@@ -719,7 +718,7 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
     };
 
     document.getElementById('exportBtn').onclick = function () {
-      openModal('데이터 추출 및 무결성 검사 중...');
+      openModal('데이터 추출 중...');
       parent.postMessage({ pluginMessage: { type: 'export' } }, '*');
     };
 
@@ -740,17 +739,12 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
       document.getElementById('tabQA').classList.remove('active');
       contentError.classList.remove('active');
       contentQA.classList.remove('active');
-      copyErrorBtn.style.display = 'none';
-      copyQABtn.style.display = 'none';
-
       if (tabId === 'error') {
         document.getElementById('tabError').classList.add('active');
         contentError.classList.add('active');
-        copyErrorBtn.style.display = 'block';
       } else {
         document.getElementById('tabQA').classList.add('active');
         contentQA.classList.add('active');
-        copyQABtn.style.display = 'block';
       }
     }
 
@@ -761,21 +755,28 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
     }
 
     copyErrorBtn.onclick = function () {
-      var prompt = "너는 디자인 시스템 전문가야. 아래는 MD to Figma 플러그인에서 발생한 치명적 등록 실패 리포트야. 이 에러들을 분석해서 원본 DESIGN.md 코드에서 어떤 부분이 틀렸는지 정확히 짚어주고, 수정된 전체 코드를 다시 작성해 줘.\n\n--- [에러 리포트] ---\n" + errorLogs.join('\n');
+      var prompt = "--- [에러 리포트] ---\n" + errorLogs.join('\n');
       copyToClipboard(prompt, '🔴 에러 브리핑 복사 완료!');
     };
 
     copyQABtn.onclick = function () {
-      var prompt = "너는 시니어 디자인 시스템 엔지니어 전문가야. 아래는 내 디자인 데이터를 피그마 플러그인이 자동으로 교정한 내역과 추출 시의 무결성 복구 리포트야. 이 내용을 바탕으로 내 디자인 시스템의 일관성을 높일 수 있는 가이드라인을 작성해 주고, 개선사항이 반영된 피드백을 줘.\n\n--- [QA 리포트] ---\n" + qaLogs.join('\n');
-      copyToClipboard(prompt, '🔵 QA 브리핑 복사 완료!');
+      var prompt = "--- [디자인 시스템 실행 리포트] ---\n" + qaLogs.join('\n');
+      copyToClipboard(prompt, '🔵 리포트 복사 완료!');
     };
 
     function copyToClipboard(text, successMsg) {
-      navigator.clipboard.writeText(text).then(() => showToast(successMsg)).catch(err => {
-        const textarea = document.createElement('textarea');
-        textarea.value = text; document.body.appendChild(textarea); textarea.select();
-        document.execCommand('copy'); document.body.removeChild(textarea); showToast(successMsg);
-      });
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) showToast(successMsg);
+        else showToast('❌ 복사에 실패했습니다.');
+      } catch (err) {
+        showToast('❌ 복사 권한 에러');
+      }
+      document.body.removeChild(textarea);
     }
 
     function showToast(message) {
@@ -790,14 +791,16 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
       if (!msg) return;
 
       if (msg.type === 'log') {
+        qaLogs.push(msg.message);
         var entry = document.createElement('div');
         entry.className = 'log-entry info';
         entry.textContent = msg.message;
         contentQA.appendChild(entry);
         contentQA.scrollTop = contentQA.scrollHeight;
+        updateBadges();
       }
       else if (msg.type === 'qa_log') {
-        qaLogs.push(msg.message);
+        qaLogs.push("QA: " + msg.message);
         var entry = document.createElement('div');
         entry.className = 'log-entry qa';
         entry.textContent = "ℹ️ " + msg.message;
@@ -814,31 +817,40 @@ Register your entire design system into Figma Variables & Styles in seconds. Thi
         contentError.appendChild(entry);
         contentError.scrollTop = contentError.scrollHeight;
         updateBadges();
+        
+        closeModalBtn.disabled = false;
+        statusBadge.className = 'status-badge error';
+        statusBadge.innerHTML = '⚠️ 에러 발생';
+        copyErrorBtn.style.display = 'block';
+        copyQABtn.style.display = 'block';
       }
       else if (msg.type === 'complete' || msg.type === 'export_complete') {
         closeModalBtn.disabled = false;
-        if (errorLogs.length === 0) {
-          statusBadge.className = 'status-badge success'; statusBadge.innerHTML = '✅ 완료';
-        } else {
-          statusBadge.className = 'status-badge error'; statusBadge.innerHTML = '⚠️ 에러 있음';
-        }
+        statusBadge.className = errorLogs.length === 0 ? 'status-badge success' : 'status-badge error';
+        statusBadge.innerHTML = errorLogs.length === 0 ? '✅ 완료' : '⚠️ 에러 있음';
 
         if (msg.type === 'export_complete') {
-          document.getElementById('modalTitle').textContent = '✅ 추출 및 다운로드 완료';
+          document.getElementById('modalTitle').textContent = '✅ 추출 완료';
           downloadFile('EXPORTED-DESIGN.md', msg.mdContent);
-          // Export 시에는 QA 탭에 추출된 내용을 뿌리지 않습니다.
           var entry = document.createElement('div');
           entry.className = 'log-entry success';
-          entry.textContent = "\n✅ 디자인 시스템 데이터 추출이 완료되어 다운로드가 시작되었습니다.";
+          entry.textContent = "\n✅ 디자인 시스템 데이터 추출 및 다운로드가 완료되었습니다.";
           contentQA.appendChild(entry);
-          contentQA.scrollTop = contentQA.scrollHeight;
+          copyQABtn.style.display = 'block';
         } else if (msg.type === 'complete') {
-          document.getElementById('modalTitle').textContent = '🎉 등록 프로세스 완료';
+          document.getElementById('modalTitle').textContent = '🎉 등록 완료';
+          var summary = `\n--- [등록 요약] ---\n`;
+          summary += `• 배리어블: Color(${msg.results.variables.colors}), Spacing(${msg.results.variables.spacing}), Radius(${msg.results.variables.radius}), Typography(${msg.results.variables.typography})\n`;
+          summary += `• 스타일: Color(${msg.results.styles.color}), Text(${msg.results.styles.text}), Effect(${msg.results.styles.effect}), Grid(${msg.results.styles.grid})\n`;
+          
+          qaLogs.push(summary);
           var entry = document.createElement('div');
           entry.className = 'log-entry success';
-          entry.textContent = "\n🎉 모든 시스템이 성공적으로 이식되었습니다!";
+          entry.textContent = summary + "\n🎉 모든 시스템이 성공적으로 이식되었습니다!";
           contentQA.appendChild(entry);
           contentQA.scrollTop = contentQA.scrollHeight;
+          copyErrorBtn.style.display = 'block';
+          copyQABtn.style.display = 'block';
         }
       }
     };
