@@ -36,9 +36,11 @@ AI / Documentation  ⇄  DESIGN.md  ⇄  MD to Figma  ⇄  Figma Variables & Sty
 - **지능형 바인딩**: 폰트가 없을 경우 취소선(Missing Font) 에러를 방지하기 위해 자동으로 `secondary` 폴백 변수에 스타일을 바인딩합니다.
 - **Smart LineHeight**: `%`와 `px`의 차이를 구분하여, 웹 호환성이 필요한 퍼센트 수치는 바인딩을 풀고 직접 주입하여 정밀도를 100% 보존합니다.
 
-### 🚀 3. Professional Tools
-- **Agentic QA Reporting**: 에러(Error)와 시스템 현황(QA)을 분리한 듀얼 탭 모달을 제공합니다. 클릭 한 번으로 AI에게 전달할 완벽한 브리핑 텍스트를 복사할 수 있습니다.
-- **Map-based Overwrite**: 대규모 데이터 처리 시 중복 생성을 원천 차단하고 기존 데이터를 정확히 덮어쓰도록(Overwrite) 캐싱 엔진을 최적화했습니다.
+### 🧠 3. Smart Sync & Fuzzy Matching
+- **기존 구조 존중 (Smart Update)**: 새로운 변수를 무조건 생성하는 대신, 피그마 파일 내의 모든 컬렉션을 검색하여 동일한 이름의 토큰이 있다면 해당 위치에서 **값만 업데이트**합니다. 디자이너가 커스텀하게 구축한 컬렉션 구조를 파괴하지 않습니다.
+- **지능형 이름 매칭 (Fuzzy Match)**: 마크다운에 `primitive/blue`라고 적혀있어도 피그마에 `blue`라는 이름의 변수가 있다면 이를 동일한 토큰으로 인식하여 연결합니다. 접두어(`primitive/`, `semantic/`) 유무에 상관없이 유연하게 대응합니다.
+- **하이브리드 추출**: 변수(Variables)뿐만 아니라 일반 스타일(Styles) 정보까지 지능적으로 탐색하여 마크다운으로 추출합니다.
+- **AI-Ready QA Report**: 데이터가 비어있을 경우, 사용자가 AI에게 바로 복사해서 전달할 수 있는 '복구용 프롬프트'를 제공하여 끊임없는 순환 구조를 보장합니다.
 
 ---
 

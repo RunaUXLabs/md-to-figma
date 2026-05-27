@@ -1,6 +1,7 @@
 /**
- * MD to Figma - v2.0.0 Official Stable Release
+ * MD to Figma - v2.1.0 Official Stable Release
  * The Complete Bidirectional Semantic Design System Engine
+ * Featuring Smart Update & AI-Ready QA Reporting
  */
 
 figma.showUI(__html__, { width: 500, height: 650 });
@@ -82,33 +83,44 @@ function parseMD(content) {
   const res = { colors: { primitive: [], semantic: [] }, spacing: { primitive: [], semantic: [] }, radius: { primitive: [], semantic: [] }, typography: [], effects: [], grid: [] };
   const lines = content.split('\n');
   let sec = '', sub = '', typoGroup = '';
+  
   for (var i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line) continue;
-    if (line.indexOf("## ") === 0) { sec = line.replace("## ", "").toLowerCase(); sub = ""; typoGroup = ""; continue; }
+    if (line.indexOf("## ") === 0) { 
+      sec = line.replace("## ", "").toLowerCase(); 
+      sub = ""; typoGroup = ""; 
+      continue; 
+    }
     if (line.indexOf("### ") === 0) { 
       const name = line.replace("### ", "").trim();
-      if (sec === 'typography') typoGroup = name.toLowerCase();
-      else sub = name.toLowerCase();
+      sub = name.toLowerCase();
+      if (sec.includes('typography')) typoGroup = sub;
       continue;
     }
     if (line.indexOf("|") === 0 && line.indexOf("---") === -1) {
       const c = line.split("|").map(x => x.trim()).filter(x => x !== "");
       if (c.length < 2 || c[0].toLowerCase() === "token") continue;
-      if (sec === 'colors') {
-        if (sub === 'primitive') res.colors.primitive.push({ token: c[0], value: c[1] || "#000000", desc: c[2] || "" });
-        else if (sub === 'semantic') res.colors.semantic.push({ token: c[0], light: c[1] || "", dark: c[2] || c[1] || "", desc: c[3] || "" });
-      } else if (sec === 'spacing' || sec === 'radius') {
-        if (res[sec] && res[sec][sub]) {
-          const target = res[sec][sub];
-          if (sub === 'primitive') target.push({ token: c[0], value: c[1] || "0px", desc: c[2] || "" });
-          else if (sub === 'semantic') target.push({ token: c[0], alias: c[1] || "", desc: c[2] || "" });
+
+      if (sec.includes('color')) {
+        // Smart Color Parsing: if 3+ columns, assume semantic (Token, Light, Dark...)
+        if (c.length >= 3 && (sub.includes('semantic') || sub.includes('token'))) {
+          res.colors.semantic.push({ token: c[0], light: c[1], dark: c[2] || c[1], desc: c[3] || "" });
+        } else {
+          res.colors.primitive.push({ token: c[0], value: c[1] || "#000000", desc: c[2] || "" });
         }
-      } else if (sec === 'typography') {
+      } else if (sec.includes('spacing') || sec.includes('radius')) {
+        const target = sec.includes('spacing') ? res.spacing : res.radius;
+        if (c.length >= 2) {
+          // If value contains px/rem or is numeric, it's likely primitive
+          if (/[0-9]/.test(c[1]) && !sub.includes('semantic')) target.primitive.push({ token: c[0], value: c[1], desc: c[2] || "" });
+          else target.semantic.push({ token: c[0], alias: c[1], desc: c[2] || "" });
+        }
+      } else if (sec.includes('typography')) {
         res.typography.push({ token: c[0], font: c[1] || "Inter", size: c[2] || "16px", weight: c[3] || "Regular", lineHeight: c[4] || "100%", ls: c[5] || "0", group: typoGroup });
-      } else if (sec === 'effects') {
+      } else if (sec.includes('effect')) {
         res.effects.push({ token: c[0], type: c[1] || "drop-shadow", color: c[2] || "rgba(0,0,0,0.1)", x: c[3] || "0", y: c[4] || "0", blur: c[5] || "0", spread: c[6] || "0" });
-      } else if (sec === 'grid') {
+      } else if (sec.includes('grid')) {
         res.grid.push({ token: c[0], type: c[1] || "columns", count: c[2] || "1", width: c[3] || "auto", gutter: c[4] || "0", margin: c[5] || "0", align: c[6] || "stretch" });
       }
     }
@@ -128,47 +140,103 @@ async function getOrCreateCollection(name) {
 async function createAllVariables(parsed, options) {
   const results = { colors: 0, spacing: 0, radius: 0, typography: 0 };
   const allExisting = await figma.variables.getLocalVariablesAsync();
-  const existingMap = new Map();
-  allExisting.forEach(v => existingMap.set(v.variableCollectionId + ":" + v.name, v));
+  const collections = await figma.variables.getLocalVariableCollectionsAsync();
+  
+  // Build a global map of variables by name for smart matching
+  const globalVarMap = new Map();
+  allExisting.forEach(v => {
+    // Store by both full path and simple name for fuzzy matching
+    globalVarMap.set(v.name.toLowerCase(), v);
+    const simpleName = v.name.split('/').pop().toLowerCase();
+    if (!globalVarMap.has(simpleName)) globalVarMap.set(simpleName, v);
+  });
 
-  const safeSet = (col, name, type, mId, val, key) => {
-    let v = existingMap.get(key) || figma.variables.createVariable(name, col, type);
-    v.setValueForMode(mId, val);
-    existingMap.set(key, v);
-    return v;
+  const loggedMatches = new Set();
+  // Track new creations by category for a cleaner summary
+  const newCreations = { Color: 0, Spacing: 0, Radius: 0, Typography: 0 };
+  
+  const getOrCreateSmartVariable = (name, type, defaultColName) => {
+    const lowName = name.toLowerCase();
+    const simpleName = name.split('/').pop().toLowerCase();
+    
+    let v = globalVarMap.get(lowName) || globalVarMap.get(simpleName);
+    if (v) {
+      if (!loggedMatches.has(v.id)) {
+        const col = collections.find(c => c.id === v.variableCollectionId);
+        sendQA("Smart Match: '" + (col ? col.name : "Unknown") + "' 컬렉션의 '" + v.name + "' 토큰 업데이트.");
+        loggedMatches.add(v.id);
+      }
+      return v;
+    }
+
+    let col = collections.find(c => c.name.toLowerCase() === defaultColName.toLowerCase());
+    if (!col) {
+      col = figma.variables.createVariableCollection(defaultColName);
+      collections.push(col);
+    }
+    const newVar = figma.variables.createVariable(name, col, type);
+    
+    // Increment counter instead of logging every single new token
+    if (newCreations[defaultColName] !== undefined) {
+      newCreations[defaultColName]++;
+    }
+    
+    globalVarMap.set(lowName, newVar);
+    loggedMatches.add(newVar.id);
+    return newVar;
+  };
+
+  const safeSetValue = (variable, value, modeIndex = 0) => {
+    const col = collections.find(c => c.id === variable.variableCollectionId);
+    if (!col || !col.modes || col.modes.length === 0) return;
+    
+    // If the requested mode index doesn't exist, fallback to the first mode
+    const modeId = col.modes[modeIndex] ? col.modes[modeIndex].modeId : col.modes[0].modeId;
+    try {
+      variable.setValueForMode(modeId, value);
+    } catch (e) {
+      sendQA("Skipped mode sync for '" + variable.name + "': " + e.message);
+    }
   };
 
   if (options.colors) {
-    sendLog('info', "Creating Color variables...");
-    const col = await getOrCreateCollection("Color");
-    const hasDark = parsed.colors.semantic.some(s => s.dark && s.dark !== s.light);
-    let lId = col.modes[0].modeId;
-    let dId = col.modes.length > 1 ? col.modes[1].modeId : (hasDark ? col.addMode("Dark") : null);
-    if (col.modes[0].name.toLowerCase().indexOf("light") === -1) col.renameMode(lId, "Light");
-
+    sendLog('info', "Syncing Colors...");
     const primMap = new Map();
-    for (var i = 0; i < parsed.colors.primitive.length; i++) {
-      const p = parsed.colors.primitive[i];
-      const name = "primitive/" + p.token;
-      const v = safeSet(col, name, "COLOR", lId, hexToRgb(p.value), col.id + ":" + name);
-      if (dId) v.setValueForMode(dId, hexToRgb(p.value));
-      primMap.set(p.token, v);
-      results.colors++;
-    }
-    for (var i = 0; i < parsed.colors.semantic.length; i++) {
-      const s = parsed.colors.semantic[i];
-      const name = "semantic/" + s.token;
-      const getAlias = (ref) => {
-        const targetVar = primMap.get(ref);
-        return targetVar ? { type: "VARIABLE_ALIAS", id: targetVar.id } : null;
+    const allParsedColors = [...parsed.colors.primitive, ...parsed.colors.semantic];
+    
+    for (var i = 0; i < allParsedColors.length; i++) {
+      const p = allParsedColors[i];
+      const isSemantic = !!p.light;
+      const name = (isSemantic ? "semantic/" : "primitive/") + p.token;
+      const v = getOrCreateSmartVariable(name, "COLOR", "Color");
+      
+      const resolveVal = (input) => {
+        if (!input) return null;
+        const targetVar = primMap.get(input) || globalVarMap.get(input.toLowerCase());
+        if (targetVar) return { type: "VARIABLE_ALIAS", id: targetVar.id };
+        if (input.startsWith("#")) return hexToRgb(input);
+        if (input.startsWith("rgb")) return parseRgbaColor(input);
+        return null;
       };
-      const lightAlias = getAlias(s.light);
-      if (lightAlias) {
-        const v = safeSet(col, name, "COLOR", lId, lightAlias, col.id + ":" + name);
-        if (dId) {
-          const darkVar = primMap.get(s.dark) || lightVar;
-          const darkAlias = darkVar ? { type: "VARIABLE_ALIAS", id: darkVar.id } : null;
-          if (darkAlias) v.setValueForMode(dId, darkAlias);
+
+      if (isSemantic) {
+        const lVal = resolveVal(p.light);
+        const dVal = resolveVal(p.dark) || lVal;
+        if (lVal) {
+          safeSetValue(v, lVal, 0);
+          const col = collections.find(c => c.id === v.variableCollectionId);
+          if (col && col.modes.length > 1) safeSetValue(v, dVal, 1);
+        }
+      } else {
+        const val = resolveVal(p.value);
+        if (val) {
+          const col = collections.find(c => c.id === v.variableCollectionId);
+          if (col && col.modes.length > 1) {
+            col.modes.forEach((m, idx) => safeSetValue(v, val, idx));
+          } else {
+            safeSetValue(v, val, 0);
+          }
+          primMap.set(p.token, v);
         }
       }
       results.colors++;
@@ -177,23 +245,21 @@ async function createAllVariables(parsed, options) {
 
   const processNumCol = async (data, colName) => {
     if (data.primitive.length === 0 && data.semantic.length === 0) return 0;
-    sendLog('info', "Creating " + colName + " variables...");
-    const col = await getOrCreateCollection(colName);
-    const mId = col.modes[0].modeId;
+    sendLog('info', "Syncing " + colName + "...");
     const pMap = new Map();
     let count = 0;
     for (var i = 0; i < data.primitive.length; i++) {
       const p = data.primitive[i];
-      const name = "primitive/" + p.token;
-      const v = safeSet(col, name, "FLOAT", mId, parseFloat(p.value), col.id + ":" + name);
+      const v = getOrCreateSmartVariable("primitive/" + p.token, "FLOAT", colName);
+      safeSetValue(v, parseFloat(p.value), 0);
       pMap.set(p.token, v);
       count++;
     }
     for (var i = 0; i < data.semantic.length; i++) {
       const s = data.semantic[i];
-      const name = "semantic/" + s.token;
+      const v = getOrCreateSmartVariable("semantic/" + s.token, "FLOAT", colName);
       const targetVar = pMap.get(s.alias);
-      if (targetVar) safeSet(col, name, "FLOAT", mId, { type: "VARIABLE_ALIAS", id: targetVar.id }, col.id + ":" + name);
+      if (targetVar) safeSetValue(v, { type: "VARIABLE_ALIAS", id: targetVar.id }, 0);
       count++;
     }
     return count;
@@ -203,31 +269,24 @@ async function createAllVariables(parsed, options) {
   if (options.radius) results.radius = await processNumCol(parsed.radius, "Radius");
 
   if (options.typography && parsed.typography.length > 0) {
-    sendLog('info', "Creating Typography variables...");
-    const col = await getOrCreateCollection("Typography");
-    const mId = col.modes[0].modeId;
-
+    sendLog('info', "Syncing Typography...");
     const uniqueFonts = [];
     for (var i = 0; i < parsed.typography.length; i++) {
       if (uniqueFonts.indexOf(parsed.typography[i].font) === -1) uniqueFonts.push(parsed.typography[i].font);
     }
     
-    safeSet(col, "fontFamily/primary", "STRING", mId, uniqueFonts[0] || "Inter", col.id + ":fontFamily/primary");
-    safeSet(col, "fontFamily/secondary", "STRING", mId, "Inter", col.id + ":fontFamily/secondary");
+    safeSetValue(getOrCreateSmartVariable("fontFamily/primary", "STRING", "Typography"), uniqueFonts[0] || "Inter", 0);
+    safeSetValue(getOrCreateSmartVariable("fontFamily/secondary", "STRING", "Typography"), "Inter", 0);
 
     for (var i = 0; i < parsed.typography.length; i++) {
       const t = parsed.typography[i];
       const base = (t.group ? t.group + "/" : "") + t.token;
-      const rawW = String(t.weight || "400").trim().toLowerCase();
-      const fStyle = resolveFontStyle(rawW);
-      const semanticName = getSemanticWeightName(t.weight);
-      const wName = "fontWeight/" + semanticName;
-      safeSet(col, wName, "STRING", mId, fStyle, col.id + ":" + wName);
+      safeSetValue(getOrCreateSmartVariable("fontWeight/" + getSemanticWeightName(t.weight), "STRING", "Typography"), resolveFontStyle(t.weight), 0);
 
       const add = (sub, val, type) => {
-        const name = base + "/" + sub;
+        const v = getOrCreateSmartVariable(base + "/" + sub, type, "Typography");
         const parsedVal = (sub === 'LineHeight') ? parseLineHeightValue(val) : parseFloat(val);
-        safeSet(col, name, type, mId, parsedVal, col.id + ":" + name);
+        safeSetValue(v, parsedVal, 0);
         results.typography++;
       };
       add("Size", t.size, "FLOAT");
@@ -235,6 +294,16 @@ async function createAllVariables(parsed, options) {
       if (t.ls && t.ls !== "0" && t.ls !== "0px") add("LetterSpacing", t.ls, "FLOAT");
     }
   }
+
+  // Print grouped summary of new creations
+  const categories = Object.keys(newCreations);
+  for (let i = 0; i < categories.length; i++) {
+    const cat = categories[i];
+    if (newCreations[cat] > 0) {
+      sendQA("✅ 신규 생성 요약: '" + cat + "' 컬렉션에 " + newCreations[cat] + "개의 토큰이 새로 생성되었습니다.");
+    }
+  }
+
   return results;
 }
 
@@ -375,55 +444,56 @@ async function generateExportMD() {
 
   let md = "<!-- [MD_TO_FIGMA_EXPORT_LOG] -->\n\n# Design System\n\n";
 
-  const extractCol = (colName, mdName) => {
-    let col = null;
-    for (var i = 0; i < collections.length; i++) {
-      if (collections[i].name.toLowerCase() === colName.toLowerCase()) { col = collections[i]; break; }
-    }
-    if (!col) return "";
-    let sMd = "## " + mdName + "\n\n### Primitive\n| Token | Value | Description |\n|---|---|---|\n";
-    const vars = allVars.filter(v => v.variableCollectionId === col.id);
-    let pR = [], sR = [];
-    const mId = col.modes[0].modeId;
-    const dId = col.modes.length > 1 ? col.modes[1].modeId : null;
+  // Group variables by their potential category based on type and name/collection
+  const colorVars = [];
+  const spacingVars = [];
+  const radiusVars = [];
 
-    vars.forEach(v => {
-      const lV = v.valuesByMode[mId];
-      if (v.name.indexOf("primitive/") === 0) {
-        const val = colName === "Color" ? rgbToHex(lV) : lV + "px";
-        pR.push("| " + v.name.replace("primitive/", "") + " | " + val + " | " + (v.description || "-") + " |");
-      } else if (v.name.indexOf("semantic/") === 0) {
-        const clean = v.name.replace(/^(primitive|semantic)\//, "");
-        const getRef = (val, mN) => {
-          if (val && val.type === "VARIABLE_ALIAS") {
-            const target = varMapById.get(val.id);
-            return target ? target.name.replace(/^(primitive|semantic)\//, "") : "";
-          }
-          const recN = "recovered/" + clean + "-" + mN;
-          const recV = colName === "Color" ? rgbToHex(val) : val + "px";
-          pR.push("| " + recN + " | " + recV + " | [Auto-Recovered] |");
-          sendQA("Recovery: " + mdName + " '" + v.name + "' reference lost, created '" + recN + "'.");
-          return recN;
-        };
-        if (colName === "Color") {
-          const dV = dId ? v.valuesByMode[dId] : lV;
-          sR.push("| " + clean + " | " + getRef(lV, "light") + " | " + getRef(dV, "dark") + " | " + (v.description || "-") + " |");
-        } else {
-          sR.push("| " + clean + " | " + getRef(lV, "alias") + " | " + (v.description || "-") + " |");
-        }
+  allVars.forEach(v => {
+    const col = collections.find(c => c.id === v.variableCollectionId);
+    const colName = col ? col.name.toLowerCase() : "";
+    const varName = v.name.toLowerCase();
+
+    if (v.resolvedType === "COLOR") {
+      colorVars.push(v);
+    } else if (v.resolvedType === "FLOAT") {
+      if (colName.includes("spacing") || varName.includes("spacing") || varName.includes("gap") || varName.includes("padding")) {
+        spacingVars.push(v);
+      } else if (colName.includes("radius") || varName.includes("radius") || varName.includes("corner") || varName.includes("round")) {
+        radiusVars.push(v);
       }
+    }
+  });
+
+  const extractVariableData = (vars, categoryName, isColor) => {
+    if (vars.length === 0) return "";
+    let sMd = "## " + categoryName + "\n\n### Tokens\n";
+    if (isColor) sMd += "| Token | Value | Description |\n|---|---|---|\n";
+    else sMd += "| Token | Value | Description |\n|---|---|---|\n";
+
+    let rows = [];
+    vars.forEach(v => {
+      const col = collections.find(c => c.id === v.variableCollectionId);
+      const mId = col.modes[0].modeId;
+      const val = v.valuesByMode[mId];
+      
+      let displayVal = "";
+      if (val && val.type === "VARIABLE_ALIAS") {
+        const target = varMapById.get(val.id);
+        displayVal = target ? target.name : "[Alias]";
+      } else {
+        displayVal = isColor ? rgbToHex(val) : val + "px";
+      }
+      
+      rows.push("| " + v.name + " | " + displayVal + " | " + (v.description || "-") + " |");
     });
-    if (pR.length === 0 && sR.length === 0) return "";
-    sMd += pR.join("\n") + "\n\n### Semantic\n";
-    if (colName === "Color") sMd += "| Token | Light | Dark | Description |\n|---|---|---|---|\n";
-    else sMd += "| Token | Alias | Description |\n|---|---|---|\n";
-    sMd += sR.join("\n") + "\n\n";
-    return sMd;
+    
+    return sMd + rows.join("\n") + "\n\n";
   };
 
-  md += extractCol("Color", "Colors");
-  md += extractCol("Spacing", "Spacing");
-  md += extractCol("Radius", "Radius");
+  md += extractVariableData(colorVars, "Colors", true);
+  md += extractVariableData(spacingVars, "Spacing", false);
+  md += extractVariableData(radiusVars, "Radius", false);
 
   const tStyles = await figma.getLocalTextStylesAsync();
   if (tStyles.length > 0) {
@@ -438,15 +508,13 @@ async function generateExportMD() {
       if (!revWeightMap[normVal] && /^\d+$/.test(key)) revWeightMap[normVal] = key;
     }
 
-    let colTypo = null;
-    for (var i = 0; i < collections.length; i++) {
-      if (collections[i].name.toLowerCase() === 'typography') { colTypo = collections[i]; break; }
-    }
-    const ffPrimaryVar = allVars.find(v => v.name === "fontFamily/primary" && colTypo && v.variableCollectionId === colTypo.id);
-    const ffSecondaryVar = allVars.find(v => v.name === "fontFamily/secondary" && colTypo && v.variableCollectionId === colTypo.id);
+    const colTypo = collections.find(c => {
+      const n = c.name.toLowerCase();
+      return n.includes("typo") || n.includes("type") || n.includes("font");
+    });
     
+    const ffPrimaryVar = allVars.find(v => (v.name.includes("fontFamily/primary") || v.name.includes("family")) && colTypo && v.variableCollectionId === colTypo.id);
     const primaryFontValue = (ffPrimaryVar && colTypo) ? ffPrimaryVar.valuesByMode[colTypo.modes[0].modeId] : null;
-    const secondaryFontValue = (ffSecondaryVar && colTypo) ? ffSecondaryVar.valuesByMode[colTypo.modes[0].modeId] : null;
 
     tStyles.forEach(s => {
       const parts = s.name.split("/");
@@ -464,8 +532,6 @@ async function generateExportMD() {
         const boundVarId = s.boundVariables.fontFamily.id;
         if (ffPrimaryVar && boundVarId === ffPrimaryVar.id && primaryFontValue) {
           exportedFontFamily = primaryFontValue;
-        } else if (ffSecondaryVar && boundVarId === ffSecondaryVar.id) {
-          exportedFontFamily = primaryFontValue || secondaryFontValue;
         }
       }
 
@@ -476,6 +542,18 @@ async function generateExportMD() {
       const g = groups[i];
       md += "### " + g + "\n| Token | Font | Size | Weight | LineHeight | LetterSpacing |\n|---|---|---|---|---|---|\n" + gs[g].join("\n") + "\n\n";
     }
+  }
+
+  const paintStyles = await figma.getLocalPaintStylesAsync();
+  if (paintStyles.length > 0 && colorVars.length === 0) {
+    md += "## Colors (from Styles)\n\n| Token | Value | Description |\n|---|---|---|\n";
+    paintStyles.forEach(ps => {
+      const p = ps.paints[0];
+      if (p && p.type === "SOLID") {
+        md += "| " + ps.name + " | " + rgbToHex(p.color) + " | " + (ps.description || "-") + " |\n";
+      }
+    });
+    md += "\n";
   }
 
   const eStyles = await figma.getLocalEffectStylesAsync();
@@ -515,6 +593,15 @@ figma.ui.onmessage = async (msg) => {
     try {
       sendLog("info", "MD parsing and generation started...");
       const parsed = parseMD(msg.content);
+      
+      // Validation Log for AI guidance
+      if (parsed.colors.primitive.length === 0 && parsed.colors.semantic.length === 0) {
+        sendQA("AI Prompt (Copy this): ## Colors 섹션의 컬러 데이터가 감지되지 않았습니다. AI에게 '마크다운의 ## Colors 섹션 테이블 구조를 확인하고, 최소 2개 이상의 컬럼(Token, Value)을 포함한 유효한 테이블 형식으로 다시 작성해줘'라고 요청하세요.");
+      }
+      if (parsed.typography.length === 0) {
+        sendQA("AI Prompt (Copy this): ## Typography 섹션 데이터가 감지되지 않았습니다. AI에게 '## Typography 섹션의 테이블 형식이 6개 컬럼(Token, Font, Size, Weight, LineHeight, LetterSpacing)을 갖춘 마크다운 테이블인지 확인하고 교정해줘'라고 요청하세요.");
+      }
+
       const vRes = await createAllVariables(parsed, msg.options.variables);
       const sRes = await createStyles(parsed, msg.options.styles);
       figma.ui.postMessage({ type: "complete", results: { variables: vRes, styles: sRes } });
