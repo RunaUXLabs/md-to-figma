@@ -6,6 +6,110 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MD to Figma</title>
   <style>
+    /* ===== Design System Tokens (Standardized v2.0.1) ===== */
+    :root {
+      /* Primitive · Blue */
+      --blue-100: #f0f7ff;
+      --blue-200: #c2dcf7;
+      --blue-300: #a8c9f0;
+      --blue-400: #1a73e8;
+      --blue-500: #18a0fb;
+      --blue-600: #0d8de5;
+      /* Primitive · Neutral */
+      --white: #ffffff;
+      --gray-50: #f8f9fa;
+      --gray-100: #f8f8f8;
+      --gray-200: #f0f0f0;
+      --gray-300: #e5e5e5;
+      --gray-400: #e0e0e0;
+      --gray-500: #d0d0d0;
+      --gray-600: #9ca3af;
+      --gray-700: #666666;
+      --gray-800: #333333;
+      --gray-900: #1a1a1a;
+      --black: #000000;
+      /* Primitive · Terminal */
+      --terminal-bg: #1e1e1e;
+      --terminal-error-bg: #2d1f1f;
+      --terminal-info: #9da5b4;
+      --terminal-blue: #61afef;
+      --terminal-red: #e06c75;
+      --terminal-green: #98c379;
+      /* Primitive · Status */
+      --red-50: #fee2e2;
+      --red-100: #fecaca;
+      --red-500: #dc2626;
+      --indigo-50: #e0e7ff;
+      --indigo-100: #dbeafe;
+      --indigo-500: #2563eb;
+      --status-yellow-50: #fff3cd;
+      --status-yellow-700: #856404;
+      --status-green-50: #d4edda;
+      --status-green-700: #155724;
+      --status-red-50: #f8d7da;
+      --status-red-700: #721c24;
+      /* Semantic (Light) */
+      --brand-primary: var(--blue-500);
+      --brand-primary-hover: var(--blue-600);
+      --brand-accent: var(--blue-400);
+      --surface-canvas: var(--white);
+      --surface-subtle: var(--gray-100);
+      --surface-header: var(--gray-50);
+      --surface-console: var(--terminal-bg);
+      --surface-inverse: var(--gray-800);
+      --border-default: var(--gray-400);
+      --border-input: var(--gray-500);
+      --border-focus: var(--blue-500);
+      --text-default: var(--gray-800);
+      --text-strong: var(--gray-900);
+      --text-muted: var(--gray-700);
+      --text-on-brand: var(--white);
+      --feedback-error: var(--red-500);
+      --feedback-error-surface: var(--red-50);
+      --feedback-info: var(--indigo-500);
+      --feedback-info-surface: var(--indigo-50);
+      --feedback-success: var(--status-green-700);
+      --feedback-success-surface: var(--status-green-50);
+      --feedback-warning: var(--status-yellow-700);
+      --feedback-warning-surface: var(--status-yellow-50);
+      /* Spacing */
+      --space-4: 4px;
+      --space-6: 6px;
+      --space-8: 8px;
+      --space-10: 10px;
+      --space-12: 12px;
+      --space-16: 16px;
+      --space-20: 20px;
+      /* Radius */
+      --radius-6: 6px;
+      --radius-8: 8px;
+      --radius-10: 10px;
+      --radius-12: 12px;
+      /* Effects */
+      --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.3);
+      --focus-ring: 0 0 0 2px rgba(24, 160, 251, 0.2);
+      /* Icon duotone tones */
+      --icon-main: var(--gray-700);
+      --icon-sub: var(--gray-600);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --surface-canvas: var(--gray-900);
+        --surface-subtle: var(--gray-800);
+        --surface-header: var(--gray-800);
+        --surface-inverse: var(--black);
+        --border-default: var(--gray-700);
+        --border-input: var(--gray-600);
+        --text-default: var(--white);
+        --text-strong: var(--white);
+        --text-muted: var(--gray-600);
+        --feedback-error-surface: var(--terminal-error-bg);
+        --feedback-info-surface: var(--indigo-100);
+        --feedback-success: var(--terminal-green);
+      }
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -13,11 +117,11 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
       font-size: 13px;
-      color: #333;
-      background: #fff;
-      padding: 20px;
+      color: var(--text-default);
+      background: var(--surface-canvas);
+      padding: var(--space-20);
       height: 100vh;
       overflow: hidden;
       display: flex;
@@ -34,7 +138,7 @@
     .header h1 {
       font-size: 18px;
       font-weight: 600;
-      color: #1a1a1a;
+      color: var(--text-strong);
       margin-bottom: 4px;
     }
 
@@ -49,12 +153,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 10px 12px;
-      background: #f0f7ff;
-      border: 1px solid #c2dcf7;
-      border-radius: 8px;
-      color: #1a73e8;
+      gap: var(--space-6);
+      padding: var(--space-10) var(--space-12);
+      background: var(--blue-100);
+      border: 1px solid var(--blue-200);
+      border-radius: var(--radius-8);
+      color: var(--brand-accent);
       font-size: 12px;
       font-weight: 500;
       cursor: pointer;
@@ -62,8 +166,8 @@
     }
 
     .btn-template:hover {
-      background: #e3f0ff;
-      border-color: #a8c9f0;
+      background: var(--blue-200);
+      border-color: var(--blue-300);
     }
 
     .textarea-section {
@@ -76,19 +180,21 @@
 
     .textarea-label {
       font-size: 12px;
-      font-weight: 500;
-      color: #333;
-      margin-bottom: 8px;
-      line-height: 1.4;
+      font-weight: 400;
+      color: var(--text-default);
+      margin-bottom: var(--space-8);
+      line-height: 1.5;
     }
 
     textarea {
       flex: 1;
       width: 100%;
-      padding: 12px;
-      border: 1px solid #d0d0d0;
-      border-radius: 8px;
-      font-family: 'SF Mono', Monaco, monospace;
+      padding: var(--space-12);
+      background: var(--surface-canvas);
+      color: var(--text-default);
+      border: 1px solid var(--border-input);
+      border-radius: var(--radius-8);
+      font-family: ui-monospace, SFMono-Regular, 'SF Mono', Monaco, Consolas, 'Liberation Mono', Menlo, monospace;
       font-size: 11px;
       resize: none;
       line-height: 1.5;
@@ -96,15 +202,15 @@
 
     textarea:focus {
       outline: none;
-      border-color: #18a0fb;
-      box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
+      border-color: var(--border-focus);
+      box-shadow: var(--focus-ring);
     }
 
     .options-section {
-      padding: 12px;
-      background: #f8f8f8;
-      border-radius: 8px;
-      margin-bottom: 12px;
+      padding: var(--space-12);
+      background: var(--surface-subtle);
+      border-radius: var(--radius-8);
+      margin-bottom: var(--space-12);
     }
 
     .options-group {
@@ -117,15 +223,31 @@
 
     .options-divider {
       height: 1px;
-      background: #e0e0e0;
-      margin: 12px 0;
+      background: var(--border-default);
+      margin: var(--space-12) 0;
     }
 
     .options-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
       font-size: 11px;
       font-weight: 600;
-      color: #333;
-      margin-bottom: 8px;
+      color: var(--text-strong);
+      margin-bottom: var(--space-8);
+    }
+
+    .ico {
+      display: inline-flex;
+      flex: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ico .ic {
+      display: block;
+      width: 16px;
+      height: 16px;
     }
 
     .options-grid {
@@ -137,15 +259,47 @@
     .option-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: var(--space-6);
       font-size: 12px;
+      color: var(--text-default);
     }
 
+    /* Custom checkbox — matches Figma Checkbox component (box + check icon) */
     .option-item input[type="checkbox"] {
-      width: 14px;
-      height: 14px;
+      appearance: none;
+      -webkit-appearance: none;
+      flex: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1px solid var(--border-input);
+      background: var(--surface-canvas);
       cursor: pointer;
-      accent-color: #18a0fb;
+      transition: all 0.15s;
+    }
+
+    .option-item input[type="checkbox"]:hover {
+      border-color: var(--border-focus);
+    }
+
+    .option-item input[type="checkbox"]:checked {
+      background-color: var(--brand-primary);
+      border-color: var(--brand-primary);
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M20 6 9 17l-5-5'/></svg>");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    /* Checkbox · Checked + Hover state */
+    .option-item input[type="checkbox"]:checked:hover {
+      background-color: var(--brand-primary-hover);
+      border-color: var(--brand-primary-hover);
+    }
+
+    /* Checkbox · Focus state (keyboard) */
+    .option-item input[type="checkbox"]:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
 
     .button-section {
@@ -154,6 +308,10 @@
     }
 
     .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       padding: 12px 16px;
       border: none;
       border-radius: 8px;
@@ -165,22 +323,22 @@
 
     .btn-primary {
       flex: 1;
-      background: #18a0fb;
-      color: white;
+      background: var(--brand-primary);
+      color: var(--text-on-brand);
     }
 
     .btn-primary:hover {
-      background: #0d8de5;
+      background: var(--brand-primary-hover);
     }
 
     .btn-export {
       flex: 1;
-      background: #2c2c2c;
-      color: white;
+      background: var(--surface-inverse);
+      color: var(--text-on-brand);
     }
 
     .btn-export:hover {
-      background: #000000;
+      background: var(--black);
     }
 
     .modal-overlay {
@@ -201,21 +359,21 @@
     }
 
     .modal {
-      background: white;
-      border-radius: 12px;
+      background: var(--surface-canvas);
+      border-radius: var(--radius-12);
       width: 90%;
       max-width: 420px;
       max-height: 85vh;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      box-shadow: var(--shadow-modal);
       overflow: hidden;
     }
 
     .modal-header {
-      padding: 16px 20px 0 20px;
-      background: #f8f9fa;
-      border-bottom: 1px solid #e0e0e0;
+      padding: var(--space-16) var(--space-20) 0 var(--space-20);
+      background: var(--surface-header);
+      border-bottom: 1px solid var(--border-default);
     }
 
     .modal-title-row {
@@ -228,7 +386,7 @@
     .modal-title {
       font-size: 15px;
       font-weight: 600;
-      color: #1a1a1a;
+      color: var(--text-strong);
     }
 
     .tabs {
@@ -238,19 +396,30 @@
     }
 
     .tab {
-      padding: 8px 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-6);
+      padding: var(--space-8) var(--space-4);
       font-size: 13px;
       font-weight: 500;
-      color: #666;
+      color: var(--text-muted);
       cursor: pointer;
       border-bottom: 2px solid transparent;
       position: relative;
       top: 1px;
     }
 
+    .tab .ico svg {
+      display: block;
+    }
+
+    .tab:hover:not(.active) {
+      color: var(--text-default);
+    }
+
     .tab.active {
-      color: #1a1a1a;
-      border-bottom-color: #1a1a1a;
+      color: var(--text-strong);
+      border-bottom-color: var(--text-strong);
     }
 
     .tab-badge {
@@ -263,33 +432,33 @@
     }
 
     .tab.active #badgeError {
-      background: #fee2e2;
-      color: #dc2626;
+      background: var(--feedback-error-surface);
+      color: var(--feedback-error);
     }
 
     .tab.active #badgeQA {
-      background: #e0e7ff;
-      color: #2563eb;
+      background: var(--feedback-info-surface);
+      color: var(--feedback-info);
     }
 
     #badgeError {
-      background: #f3f4f6;
-      color: #9ca3af;
+      background: var(--gray-150);
+      color: var(--gray-500);
     }
 
     #badgeQA {
-      background: #f3f4f6;
-      color: #9ca3af;
+      background: var(--gray-150);
+      color: var(--gray-500);
     }
 
     .tab-content {
       display: none;
       flex: 1;
       overflow-y: auto;
-      background: #1e1e1e;
-      padding: 16px;
+      background: var(--surface-console);
+      padding: var(--space-16);
       height: 300px;
-      font-family: 'SF Mono', Monaco, monospace;
+      font-family: ui-monospace, SFMono-Regular, 'SF Mono', Monaco, Consolas, 'Liberation Mono', Menlo, monospace;
       font-size: 11px;
       line-height: 1.6;
     }
@@ -305,34 +474,34 @@
     }
 
     .log-entry.info {
-      color: #9da5b4;
+      color: var(--terminal-info);
     }
 
     .log-entry.qa {
-      color: #61afef;
-      padding-left: 12px;
-      border-left: 3px solid #61afef;
+      color: var(--terminal-blue);
+      padding-left: var(--space-12);
+      border-left: 3px solid var(--terminal-blue);
     }
 
     .log-entry.error {
-      color: #e06c75;
-      background: #2d1f1f;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #e06c75;
+      color: var(--terminal-red);
+      background: var(--terminal-error-bg);
+      padding: var(--space-8);
+      border-radius: var(--radius-6);
+      border: 1px solid var(--terminal-red);
     }
 
     .log-entry.success {
-      color: #98c379;
+      color: var(--terminal-green);
       font-weight: 600;
     }
 
     .modal-footer {
       display: flex;
-      gap: 8px;
-      padding: 16px 20px;
-      border-top: 1px solid #e0e0e0;
-      background: white;
+      gap: var(--space-8);
+      padding: var(--space-16) var(--space-20);
+      border-top: 1px solid var(--border-default);
+      background: var(--surface-canvas);
       justify-content: flex-end;
     }
 
@@ -342,43 +511,43 @@
     }
 
     .btn-copy-error {
-      background: #fee2e2;
-      color: #dc2626;
+      background: var(--feedback-error-surface);
+      color: var(--feedback-error);
       display: none;
     }
 
     .btn-copy-error:hover {
-      background: #fecaca;
+      background: var(--red-100);
     }
 
     .btn-copy-qa {
-      background: #e0e7ff;
-      color: #2563eb;
+      background: var(--feedback-info-surface);
+      color: var(--feedback-info);
       display: none;
     }
 
     .btn-copy-qa:hover {
-      background: #dbeafe;
+      background: var(--indigo-100);
     }
 
     .btn-close-modal {
-      background: #f0f0f0;
-      color: #666;
+      background: var(--gray-200);
+      color: var(--text-muted);
     }
 
     .btn-close-modal:hover {
-      background: #e5e5e5;
+      background: var(--gray-250);
     }
 
     .toast {
       position: fixed;
-      bottom: 20px;
+      bottom: var(--space-20);
       left: 50%;
       transform: translateX(-50%);
-      background: #333;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 6px;
+      background: var(--gray-700);
+      color: var(--white);
+      padding: var(--space-10) var(--space-20);
+      border-radius: var(--radius-6);
       font-size: 12px;
       opacity: 0;
       transition: opacity 0.3s;
@@ -401,18 +570,29 @@
     }
 
     .status-badge.running {
-      background: #fff3cd;
-      color: #856404;
+      background: var(--feedback-warning-surface);
+      color: var(--feedback-warning);
     }
 
     .status-badge.success {
-      background: #d4edda;
-      color: #155724;
+      background: var(--status-green-50);
+      color: var(--status-green-700);
     }
 
     .status-badge.error {
-      background: #f8d7da;
-      color: #721c24;
+      background: var(--status-red-50);
+      color: var(--status-red-700);
+    }
+
+    /* StatusBadge icon — inherits badge color via currentColor */
+    .status-badge .ic {
+      display: block;
+      width: 14px;
+      height: 14px;
+    }
+
+    .status-badge .ic.spin {
+      animation: spin 0.8s linear infinite;
     }
 
     .spinner {
@@ -433,13 +613,9 @@
 </head>
 
 <body>
-  <div class="header">
-    <h1>📦 MD to Figma</h1>
-  </div>
-
   <div class="template-section">
-    <button class="btn-template" id="downloadTemplateBtn">📥 템플릿 받기</button>
-    <button class="btn-template" id="downloadGuideBtn">📖 AI 가이드</button>
+    <button class="btn-template" id="downloadTemplateBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g opacity="0.8" style="stroke:var(--indigo-500)"><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" style="stroke:var(--gray-500)"/></svg></span>템플릿 받기</button>
+    <button class="btn-template" id="downloadGuideBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g opacity="0.8" style="stroke:var(--gray-500)"><path d="M12 7v14"/></g><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" style="stroke:var(--gray-600)"/></svg></span>AI 가이드</button>
   </div>
 
   <div class="textarea-section">
@@ -449,7 +625,7 @@
 
   <div class="options-section">
     <div class="options-group">
-      <div class="options-title">📦 Variables (컬렉션 분리 생성)</div>
+      <div class="options-title"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g opacity="0.8"><path d="M12 22V12" style="stroke:var(--gray-500)"/><path d="m3.3 7 8.7 5 8.7-5" style="stroke:var(--feedback-info)"/><path d="m7.5 4.27 9 5.15" style="stroke:var(--gray-500)"/></g><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" style="stroke:var(--gray-600)"/></svg></span>Variables (컬렉션 분리 생성)</div>
       <div class="options-grid">
         <div class="option-item"><input type="checkbox" id="optVarColors" checked><label
             for="optVarColors">Colors</label></div>
@@ -463,7 +639,7 @@
     </div>
     <div class="options-divider"></div>
     <div class="options-group">
-      <div class="options-title">🎨 Styles (Variable 연동)</div>
+      <div class="options-title"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z" style="stroke:var(--gray-600)"/><g opacity="0.8" stroke="none"><circle cx="13.5" cy="6.5" r="1.4" style="fill:var(--feedback-info)"/><circle cx="17.5" cy="10.5" r="1.4" style="fill:var(--feedback-success)"/><circle cx="6.5" cy="12.5" r="1.4" style="fill:var(--feedback-warning)"/><circle cx="8.5" cy="7.5" r="1.4" style="fill:var(--feedback-error)"/></g></svg></span>Styles (Variable 연동)</div>
       <div class="options-grid">
         <div class="option-item"><input type="checkbox" id="optColorStyles"><label for="optColorStyles">Color
             Styles</label></div>
@@ -478,8 +654,8 @@
   </div>
 
   <div class="button-section">
-    <button class="btn btn-primary" id="generateBtn">🚀 등록 (MD → Figma)</button>
-    <button class="btn btn-export" id="exportBtn">📤 추출 (Figma → MD)</button>
+    <button class="btn btn-primary" id="generateBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g opacity="0.8" style="stroke:var(--gray-300)"><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g><g opacity="0.8" style="stroke:var(--red-500)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/></g><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" style="stroke:var(--gray-300)"/></svg></span>등록 (MD → Figma)</button>
+    <button class="btn btn-export" id="exportBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g opacity="0.8" style="stroke:var(--indigo-500)"><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" style="stroke:var(--gray-300)"/></svg></span>추출 (Figma → MD)</button>
   </div>
 
   <div class="modal-overlay" id="modalOverlay">
@@ -487,11 +663,11 @@
       <div class="modal-header">
         <div class="modal-title-row">
           <span class="modal-title" id="modalTitle">실행 리포트</span>
-          <span class="status-badge running" id="statusBadge"><span class="spinner"></span>작업 중</span>
+          <span class="status-badge running" id="statusBadge"><svg class="ic spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg><span>작업 중</span></span>
         </div>
         <div class="tabs">
-          <div class="tab" id="tabQA" onclick="switchTab('qa')">🔵 실행 로그/QA <span class="tab-badge" id="badgeQA">0</span></div>
-          <div class="tab" id="tabError" onclick="switchTab('error')">🔴 해결 필요 <span class="tab-badge" id="badgeError">0</span></div>
+          <div class="tab" id="tabQA" onclick="switchTab('qa')"><span class="ico"><svg width="10" height="10" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke-width="2" style="stroke:var(--feedback-info-surface)"/><circle cx="12" cy="12" r="6" stroke="none" style="fill:var(--feedback-info)"/></svg></span>실행 로그/QA <span class="tab-badge" id="badgeQA">0</span></div>
+          <div class="tab" id="tabError" onclick="switchTab('error')"><span class="ico"><svg width="10" height="10" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke-width="2" style="stroke:var(--feedback-error-surface)"/><circle cx="12" cy="12" r="6" stroke="none" style="fill:var(--feedback-error)"/></svg></span>해결 필요 <span class="tab-badge" id="badgeError">0</span></div>
         </div>
       </div>
       <div class="tab-content" id="contentQA"></div>
@@ -510,7 +686,7 @@
     var TEMPLATE_MD = `# Design System
 
 <!--
-📌 작성 규칙 (v2.0.0 Official Release)
+📌 작성 규칙 (v2.0.1 Official Release)
 
 [형식]
 - 컬러: HEX 6자리 (#ffffff) 또는 rgba(0,0,0,0.1)
@@ -619,7 +795,7 @@
 |-------|------|-------|-------|--------|--------|-----------|
 | columns-12 | columns | 12 | auto | 24px | 48px | stretch |`;
 
-    var AI_PROMPT_GUIDE = `# 🚀 MD to Figma: Global AI Prompt Guide (v2.0.0)
+    var AI_PROMPT_GUIDE = `# 🚀 MD to Figma: Global AI Prompt Guide (v2.0.1)
 
     Register your entire design system into Figma Variables & Styles in seconds. This guide helps you bridge the gap between your documentation and Figma using the power of AI.
 
@@ -722,14 +898,24 @@
       parent.postMessage({ pluginMessage: { type: 'export' } }, '*');
     };
 
+    // StatusBadge icons (loader / circle-check / alert-triangle) — inherit badge color via currentColor
+    var STATUS_ICONS = {
+      running: '<svg class="ic spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>',
+      success: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" opacity="0.8"/><path d="m9 12 2 2 4-4"/></svg>',
+      error: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><g opacity="0.8"><path d="M12 9v4"/><path d="M12 17h.01"/></g></svg>'
+    };
+    function setStatus(state, text) {
+      statusBadge.className = 'status-badge ' + state;
+      statusBadge.innerHTML = STATUS_ICONS[state] + '<span>' + text + '</span>';
+    }
+
     function openModal(title) {
       document.getElementById('modalTitle').textContent = title;
       errorLogs = []; qaLogs = [];
       contentError.innerHTML = ''; contentQA.innerHTML = '';
       updateBadges();
       closeModalBtn.disabled = true;
-      statusBadge.className = 'status-badge running';
-      statusBadge.innerHTML = '<span class="spinner"></span>진행 중';
+      setStatus('running', '진행 중');
       modalOverlay.classList.add('show');
       switchTab('qa');
     }
@@ -819,15 +1005,13 @@
         updateBadges();
         
         closeModalBtn.disabled = false;
-        statusBadge.className = 'status-badge error';
-        statusBadge.innerHTML = '⚠️ 에러 발생';
+        setStatus('error', '에러 발생');
         copyErrorBtn.style.display = 'block';
         copyQABtn.style.display = 'block';
       }
       else if (msg.type === 'complete' || msg.type === 'export_complete') {
         closeModalBtn.disabled = false;
-        statusBadge.className = errorLogs.length === 0 ? 'status-badge success' : 'status-badge error';
-        statusBadge.innerHTML = errorLogs.length === 0 ? '✅ 완료' : '⚠️ 에러 있음';
+        setStatus(errorLogs.length === 0 ? 'success' : 'error', errorLogs.length === 0 ? '완료' : '에러 있음');
 
         if (msg.type === 'export_complete') {
           document.getElementById('modalTitle').textContent = '✅ 추출 완료';
