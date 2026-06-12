@@ -1,4 +1,4 @@
-# 🚀 MD to Figma: Global AI Prompt Guide (v2.0.0)
+# 🚀 MD to Figma: Global AI Prompt Guide (v2.0.1)
 
 Register your entire design system into Figma Variables & Styles in seconds. This guide helps you bridge the gap between your documentation and Figma using the power of AI.
 
