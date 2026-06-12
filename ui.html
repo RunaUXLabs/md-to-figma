@@ -128,20 +128,6 @@
       flex-direction: column;
     }
 
-    .header {
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .header h1 {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text-strong);
-      margin-bottom: 4px;
-    }
-
     .template-section {
       display: flex;
       gap: 8px;
@@ -614,8 +600,23 @@
 
 <body>
   <div class="template-section">
-    <button class="btn-template" id="downloadTemplateBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g opacity="0.8" style="stroke:var(--indigo-500)"><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" style="stroke:var(--gray-500)"/></svg></span>템플릿 받기</button>
-    <button class="btn-template" id="downloadGuideBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g opacity="0.8" style="stroke:var(--gray-500)"><path d="M12 7v14"/></g><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" style="stroke:var(--gray-600)"/></svg></span>AI 가이드</button>
+    <button class="btn-template" id="downloadTemplateBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24"
+          fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <g opacity="0.8" style="stroke:var(--indigo-500)">
+            <path d="M7 10l5 5 5-5" />
+            <path d="M12 15V3" />
+          </g>
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" style="stroke:var(--gray-500)" />
+        </svg></span>템플릿 받기</button>
+    <button class="btn-template" id="downloadGuideBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <g opacity="0.8" style="stroke:var(--gray-500)">
+            <path d="M12 7v14" />
+          </g>
+          <path
+            d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
+            style="stroke:var(--gray-600)" />
+        </svg></span>AI 가이드</button>
   </div>
 
   <div class="textarea-section">
@@ -625,7 +626,17 @@
 
   <div class="options-section">
     <div class="options-group">
-      <div class="options-title"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g opacity="0.8"><path d="M12 22V12" style="stroke:var(--gray-500)"/><path d="m3.3 7 8.7 5 8.7-5" style="stroke:var(--feedback-info)"/><path d="m7.5 4.27 9 5.15" style="stroke:var(--gray-500)"/></g><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" style="stroke:var(--gray-600)"/></svg></span>Variables (컬렉션 분리 생성)</div>
+      <div class="options-title"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <g opacity="0.8">
+              <path d="M12 22V12" style="stroke:var(--gray-500)" />
+              <path d="m3.3 7 8.7 5 8.7-5" style="stroke:var(--gray-500)" />
+              <path d="m7.5 4.27 9 5.15" style="stroke:var(--feedback-info)" />
+            </g>
+            <path
+              d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"
+              style="stroke:var(--gray-600)" />
+          </svg></span>Variables (컬렉션 분리 생성)</div>
       <div class="options-grid">
         <div class="option-item"><input type="checkbox" id="optVarColors" checked><label
             for="optVarColors">Colors</label></div>
@@ -639,7 +650,18 @@
     </div>
     <div class="options-divider"></div>
     <div class="options-group">
-      <div class="options-title"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z" style="stroke:var(--gray-600)"/><g opacity="0.8" stroke="none"><circle cx="13.5" cy="6.5" r="1.4" style="fill:var(--feedback-info)"/><circle cx="17.5" cy="10.5" r="1.4" style="fill:var(--feedback-success)"/><circle cx="6.5" cy="12.5" r="1.4" style="fill:var(--feedback-warning)"/><circle cx="8.5" cy="7.5" r="1.4" style="fill:var(--feedback-error)"/></g></svg></span>Styles (Variable 연동)</div>
+      <div class="options-title"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"
+              style="stroke:var(--gray-600)" />
+            <g opacity="0.8" stroke="none">
+              <circle cx="13.5" cy="6.5" r="1.4" style="fill:var(--feedback-info)" />
+              <circle cx="17.5" cy="10.5" r="1.4" style="fill:var(--feedback-success)" />
+              <circle cx="6.5" cy="12.5" r="1.4" style="fill:var(--feedback-warning)" />
+              <circle cx="8.5" cy="7.5" r="1.4" style="fill:var(--feedback-error)" />
+            </g>
+          </svg></span>Styles (Variable 연동)</div>
       <div class="options-grid">
         <div class="option-item"><input type="checkbox" id="optColorStyles"><label for="optColorStyles">Color
             Styles</label></div>
@@ -654,8 +676,26 @@
   </div>
 
   <div class="button-section">
-    <button class="btn btn-primary" id="generateBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g opacity="0.8" style="stroke:var(--gray-300)"><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g><g opacity="0.8" style="stroke:var(--red-500)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/></g><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" style="stroke:var(--gray-300)"/></svg></span>등록 (MD → Figma)</button>
-    <button class="btn btn-export" id="exportBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g opacity="0.8" style="stroke:var(--indigo-500)"><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" style="stroke:var(--gray-300)"/></svg></span>추출 (Figma → MD)</button>
+    <button class="btn btn-primary" id="generateBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <g opacity="0.8" style="stroke:var(--gray-300)">
+            <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+            <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+          </g>
+          <g opacity="0.8" style="stroke:var(--red-500)">
+            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+          </g>
+          <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"
+            style="stroke:var(--gray-300)" />
+        </svg></span>등록 (MD → Figma)</button>
+    <button class="btn btn-export" id="exportBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <g opacity="0.8" style="stroke:var(--indigo-500)">
+            <path d="M17 8l-5-5-5 5" />
+            <path d="M12 3v12" />
+          </g>
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" style="stroke:var(--gray-300)" />
+        </svg></span>추출 (Figma → MD)</button>
   </div>
 
   <div class="modal-overlay" id="modalOverlay">
@@ -663,11 +703,24 @@
       <div class="modal-header">
         <div class="modal-title-row">
           <span class="modal-title" id="modalTitle">실행 리포트</span>
-          <span class="status-badge running" id="statusBadge"><svg class="ic spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg><span>작업 중</span></span>
+          <span class="status-badge running" id="statusBadge"><svg class="ic spin" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+            </svg><span>작업 중</span></span>
         </div>
         <div class="tabs">
-          <div class="tab" id="tabQA" onclick="switchTab('qa')"><span class="ico"><svg width="10" height="10" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke-width="2" style="stroke:var(--feedback-info-surface)"/><circle cx="12" cy="12" r="6" stroke="none" style="fill:var(--feedback-info)"/></svg></span>실행 로그/QA <span class="tab-badge" id="badgeQA">0</span></div>
-          <div class="tab" id="tabError" onclick="switchTab('error')"><span class="ico"><svg width="10" height="10" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke-width="2" style="stroke:var(--feedback-error-surface)"/><circle cx="12" cy="12" r="6" stroke="none" style="fill:var(--feedback-error)"/></svg></span>해결 필요 <span class="tab-badge" id="badgeError">0</span></div>
+          <div class="tab" id="tabQA" onclick="switchTab('qa')"><span class="ico"><svg width="10" height="10"
+                viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" fill="none" stroke-width="2"
+                  style="stroke:var(--feedback-info-surface)" />
+                <circle cx="12" cy="12" r="6" stroke="none" style="fill:var(--feedback-info)" />
+              </svg></span>실행 로그/QA<span class="tab-badge" id="badgeQA">0</span></div>
+          <div class="tab" id="tabError" onclick="switchTab('error')"><span class="ico"><svg width="10" height="10"
+                viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" fill="none" stroke-width="2"
+                  style="stroke:var(--feedback-error-surface)" />
+                <circle cx="12" cy="12" r="6" stroke="none" style="fill:var(--feedback-error)" />
+              </svg></span>해결 필요<span class="tab-badge" id="badgeError">0</span></div>
         </div>
       </div>
       <div class="tab-content" id="contentQA"></div>
@@ -1003,7 +1056,7 @@
         contentError.appendChild(entry);
         contentError.scrollTop = contentError.scrollHeight;
         updateBadges();
-        
+
         closeModalBtn.disabled = false;
         setStatus('error', '에러 발생');
         copyErrorBtn.style.display = 'block';
@@ -1026,7 +1079,7 @@
           var summary = "\n--- [등록 요약] ---\n";
           summary += "• 배리어블: Color(" + msg.results.variables.colors + "), Spacing(" + msg.results.variables.spacing + "), Radius(" + msg.results.variables.radius + "), Typography(" + msg.results.variables.typography + ")\n";
           summary += "• 스타일: Color(" + msg.results.styles.color + "), Text(" + msg.results.styles.text + "), Effect(" + msg.results.styles.effect + "), Grid(" + msg.results.styles.grid + ")\n";
-          
+
           qaLogs.push(summary);
           var entry = document.createElement('div');
           entry.className = 'log-entry success';
