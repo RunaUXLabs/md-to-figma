@@ -6,13 +6,13 @@ Figma plugin that synchronizes your entire design system between Markdown and Fi
 Create Variables & Styles from MD, or export your existing Figma system back to MD — with smart bindings and zero configuration.
 
 [![Figma Plugin](https://img.shields.io/badge/Figma-Plugin-blue?logo=figma)](https://www.figma.com/community/plugin/YOUR_PLUGIN_ID)
-![Version](https://img.shields.io/badge/version-2.0.0-brightgreen)
+![Version](https://img.shields.io/badge/version-2.0.1-brightgreen)
 
 ![cover](./resources/cover_v2.png)
 
 ---
 
-## 💡 MD to Figma를 쓰는 이유 (v2.0.0 Major Update)
+## 💡 MD to Figma를 쓰는 이유
 
 1. **AI 워크플로우 최적화**: AI가 생성한 `DESIGN.md`를 피그마에 즉시 무료로 이식합니다. MCP의 토큰 낭비 없이 대규모 시스템을 구축하세요.
 2. **양방향 동기화 (Bidirectional)**: 피그마에 구축된 복잡한 변수와 스타일을 다시 마크다운 문서로 정밀하게 추출(Export)할 수 있습니다.
@@ -25,7 +25,7 @@ AI / Documentation  ⇄  DESIGN.md  ⇄  MD to Figma  ⇄  Figma Variables & Sty
 
 ---
 
-## ✨ Key Features (v2.0.0)
+## ✨ Key Features
 
 ### 🔄 1. The Bidirectional Engine
 - **MD → Figma (Generate)**: 마크다운 테이블을 분석하여 변수(Variables)와 스타일(Styles)을 완벽한 계층 구조로 자동 생성합니다.
@@ -93,8 +93,11 @@ md-to-figma/
 ├── .gitignore                   # manifest.json excluded
 ├── README.md
 └── resources/
-    ├── DESIGN-TEMPLATE.md       # DESIGN.md template (v2.0.0)
-    ├── AI-PROMPT-GUIDE.md       # AI prompt guide (v2.0.0)
+    ├── DS/                      # Design System Specifications
+    │   ├── MD-TO-FIGMA-FOUNDATION.md # Foundation tokens
+    │   └── MD-TO-FIGMA-COMPONENTS.md # Component Specifications
+    ├── DESIGN-TEMPLATE.md       # DESIGN.md template (v2.0.1)
+    ├── AI-PROMPT-GUIDE.md       # AI prompt guide (v2.0.1)
     ├── TEMPLATED-SAMPLE.md      # Sample output generated from the template
     ├── cover_v2.png             # Plugin cover image
     ├── Icon_v2.png              # Plugin icon
@@ -133,7 +136,23 @@ Then replace `YOUR_PLUGIN_ID` in `manifest.json` with your actual Figma plugin I
 
 ---
 
-## v2.0.0 릴리즈 노트 (Latest)
+## v2.0.1 릴리즈 노트 (Latest)
+
+### 🎨 UI Refinement & Design System Documentation
+플러그인의 시각적 완성도를 높이고, 개발자와 디자이너 간의 협업을 위한 디자인 시스템 명세를 추가했습니다.
+
+#### **1. UI 고도화 및 최적화**
+- **토큰 정규화**: 파편화된 CSS 토큰을 v2.0.1 표준 체계로 정규화하여 유지보수성을 강화했습니다.
+- **폐쇄망 환경 대응**: 외부 폰트 의존성을 제거하고 OS별 최적화된 **시스템 폰트 폴백 스택**을 적용했습니다.
+- **동적 아이콘 시스템**: 작업 상태에 따라 실시간으로 반응하는 SVG 아이콘 및 애니메이션 로직을 도입했습니다.
+
+#### **2. MD to Figma 제품 디자인 시스템(DS) 명세 추가**
+- **Foundation 명세**: 컬러, 간격, 곡률, 타이포그래피 등 시스템의 기초가 되는 토큰 정의서를 제공합니다. (`resources/DS/MD-TO-FIGMA-FOUNDATION.md`)
+- **Component 명세**: 7개의 기본 컴포넌트와 4개의 복합 컴포넌트(총 11개)에 대한 상세 API 및 슬롯 아키텍처를 문서화했습니다. (`resources/DS/MD-TO-FIGMA-COMPONENTS.md`)
+
+---
+
+## v2.0.0 릴리즈 노트
 
 ### 🚀 대규모 업데이트: The Bidirectional Semantic Engine
 v1.6.0 이후의 모든 개발 성과를 집약한 대규모 메이저 업데이트입니다. 텍스트 등록을 넘어선 디자인 시스템의 완전한 관리를 지향합니다.
