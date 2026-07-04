@@ -6,7 +6,7 @@ Figma plugin that synchronizes your entire design system between Markdown and Fi
 Create Variables & Styles from MD, or export your existing Figma system back to MD — with smart bindings and zero configuration.
 
 [![Figma Plugin](https://img.shields.io/badge/Figma-Plugin-blue?logo=figma)](https://www.figma.com/community/plugin/YOUR_PLUGIN_ID)
-![Version](https://img.shields.io/badge/version-2.0.1-brightgreen)
+![Version](https://img.shields.io/badge/version-2.0.2-brightgreen)
 
 ![cover](./resources/cover_v2.png)
 
@@ -96,8 +96,8 @@ md-to-figma/
     ├── DS/                      # Design System Specifications
     │   ├── MD-TO-FIGMA-FOUNDATION.md # Foundation tokens
     │   └── MD-TO-FIGMA-COMPONENTS.md # Component Specifications
-    ├── DESIGN-TEMPLATE.md       # DESIGN.md template (v2.0.1)
-    ├── AI-PROMPT-GUIDE.md       # AI prompt guide (v2.0.1)
+    ├── DESIGN-TEMPLATE.md       # DESIGN.md template (v2.0.2)
+    ├── AI-PROMPT-GUIDE.md       # AI prompt guide (v2.0.2)
     ├── TEMPLATED-SAMPLE.md      # Sample output generated from the template
     ├── cover_v2.png             # Plugin cover image
     ├── Icon_v2.png              # Plugin icon
@@ -136,7 +136,23 @@ Then replace `YOUR_PLUGIN_ID` in `manifest.json` with your actual Figma plugin I
 
 ---
 
-## v2.0.1 릴리즈 노트 (Latest)
+## v2.0.2 릴리즈 노트 (Latest)
+
+### 🐛 MD 추출 버그 해결 및 네이밍 매칭 최적화
+피그마 플러그인의 양방향 데이터 내보내기(Export)와 가져오기(Import) 네이밍 매칭 안정성을 강화했습니다.
+
+#### **1. MD 추출(Export) 포맷 정상화**
+- **변수 카테고리 분리**: 내보내기 시 Spacing, Radius, Colors를 Primitive와 Semantic 테이블로 완전 분리하여 내보냅니다.
+- **접두어 제거**: 내보내는 마크다운의 토큰 이름 및 참조 에일리어스 값에서 `primitive/`, `semantic/` 접두어를 정리하여 내보내도록 하여 재가져오기 시 토큰이 중복 생성되는 현상을 차단했습니다.
+- **다중 모드 및 타이포그래피 추적**: 세맨틱 컬러의 다중 모드(Light/Dark) 값을 동시에 내보내며, 텍스트 스타일 내보내기 시 스타일에 바인딩된 최신 변수 값을 직접 추적하여 내보집니다.
+
+#### **2. 슬래시(/) 및 하이픈(-) 네이밍 호환성 최적화 (Fuzzy Match)**
+- 피그마의 다중 그룹핑용 슬래시(`/`)와 코드의 하이픈 (`-`) 기호 차이를 매칭 시 메모리 내에서 정규화하여 대조하는 로직을 적용했습니다.
+- 기존에 피그마 내에 슬래시나 하이픈으로 정의되어 있던 배리어블의 원래 이름과 폴더 구조를 파괴하지 않고 안전하게 **값만 업데이트**하도록 개선했습니다.
+
+---
+
+## v2.0.1 릴리즈 노트 (Old)
 
 ### 🎨 UI Refinement & Design System Documentation
 플러그인의 시각적 완성도를 높이고, 개발자와 디자이너 간의 협업을 위한 디자인 시스템 명세를 추가했습니다.

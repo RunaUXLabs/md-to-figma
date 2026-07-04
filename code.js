@@ -1,5 +1,5 @@
 /**
- * MD to Figma - v2.0.1 Official Stable Release
+ * MD to Figma - v2.0.2 Official Stable Release
  * The Complete Bidirectional Semantic Design System Engine
  * Featuring Smart Update & AI-Ready QA Reporting
  */
@@ -79,6 +79,14 @@ const getSemanticWeightName = (w) => {
   return style.toLowerCase();
 };
 
+const cleanTokenName = (name) => {
+  return String(name || "").replace(/^(primitive|semantic)\//i, '');
+};
+
+const normalizeName = (name) => {
+  return cleanTokenName(name).toLowerCase().replace(/[\s\-_\/]/g, "");
+};
+
 function parseMD(content) {
   const res = { colors: { primitive: [], semantic: [] }, spacing: { primitive: [], semantic: [] }, radius: { primitive: [], semantic: [] }, typography: [], effects: [], grid: [] };
   const lines = content.split('\n');
@@ -142,24 +150,27 @@ async function createAllVariables(parsed, options) {
   const allExisting = await figma.variables.getLocalVariablesAsync();
   const collections = await figma.variables.getLocalVariableCollectionsAsync();
   
-  // Build a global map of variables by name for smart matching
   const globalVarMap = new Map();
+  const normalizedVarMap = new Map();
+  
   allExisting.forEach(v => {
-    // Store by both full path and simple name for fuzzy matching
     globalVarMap.set(v.name.toLowerCase(), v);
     const simpleName = v.name.split('/').pop().toLowerCase();
     if (!globalVarMap.has(simpleName)) globalVarMap.set(simpleName, v);
+    
+    const norm = normalizeName(v.name);
+    if (norm) normalizedVarMap.set(norm, v);
   });
 
   const loggedMatches = new Set();
-  // Track new creations by category for a cleaner summary
   const newCreations = { Color: 0, Spacing: 0, Radius: 0, Typography: 0 };
   
   const getOrCreateSmartVariable = (name, type, defaultColName) => {
     const lowName = name.toLowerCase();
     const simpleName = name.split('/').pop().toLowerCase();
+    const normName = normalizeName(name);
     
-    let v = globalVarMap.get(lowName) || globalVarMap.get(simpleName);
+    let v = globalVarMap.get(lowName) || globalVarMap.get(simpleName) || normalizedVarMap.get(normName);
     if (v) {
       if (!loggedMatches.has(v.id)) {
         const col = collections.find(c => c.id === v.variableCollectionId);
@@ -176,12 +187,12 @@ async function createAllVariables(parsed, options) {
     }
     const newVar = figma.variables.createVariable(name, col, type);
     
-    // Increment counter instead of logging every single new token
     if (newCreations[defaultColName] !== undefined) {
       newCreations[defaultColName]++;
     }
     
     globalVarMap.set(lowName, newVar);
+    normalizedVarMap.set(normName, newVar);
     loggedMatches.add(newVar.id);
     return newVar;
   };
@@ -190,7 +201,6 @@ async function createAllVariables(parsed, options) {
     const col = collections.find(c => c.id === variable.variableCollectionId);
     if (!col || !col.modes || col.modes.length === 0) return;
     
-    // If the requested mode index doesn't exist, fallback to the first mode
     const modeId = col.modes[modeIndex] ? col.modes[modeIndex].modeId : col.modes[0].modeId;
     try {
       variable.setValueForMode(modeId, value);
@@ -212,7 +222,10 @@ async function createAllVariables(parsed, options) {
       
       const resolveVal = (input) => {
         if (!input) return null;
-        const targetVar = primMap.get(input) || globalVarMap.get(input.toLowerCase());
+        const normInput = normalizeName(input);
+        const targetVar = primMap.get(input) || 
+                          globalVarMap.get(input.toLowerCase()) || 
+                          normalizedVarMap.get(normInput);
         if (targetVar) return { type: "VARIABLE_ALIAS", id: targetVar.id };
         if (input.startsWith("#")) return hexToRgb(input);
         if (input.startsWith("rgb")) return parseRgbaColor(input);
@@ -258,7 +271,8 @@ async function createAllVariables(parsed, options) {
     for (var i = 0; i < data.semantic.length; i++) {
       const s = data.semantic[i];
       const v = getOrCreateSmartVariable("semantic/" + s.token, "FLOAT", colName);
-      const targetVar = pMap.get(s.alias);
+      const normAlias = normalizeName(s.alias);
+      const targetVar = pMap.get(s.alias) || normalizedVarMap.get(normAlias);
       if (targetVar) safeSetValue(v, { type: "VARIABLE_ALIAS", id: targetVar.id }, 0);
       count++;
     }
@@ -444,10 +458,12 @@ async function generateExportMD() {
 
   let md = "<!-- [MD_TO_FIGMA_EXPORT_LOG] -->\n\n# Design System\n\n";
 
-  // Group variables by their potential category based on type and name/collection
-  const colorVars = [];
-  const spacingVars = [];
-  const radiusVars = [];
+  const primitiveColors = [];
+  const semanticColors = [];
+  const primitiveSpacing = [];
+  const semanticSpacing = [];
+  const primitiveRadius = [];
+  const semanticRadius = [];
 
   allVars.forEach(v => {
     const col = collections.find(c => c.id === v.variableCollectionId);
@@ -455,45 +471,117 @@ async function generateExportMD() {
     const varName = v.name.toLowerCase();
 
     if (v.resolvedType === "COLOR") {
-      colorVars.push(v);
+      if (v.name.startsWith("primitive/")) {
+        primitiveColors.push(v);
+      } else if (v.name.startsWith("semantic/")) {
+        semanticColors.push(v);
+      } else {
+        if (colName.includes("color")) primitiveColors.push(v);
+        else semanticColors.push(v);
+      }
     } else if (v.resolvedType === "FLOAT") {
-      if (colName.includes("spacing") || varName.includes("spacing") || varName.includes("gap") || varName.includes("padding")) {
-        spacingVars.push(v);
-      } else if (colName.includes("radius") || varName.includes("radius") || varName.includes("corner") || varName.includes("round")) {
-        radiusVars.push(v);
+      const isSpacing = colName.includes("spacing") || varName.includes("spacing") || varName.includes("gap") || varName.includes("padding");
+      const isRadius = colName.includes("radius") || varName.includes("radius") || varName.includes("corner") || varName.includes("round");
+
+      if (isSpacing) {
+        if (v.name.startsWith("primitive/")) primitiveSpacing.push(v);
+        else semanticSpacing.push(v);
+      } else if (isRadius) {
+        if (v.name.startsWith("primitive/")) primitiveRadius.push(v);
+        else semanticRadius.push(v);
       }
     }
   });
 
-  const extractVariableData = (vars, categoryName, isColor) => {
-    if (vars.length === 0) return "";
-    let sMd = "## " + categoryName + "\n\n### Tokens\n";
-    if (isColor) sMd += "| Token | Value | Description |\n|---|---|---|\n";
-    else sMd += "| Token | Value | Description |\n|---|---|---|\n";
+  const resolveExportValue = (val, isColor) => {
+    if (val === undefined || val === null) return "-";
+    if (val.type === "VARIABLE_ALIAS") {
+      const target = varMapById.get(val.id);
+      return target ? cleanTokenName(target.name) : "[Alias]";
+    }
+    if (isColor) {
+      return rgbToHex(val);
+    }
+    return val + "px";
+  };
 
-    let rows = [];
-    vars.forEach(v => {
+  // 1. Colors Section
+  md += "## Colors\n\n";
+  if (primitiveColors.length > 0) {
+    md += "### Primitive\n\n| Token | Value | Description |\n|---|---|---|\n";
+    primitiveColors.forEach(v => {
       const col = collections.find(c => c.id === v.variableCollectionId);
       const mId = col.modes[0].modeId;
       const val = v.valuesByMode[mId];
-      
-      let displayVal = "";
-      if (val && val.type === "VARIABLE_ALIAS") {
-        const target = varMapById.get(val.id);
-        displayVal = target ? target.name : "[Alias]";
-      } else {
-        displayVal = isColor ? rgbToHex(val) : val + "px";
-      }
-      
-      rows.push("| " + v.name + " | " + displayVal + " | " + (v.description || "-") + " |");
+      md += "| " + cleanTokenName(v.name) + " | " + resolveExportValue(val, true) + " | " + (v.description || "-") + " |\n";
     });
-    
-    return sMd + rows.join("\n") + "\n\n";
-  };
+    md += "\n";
+  }
 
-  md += extractVariableData(colorVars, "Colors", true);
-  md += extractVariableData(spacingVars, "Spacing", false);
-  md += extractVariableData(radiusVars, "Radius", false);
+  if (semanticColors.length > 0) {
+    md += "### Semantic\n\n| Token | Light | Dark | Description |\n|---|---|---|---|\n";
+    semanticColors.forEach(v => {
+      const col = collections.find(c => c.id === v.variableCollectionId);
+      const mIdLight = col.modes[0].modeId;
+      const valLight = v.valuesByMode[mIdLight];
+      const displayLight = resolveExportValue(valLight, true);
+
+      const mIdDark = col.modes.length > 1 ? col.modes[1].modeId : mIdLight;
+      const valDark = v.valuesByMode[mIdDark];
+      const displayDark = resolveExportValue(valDark, true);
+
+      md += "| " + cleanTokenName(v.name) + " | " + displayLight + " | " + displayDark + " | " + (v.description || "-") + " |\n";
+    });
+    md += "\n";
+  }
+
+  // 2. Spacing Section
+  md += "## Spacing\n\n";
+  if (primitiveSpacing.length > 0) {
+    md += "### Primitive\n\n| Token | Value | Description |\n|---|---|---|\n";
+    primitiveSpacing.forEach(v => {
+      const col = collections.find(c => c.id === v.variableCollectionId);
+      const mId = col.modes[0].modeId;
+      const val = v.valuesByMode[mId];
+      md += "| " + cleanTokenName(v.name) + " | " + resolveExportValue(val, false) + " | " + (v.description || "-") + " |\n";
+    });
+    md += "\n";
+  }
+
+  if (semanticSpacing.length > 0) {
+    md += "### Semantic\n\n| Token | Alias | Description |\n|---|---|---|\n";
+    semanticSpacing.forEach(v => {
+      const col = collections.find(c => c.id === v.variableCollectionId);
+      const mId = col.modes[0].modeId;
+      const val = v.valuesByMode[mId];
+      md += "| " + cleanTokenName(v.name) + " | " + resolveExportValue(val, false) + " | " + (v.description || "-") + " |\n";
+    });
+    md += "\n";
+  }
+
+  // 3. Radius Section
+  md += "## Radius\n\n";
+  if (primitiveRadius.length > 0) {
+    md += "### Primitive\n\n| Token | Value | Description |\n|---|---|---|\n";
+    primitiveRadius.forEach(v => {
+      const col = collections.find(c => c.id === v.variableCollectionId);
+      const mId = col.modes[0].modeId;
+      const val = v.valuesByMode[mId];
+      md += "| " + cleanTokenName(v.name) + " | " + resolveExportValue(val, false) + " | " + (v.description || "-") + " |\n";
+    });
+    md += "\n";
+  }
+
+  if (semanticRadius.length > 0) {
+    md += "### Semantic\n\n| Token | Alias | Description |\n|---|---|---|\n";
+    semanticRadius.forEach(v => {
+      const col = collections.find(c => c.id === v.variableCollectionId);
+      const mId = col.modes[0].modeId;
+      const val = v.valuesByMode[mId];
+      md += "| " + cleanTokenName(v.name) + " | " + resolveExportValue(val, false) + " | " + (v.description || "-") + " |\n";
+    });
+    md += "\n";
+  }
 
   const tStyles = await figma.getLocalTextStylesAsync();
   if (tStyles.length > 0) {
@@ -521,11 +609,65 @@ async function generateExportMD() {
       const g = parts.length > 1 ? parts[0] : "default";
       const t = parts.length > 1 ? parts.slice(1).join("/") : s.name;
       if (!gs[g]) gs[g] = [];
-      const lh = s.lineHeight.unit === "PERCENT" ? Math.round(s.lineHeight.value) + "%" : roundVal(s.lineHeight.value) + "px";
-      const ls = roundVal(s.letterSpacing.value) + (s.letterSpacing.unit === "PIXELS" ? "px" : "%");
+
+      let sizeVal = s.fontSize;
+      if (s.boundVariables && s.boundVariables.fontSize) {
+        const boundVar = varMapById.get(s.boundVariables.fontSize.id);
+        if (boundVar) {
+          const col = collections.find(c => c.id === boundVar.variableCollectionId);
+          const mId = col ? col.modes[0].modeId : null;
+          if (mId) {
+            const vVal = boundVar.valuesByMode[mId];
+            if (vVal !== undefined) sizeVal = parseFloat(vVal);
+          }
+        }
+      }
+
+      let lhVal = s.lineHeight;
+      if (s.boundVariables && s.boundVariables.lineHeight) {
+        const boundVar = varMapById.get(s.boundVariables.lineHeight.id);
+        if (boundVar) {
+          const col = collections.find(c => c.id === boundVar.variableCollectionId);
+          const mId = col ? col.modes[0].modeId : null;
+          if (mId) {
+            const vVal = boundVar.valuesByMode[mId];
+            if (vVal !== undefined) lhVal = { value: parseFloat(vVal), unit: "PIXELS" };
+          }
+        }
+      }
+
+      let lsVal = s.letterSpacing;
+      if (s.boundVariables && s.boundVariables.letterSpacing) {
+        const boundVar = varMapById.get(s.boundVariables.letterSpacing.id);
+        if (boundVar) {
+          const col = collections.find(c => c.id === boundVar.variableCollectionId);
+          const mId = col ? col.modes[0].modeId : null;
+          if (mId) {
+            const vVal = boundVar.valuesByMode[mId];
+            if (vVal !== undefined) lsVal = { value: parseFloat(vVal), unit: "PIXELS" };
+          }
+        }
+      }
+
+      const lh = lhVal.unit === "PERCENT" ? Math.round(lhVal.value) + "%" : roundVal(lhVal.value) + "px";
+      const ls = roundVal(lsVal.value) + (lsVal.unit === "PIXELS" ? "px" : "%");
       
-      const normalizedStyle = s.fontName.style.toLowerCase().replace(/[\s\-_]/g, "");
-      const semanticWeight = revWeightMap[normalizedStyle] || s.fontName.style;
+      let semanticWeight = s.fontName.style;
+      if (s.boundVariables && s.boundVariables.fontStyle) {
+        const boundVar = varMapById.get(s.boundVariables.fontStyle.id);
+        if (boundVar) {
+          const col = collections.find(c => c.id === boundVar.variableCollectionId);
+          const mId = col ? col.modes[0].modeId : null;
+          if (mId) {
+            const styleVal = boundVar.valuesByMode[mId];
+            const normalizedStyle = String(styleVal || "").toLowerCase().replace(/[\s\-_]/g, "");
+            semanticWeight = revWeightMap[normalizedStyle] || styleVal;
+          }
+        }
+      } else {
+        const normalizedStyle = s.fontName.style.toLowerCase().replace(/[\s\-_]/g, "");
+        semanticWeight = revWeightMap[normalizedStyle] || s.fontName.style;
+      }
       
       let exportedFontFamily = s.fontName.family;
       if (s.boundVariables && s.boundVariables.fontFamily) {
@@ -535,7 +677,7 @@ async function generateExportMD() {
         }
       }
 
-      gs[g].push("| " + t + " | " + exportedFontFamily + " | " + roundVal(s.fontSize) + "px | " + semanticWeight + " | " + lh + " | " + ls + " |");
+      gs[g].push("| " + t + " | " + exportedFontFamily + " | " + roundVal(sizeVal) + "px | " + semanticWeight + " | " + lh + " | " + ls + " |");
     });
     const groups = Object.keys(gs);
     for (var i = 0; i < groups.length; i++) {
@@ -545,12 +687,12 @@ async function generateExportMD() {
   }
 
   const paintStyles = await figma.getLocalPaintStylesAsync();
-  if (paintStyles.length > 0 && colorVars.length === 0) {
+  if (paintStyles.length > 0 && primitiveColors.length === 0 && semanticColors.length === 0) {
     md += "## Colors (from Styles)\n\n| Token | Value | Description |\n|---|---|---|\n";
     paintStyles.forEach(ps => {
       const p = ps.paints[0];
       if (p && p.type === "SOLID") {
-        md += "| " + ps.name + " | " + rgbToHex(p.color) + " | " + (ps.description || "-") + " |\n";
+        md += "| " + cleanTokenName(ps.name) + " | " + rgbToHex(p.color) + " | " + (ps.description || "-") + " |\n";
       }
     });
     md += "\n";
@@ -563,7 +705,7 @@ async function generateExportMD() {
       if (s.effects.length > 0) {
         const e = s.effects[0];
         if (e.type === "DROP_SHADOW" || e.type === "INNER_SHADOW") {
-          md += "| " + s.name + " | " + (e.type === "DROP_SHADOW" ? "drop-shadow" : "inner-shadow") + " | " + rgbaToString(e.color) + " | " + roundVal(e.offset.x) + "px | " + roundVal(e.offset.y) + "px | " + roundVal(e.radius) + "px | " + roundVal(e.spread) + "px |\n";
+          md += "| " + cleanTokenName(s.name) + " | " + (e.type === "DROP_SHADOW" ? "drop-shadow" : "inner-shadow") + " | " + rgbaToString(e.color) + " | " + roundVal(e.offset.x) + "px | " + roundVal(e.offset.y) + "px | " + roundVal(e.radius) + "px | " + roundVal(e.spread) + "px |\n";
         }
       }
     });
@@ -577,9 +719,9 @@ async function generateExportMD() {
       if (s.layoutGrids.length > 0) {
         const g = s.layoutGrids[0];
         if (g.pattern === "GRID") {
-          md += "| " + s.name + " | grid | " + roundVal(g.sectionSize) + "px | - | - | - | - |\n";
+          md += "| " + cleanTokenName(s.name) + " | grid | " + roundVal(g.sectionSize) + "px | - | - | - | - |\n";
         } else {
-          md += "| " + s.name + " | " + g.pattern.toLowerCase() + " | " + g.count + " | auto | " + roundVal(g.gutterSize) + "px | " + roundVal(g.offset) + "px | " + g.alignment.toLowerCase() + " |\n";
+          md += "| " + cleanTokenName(s.name) + " | " + g.pattern.toLowerCase() + " | " + g.count + " | auto | " + roundVal(g.gutterSize) + "px | " + roundVal(g.offset) + "px | " + g.alignment.toLowerCase() + " |\n";
         }
       }
     });
