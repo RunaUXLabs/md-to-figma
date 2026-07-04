@@ -1,7 +1,7 @@
 # Design System
 
 <!--
-📌 작성 규칙 (v2.0.1 Official Release)
+📌 작성 규칙 (v2.0.2 Official Release)
 
 [형식]
 - 컬러: HEX 6자리 (#ffffff) 또는 rgba(0,0,0,0.1)

@@ -1,4 +1,4 @@
-# 🧩 Component Specifications: MD to Figma (v2.0.1)
+# 🧩 Component Specifications: MD to Figma (v2.0.2)
 
 > **Description:** MD to Figma 플러그인의 UI를 구성하는 11개의 핵심 컴포넌트 명세입니다.
 > **적용 범위 (Scope):** 플러그인 메인 패널, 실행 모달, 시스템 알림.
