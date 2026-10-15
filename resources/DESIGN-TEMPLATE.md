@@ -1,111 +1,152 @@
 # Design System
 
 <!--
-📌 작성 규칙 (v2.0.2 Official Release)
+MD to Figma 입력 템플릿 — 아래 데이터는 형식을 보여주는 예시입니다.
 
-[형식]
-- 컬러: HEX 6자리 (#ffffff) 또는 rgba(0,0,0,0.1)
-- 크기: 숫자+px 필수 (16px, -1.5px)
-- LineHeight (중요): 
-  1. % 또는 소수점(1.5 등): 피그마 스타일에 %로 직접 입력됨 (바인딩 해제, 퍼센트 값 보존)
-  2. px 명시 (24px 등): 피그마 배리어블과 스타일이 바인딩됨 (시스템 일관성 유지)
-- Weight: 숫자(400, 700) 또는 이름(Regular, Bold). 피그마 스타일명과 일치 권장.
-- 빈 값: - 로 표기
-
-[시멘틱 타이포그래피 규칙]
-- FontFamily 배리어블은 'fontFamily/primary'(의도), 'fontFamily/secondary'(실제 폴백) 이름으로 자동 생성됩니다.
-- MD에 적힌 폰트명이 primary 변수의 '값'으로 할당되어 디자인 의도를 보존합니다.
-- 폰트가 시스템에 없을 경우 secondary(Inter)로 지능적 바인딩 전환이 일어나 취소선 없는 환경을 구축합니다.
-- FontWeight 배리어블은 'fontWeight/400' 처럼 입력 수치를 이름으로 생성하며 스타일명(Regular 등)이 값으로 할당됩니다.
-
-[토큰 구조]
-- Primitive: 기본 색상 팔레트 (원시값, 모드 무관)
-- Semantic: 용도별 색상 (Light/Dark 모드별 Alias 지정)
-
-[Typography 그룹핑]
-- ### 그룹명 으로 그룹 구분 (예: ### Display)
-- 예: ### Display 아래 xl -> display/xl
+[AI conversion rules]
+Convert the user's data to this schema and follow their requested changes.
+Do not copy example data or invent missing items. Preserve existing names, modes, types, categories, values and references unless asked to change them.
+Keep schema headings, column headers, JSON keys and enums unchanged.
+Return one complete importable MD block; explain changes and unresolved points outside it in the user's language.
+Detailed prompts and workflow: AI-PROMPT-GUIDE.md.
 -->
 
-
-## Colors
-
-### Primitive
-
-| Token | Value | Description |
-|-------|-------|-------------|
-| coral/500 | #cc785c | 코랄 기본 |
-| coral/600 | #a9583e | 코랄 어두움 |
-| coral/300 | #e8a990 | 코랄 밝음 |
-| navy/900 | #181715 | 네이비 가장 어두움 |
-| neutral/white | #ffffff | 화이트 |
-| neutral/gray-900 | #171717 | 다크 그레이 가장 어두움 |
-
-### Semantic
-
-| Token | Light | Dark | Description |
-|-------|-------|------|-------------|
-| brand/primary | coral/500 | coral/500 | 메인 브랜드 |
-| surface/canvas | neutral/white | neutral/gray-900 | 기본 배경 |
-| text/default | navy/900 | neutral/white | 기본 텍스트 |
+이 파일은 데이터 형식과 필드 설명을 담은 참고 템플릿입니다. 필요한 섹션만 사용하세요.
+기존 자료와 함께 AI에 전달할 수 있으며, 상세 요청 예시는 AI-PROMPT-GUIDE.md를 참고하세요.
 
 
-## Spacing
+## Variable Modes
 
-### Primitive
+<!--
+[변수 형식 선택]
+1. Variable Modes 표가 있으면 그 표만 변수 생성·수정의 기준으로 사용한다.
+   아래 Colors/Spacing/Radius/Motion 요약 표를 수정해도 변수 변경에 사용되지 않는다.
+2. 사용자 지정 모드와 모든 변수 타입은 Variable Modes로 작성하는 것을 권장한다.
+3. 구버전 표도 지원한다. 기존 Colors의 Primitive(Value)/Semantic(Light, Dark),
+   Spacing·Radius의 Primitive(Value)/Semantic(Alias), Typography 표 형식을 유지할 수 있다.
+   자유로운 모드가 필요하면 Variable Modes로 변환하고 모든 모드별 값을 명시한다.
+4. Variable Modes를 선택했다면 Typography 표는 텍스트 스타일 정의로만 사용한다.
+   이 표에만 있는 폰트 크기·행간·자간은 자동으로 모드별 변수로 생성되지 않는다.
+5. 필요하지 않은 섹션과 행은 제거해도 된다. 모든 카테고리를 채울 필요가 없다.
+   선택돼 있어도 정의가 없는 항목은 처리하지 않는다.
 
-| Token | Value | Description |
-|-------|-------|-------------|
-| space-16 | 16px | 기본 단위 |
+[Variable Modes의 7개 열]
+열 이름과 순서: Category, Collection, Token, Type, Mode, Value, Description.
+Category: colors / spacing / radius / typography / motion. 선택 체크박스와 연결된다.
+Collection, Token, Mode, Description: JSON 문자열. 큰따옴표를 반드시 포함한다.
+Type과 Value:
+- COLOR: 0~1 범위 RGBA 객체. 예: {"r":1,"g":1,"b":1,"a":1}. HEX 문자열을 쓰지 않는다.
+- FLOAT: 단위 없는 숫자. 16px가 아니라 16.
+- STRING: "Inter", "Regular" 같은 JSON 문자열.
+- BOOLEAN: true 또는 false.
+- TIMING: 초 단위 숫자. 150ms는 0.15.
+- EASING: MotionEasing 객체. 예: {"type":"EASE_OUT"}.
+- 변수 참조: {"alias":{"collection":"Color","token":"primitive/canvas"}}.
+  참조 대상의 타입은 같아야 한다. 대상은 MD에 포함하거나 Figma 파일에 이미 있어야 한다.
+한 행은 변수 하나의 모드 하나다. Collection + Token + Mode 조합은 중복하지 않는다.
+한 변수의 Type과 Description은 모든 모드 행에서 같게 작성한다.
+모드 이름은 한글·영문·사용자 지정 이름을 그대로 보존한다. 순서로 Light/Dark를 추정하지 않는다.
+새 컬렉션은 첫 번째로 작성된 모드가 기본 모드이며 기존 컬렉션의 기본 모드는 유지한다.
+MD에 없는 기존 모드와 변수는 삭제하지 않는다. 이름 변경은 새 항목으로 취급될 수 있다.
+기존 데이터 변경은 원래 이름을 유지한다. 명시적 이름 변경은 Figma에서 수행한 뒤 Export를 권장한다.
+Value에 빈 값이나 -를 넣지 않는다. 빈 설명은 ""이다. 빈 셀 때문에 열을 이동시키지 않는다.
+JSON 문자열의 따옴표와 줄바꿈은 JSON 이스케이프를 쓰며, 표 안 파이프 문자는 &#124;로 쓴다.
+-->
 
-### Semantic
-
-| Token | Alias | Description |
-|-------|-------|-------------|
-| md | space-16 | 중간 |
-
-
-## Radius
-
-### Primitive
-
-| Token | Value | Description |
-|-------|-------|-------------|
-| radius-8 | 8px | 기본 |
-
-### Semantic
-
-| Token | Alias | Description |
-|-------|-------|-------------|
-| md | radius-8 | 중간 |
-
+| Category | Collection | Token | Type | Mode | Value | Description |
+|---|---|---|---|---|---|---|
+| colors | "Color" | "primitive/canvas" | COLOR | "주간" | {"r":1,"g":1,"b":1,"a":1} | "원시 배경" |
+| colors | "Color" | "primitive/canvas" | COLOR | "야간" | {"r":0.08,"g":0.1,"b":0.14,"a":1} | "원시 배경" |
+| colors | "Color" | "semantic/surface" | COLOR | "주간" | {"alias":{"collection":"Color","token":"primitive/canvas"}} | "화면 배경" |
+| colors | "Color" | "semantic/surface" | COLOR | "야간" | {"alias":{"collection":"Color","token":"primitive/canvas"}} | "화면 배경" |
+| spacing | "Spacing" | "space/12" | FLOAT | "기본" | 12 | "기본 간격" |
+| radius | "Radius" | "corner/md" | FLOAT | "기본" | 8 | "기본 곡률" |
+| typography | "Typography" | "body/Size" | FLOAT | "기본" | 16 | "본문 크기" |
+| typography | "Typography" | "fontFamily/primary" | STRING | "기본" | "Inter" | "의도한 폰트" |
+| typography | "Typography" | "fontFamily/secondary" | STRING | "기본" | "Inter" | "폴백 폰트" |
+| typography | "Typography" | "fontWeight/400" | STRING | "기본" | "Regular" | "본문 두께" |
 
 ## Typography
 
-### Display
+<!--
+[스타일과 그룹]
+Color Styles: Variable Modes의 COLOR 변수마다 변수에 바인딩된 스타일을 만든다.
+  스타일 이름은 Token 경로를 따른다. 컬렉션 이름을 자동 그룹으로 추가하지 않는다.
+  다른 변수의 동일 이름 스타일과 충돌하면 자동으로 합치지 말고 사용자에게 확인한다.
+Text Styles: Typography 표로 정의한다. 그룹 없는 body는 최상위 body 스타일이다.
+  그룹 Body 아래 md는 Body/md가 되며 대소문자를 보존한다.
+  Token에 Body/md를 직접 쓰는 방법도 가능하지만 그룹 Body와 중복하지 않는다.
+  크기 변수는 스타일이름/Size, 행간은 스타일이름/LineHeight, 자간은 스타일이름/LetterSpacing.
+  폰트명은 fontFamily/primary 또는 폴백용 fontFamily/secondary, 두께는 fontWeight/400 같은 STRING 변수.
+  두께 값은 Regular/Bold 등 Figma 폰트 스타일 이름이다. 폰트 변수는 없을 때 보완하고 바인딩한다.
+  폰트명·두께·크기의 바인딩을 우선한다. 행간·자간 연결 실패는 다른 바인딩을 중단하지 않는다.
+  LineHeight는 150% 또는 24px처럼 명시한다. %는 정적 스타일 값, px는 변수 바인딩 가능.
+  모드별 변수와 모드마다 별도로 생성되는 텍스트 스타일을 혼동하지 않는다.
+-->
 
 | Token | Font | Size | Weight | LineHeight | LetterSpacing |
-|-------|------|------|--------|------------|---------------|
-| xl | Inter | 64px | 700 | 110% | -1px |
-| lg | Inter | 48px | 700 | 1.2 | -0.5px |
-
-### Body
-
-| Token | Font | Size | Weight | LineHeight | LetterSpacing |
-|-------|------|------|--------|------------|---------------|
-| md | Inter | 16px | 400 | 150% | 0px |
-| sm | Inter | 14px | 400 | 24px | 0px |
-
+|---|---|---|---|---|---|
+| body | Inter | 16px | 400 | 150% | 0px |
 
 ## Effects
 
-| Token | Type | Color | X | Y | Blur | Spread |
-|-------|------|-------|---|---|------|--------|
-| shadow-md | drop-shadow | rgba(0,0,0,0.12) | 0 | 4px | 8px | 0 |
+<!--
+Effect Styles: drop-shadow / inner-shadow / layer-blur / background-blur / noise / texture / glass.
+  종류별 상위 그룹을 붙인다. 예: card → drop-shadow/card.
+  이미 같은 종류 접두어가 있으면 중복해서 붙이지 않는다. 기존 하위 경로는 유지한다.
+  Shader는 이번 버전에서 제외한다. Beta 효과는 환경에 따라 QA 안내 후 건너뛸 수 있다.
 
+[Effects / Grid의 Settings]
+Token, Type, Settings 3개 열을 사용한다. Settings는 JSON 객체 또는 Export의 JSON 배열이다.
+단일 객체의 type/pattern은 Type 열에서 정한다. 배열은 각 항목에 type/pattern을 유지한다.
+복합 스타일은 배열의 모든 항목과 순서를 보존한다. 한 스타일의 그룹은 첫 항목 종류를 따른다.
+정적 속성값은 항상 작성한다. 연결할 속성만 boundVariables에 명시한다.
+예: "boundVariables":{"radius":{"alias":{"collection":"Spacing","token":"space/12"}}}
+참조가 없으면 정적 값. 값이 같은 변수에 자동 연결하지 않는다.
+참조 누락·타입 불일치는 해당 바인딩만 QA로 안내하고 정적 값을 사용한다.
+Export 참조는 파일 내부 ID 대신 Collection과 Token 이름으로 관리한다.
+지원 바인딩:
+- 그림자 color(COLOR), radius/spread/offsetX/offsetY(FLOAT).
+- Layer Blur·Background Blur radius(FLOAT).
+- Noise·Texture·Glass는 현재 정적 값만 지원.
+- Grid Size는 sectionSize(FLOAT).
+- Columns·Rows Gutter는 gutterSize(FLOAT), Margin은 offset(FLOAT).
+  STRETCH에서 count/offset/gutterSize, MIN/MAX에서 sectionSize/count/offset/gutterSize,
+  CENTER에서 sectionSize/count/gutterSize를 지원한다.
+-->
+
+| Token | Type | Settings |
+|---|---|---|
+| card | drop-shadow | {"color":{"r":0,"g":0,"b":0,"a":0.12},"offset":{"x":0,"y":4},"radius":12,"spread":0,"visible":true,"blendMode":"NORMAL","boundVariables":{"radius":{"alias":{"collection":"Spacing","token":"space/12"}}}} |
+| soft | layer-blur | {"radius":8,"visible":true,"blurType":"NORMAL"} |
 
 ## Grid
 
-| Token | Type | Count | Width | Gutter | Margin | Alignment |
-|-------|------|-------|-------|--------|--------|-----------|
-| columns-12 | columns | 12 | auto | 24px | 48px | stretch |
+<!--
+Grid Styles: columns / rows / grid 3종. 종류별 상위 그룹을 같은 방식으로 붙인다.
+Settings의 JSON 형식과 속성별 바인딩 규칙은 위 Effects 설명을 함께 참고합니다.
+-->
+
+| Token | Type | Settings |
+|---|---|---|
+| desktop | columns | {"count":12,"alignment":"STRETCH","offset":48,"gutterSize":12,"color":{"r":1,"g":0,"b":0,"a":0.1},"boundVariables":{"gutterSize":{"alias":{"collection":"Spacing","token":"space/12"}}}} |
+| baseline | rows | {"count":8,"alignment":"STRETCH","offset":12,"gutterSize":8,"color":{"r":1,"g":0,"b":0,"a":0.1},"boundVariables":{"offset":{"alias":{"collection":"Spacing","token":"space/12"}}}} |
+| square | grid | {"sectionSize":12,"color":{"r":1,"g":0,"b":0,"a":0.1},"boundVariables":{"sectionSize":{"alias":{"collection":"Spacing","token":"space/12"}}}} |
+
+<!-- Motion은 옵션입니다. 아래 빈 표는 필요 없으면 삭제하고, 필요한 경우 기존 Export의 내용을 보완합니다. -->
+## Motion Styles
+
+<!--
+[Motion Styles]
+열은 Token, Entries. Entries는 Figma 프리셋을 조합하는 JSON 배열이다.
+각 항목은 {"preset":"기존 Export의 정확한 프리셋 이름","props":{...}} 형태.
+Export의 styleId가 있으면 보존하되 다른 파일에서는 프리셋 이름으로 다시 찾는다.
+props는 해당 프리셋이 지원하는 속성만 사용한다. 명시적 변수 참조도 사용할 수 있다.
+프리셋 이름과 props 키를 추측하지 않는다. 모르는 경우 기존 Motion Style을 Export하도록 안내한다.
+@first는 API 확인용 테스트 값이다. 사용자 실사용 문서에 임의로 넣지 않는다.
+모션 스타일은 로컬 스타일로만 등록하며 선택 레이어에 자동 적용하지 않는다.
+TIMING 변수의 단위는 초. 구버전 Motion/Timing 표의 150ms 표기와 혼용하지 않는다.
+-->
+
+| Token | Entries |
+|---|---|

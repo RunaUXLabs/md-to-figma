@@ -6,7 +6,7 @@ Figma plugin that synchronizes your entire design system between Markdown and Fi
 Create Variables & Styles from MD, or export your existing Figma system back to MD — with smart bindings and zero configuration.
 
 [![Figma Plugin](https://img.shields.io/badge/Figma-Plugin-blue?logo=figma)](https://www.figma.com/community/plugin/YOUR_PLUGIN_ID)
-![Version](https://img.shields.io/badge/version-2.0.2-brightgreen)
+![Version](https://img.shields.io/badge/version-2.1.0-brightgreen)
 
 ![cover](./resources/cover_v2.png)
 
@@ -46,6 +46,10 @@ AI / Documentation  ⇄  DESIGN.md  ⇄  MD to Figma  ⇄  Figma Variables & Sty
 
 ## 📸 Screenshots
 
+UI and report screenshots show the current plugin UI rendered in a local browser.
+Report examples use the final sample in an automated test harness with a simulated Figma API.
+The Figma output image is maintained separately.
+
 | UI | Error Log |
 |---|---|
 | ![UI](./resources/UI.png) | ![ErrorLog](./resources/ErrorLog.png) |
@@ -75,7 +79,7 @@ AI / Documentation  ⇄  DESIGN.md  ⇄  MD to Figma  ⇄  Figma Variables & Sty
 |---|---|
 | [DESIGN-TEMPLATE.md](./resources/DESIGN-TEMPLATE.md) | Token template with formatting rules and examples |
 | [AI-PROMPT-GUIDE.md](./resources/AI-PROMPT-GUIDE.md) | Ready-to-use prompts for filling the template with AI |
-| [TEMPLATED-SAMPLE.md](./resources/TEMPLATED-SAMPLE.md) | Sample DESIGN.md generated from the template (Airbnb-inspired) |
+| [FINAL-INTEGRATION-SAMPLE.md](./resources/FINAL-INTEGRATION-SAMPLE.md) | Final sample covering variables, modes, styles, bindings, and Motion |
 
 > Raw links for in-plugin download:
 > - `https://raw.githubusercontent.com/YOUR_USERNAME/md-to-figma/main/resources/DESIGN-TEMPLATE.md`
@@ -96,9 +100,9 @@ md-to-figma/
     ├── DS/                      # Design System Specifications
     │   ├── MD-TO-FIGMA-FOUNDATION.md # Foundation tokens
     │   └── MD-TO-FIGMA-COMPONENTS.md # Component Specifications
-    ├── DESIGN-TEMPLATE.md       # DESIGN.md template (v2.0.2)
-    ├── AI-PROMPT-GUIDE.md       # AI prompt guide (v2.0.2)
-    ├── TEMPLATED-SAMPLE.md      # Sample output generated from the template
+    ├── DESIGN-TEMPLATE.md       # DESIGN.md template (v2.1.0)
+    ├── AI-PROMPT-GUIDE.md       # AI prompt guide (v2.1.0)
+    ├── FINAL-INTEGRATION-SAMPLE.md      # Sample output generated from the template
     ├── cover_v2.png             # Plugin cover image
     ├── Icon_v2.png              # Plugin icon
     ├── UI.png                   # Screenshot: Main UI
@@ -110,6 +114,39 @@ md-to-figma/
 ---
 
 ## 🛠 Development
+
+### 모드 보존 업데이트 (작업본)
+
+Export MD의 `## Variable Modes` 표는 변수 동기화의 기준입니다. 각 행에
+Category, Collection, Token, Type, Mode, Value, Description을 기록하므로,
+임의의 모드 이름과 3개 이상의 모드, 동일 이름의 다른 컬렉션 변수도 구분합니다.
+기존 Colors/Spacing/Radius/Typography/Motion 섹션은 요약 및 스타일 생성용입니다.
+`Variable Modes` 표가 있는 문서에서는 변수 값을 그 표에서 수정하세요.
+
+- Collection, Token, Mode, Description은 JSON 문자열 (`"Dark"`)로 적습니다.
+- Value는 JSON 값입니다. FLOAT는 숫자, STRING은 문자열, COLOR는 RGBA 객체,
+  TIMING은 초 단위 숫자, EASING은 Figma MotionEasing 객체입니다.
+- 참조는 `{"alias":{"collection":"Color","token":"primitive/blue"}}`로 적습니다.
+- 표 안의 파이프 문자는 `&#124;`, 문자열의 줄바꿈은 `\n`으로 적습니다.
+- Category는 `colors`, `spacing`, `radius`, `typography`, `motion` 중 하나이며
+  UI의 변수 선택 옵션을 따릅니다. Export의 카테고리 자동 분류가 다른 경우 수정할 수 있습니다.
+- 기존 컬렉션과 변수는 정확한 이름으로 매칭하고 모드는 이름으로 매칭합니다.
+  MD에 없는 기존 모드와 변수는 삭제하지 않습니다. 기존 기본 모드도 유지합니다.
+  새 컬렉션은 표에 먼저 나오는 모드가 기본 모드가 됩니다.
+- 모드 생성 제한, 참조 누락, 값 오류는 QA 로그에 기록합니다. 실패한 모드의 값을
+  다른 모드에 대신 쓰지 않습니다. 선택하지 않은 카테고리의 참조 대상은 파일에 있어야 합니다.
+- 구버전 MD도 지원합니다. Light/Dark는 모드 이름으로 연결하며 Primitive의 단일 값은
+  기본 모드에만 적용합니다. 여러 모드를 같은 값으로 덮어쓰지 않습니다.
+
+이 업데이트는 변수 모드 보존을 다룹니다. 텍스트 스타일의 모드별 생성은 별도 기능이며,
+실제 Figma 파일에서 모드 제한과 스타일 동작을 최종 확인해야 합니다.
+Color Styles를 선택하면 Variable Modes 표의 COLOR 변수마다 토큰 이름의
+컬러 스타일을 생성하거나 갱신합니다. 각 스타일은 변수에 바인딩되므로 소비하는
+레이어의 모드를 따릅니다. 모드별로 스타일을 중복 생성하지 않습니다.
+MD에 명시된 그룹 경로만 스타일 이름에 사용합니다. 이름 충돌은 자동 그룹 추가 없이 QA로 안내합니다.
+Typography의 그룹명은 대소문자를 유지하며, 그룹 없는 스타일의 Export도 그룹을 추가하지 않습니다.
+텍스트 스타일에 필요한 폰트명·두께 STRING 변수는 없을 때 보완하고 바인딩합니다.
+회귀 테스트: `node --test tests/modes.test.cjs`
 
 ### Local Setup
 
@@ -136,7 +173,33 @@ Then replace `YOUR_PLUGIN_ID` in `manifest.json` with your actual Figma plugin I
 
 ---
 
-## v2.0.2 릴리즈 노트 (Latest)
+## v2.1.0 릴리즈 노트 (Latest)
+
+### ✨ 다중 모드 보존과 스타일 등록 확장
+컬렉션·모드·참조를 보존하는 Variable Modes 형식을 추가하고, 효과·가이드·모션 스타일과 AI 작업 흐름을 확장했습니다.
+
+#### **1. Variable Modes 기반 양방향 동기화**
+- **사용자 지정 모드**: Light/Dark 외의 모드 이름과 모드별 값을 그대로 가져오고 내보냅니다. 컬렉션·토큰·모드 이름으로 매칭하며 MD에 없는 기존 항목은 유지합니다.
+- **타입과 참조 보존**: COLOR, FLOAT, STRING, BOOLEAN과 선택 기능인 TIMING/EASING을 지원하며, 컬렉션 간 참조와 색상 투명도를 보존합니다.
+- **기존 형식 호환**: 기존 표도 지원합니다. Variable Modes 표가 있으면 해당 표를 변수 수정의 기준으로 사용합니다.
+
+#### **2. 스타일과 명시적 변수 바인딩 확장**
+- **Color / Text**: 컬러 스타일을 COLOR 변수에 연결하고, 텍스트의 폰트명·두께·크기와 지원되는 행간·자간을 변수에 연결합니다. 토큰 경로와 그룹 대소문자를 보존합니다.
+- **Effect / Grid**: 효과 7종과 가이드 3종을 종류별로 정리하고, JSON 설정으로 복합 항목과 순서를 보존합니다. 명시한 속성만 변수에 연결하며 참조 문제가 있으면 정적 값을 사용하고 QA로 안내합니다.
+- **Noise 호환성**: Figma 환경별 NORMAL blendMode 스키마 차이에 대응합니다. Noise·Texture·Glass 등 베타 효과의 지원 여부는 실행 환경에 따라 달라질 수 있습니다.
+
+#### **3. 선택형 Motion 지원**
+- **변수와 스타일 분리**: TIMING/EASING 변수와 Motion Styles를 각각 선택할 수 있습니다.
+- **프리셋 기반 등록**: Export의 프리셋과 설정값을 보존하며 로컬 모션 스타일을 등록합니다. API 미지원 환경은 QA로 안내하고 다른 항목은 계속 처리합니다.
+
+#### **4. 결과 리포트와 AI 자료 정리**
+- **처리 결과 중심 로그**: 변수는 적용/검사, 스타일은 신규/처리 수로 표시합니다. 선택돼 있어도 MD에 없는 항목은 생성하지 않습니다.
+- **템플릿과 가이드 역할 분리**: 템플릿은 짧은 AI 변환 규칙·데이터·필드 설명으로 구성하고, 상세 작업 안내와 상황별 프롬프트는 AI 가이드로 모았습니다. 설명은 사용자의 언어로 제공하도록 안내합니다.
+- **통합 샘플과 검증**: 최종 샘플의 변수 21개·스타일 19개를 실제 Figma에서 등록 → Export → 새 파일 이식 → 같은 파일 재등록까지 확인했습니다. 자동 테스트 9개를 통과했습니다.
+
+---
+
+## v2.0.2 릴리즈 노트 (Old)
 
 ### 🐛 MD 추출 버그 해결 및 네이밍 매칭 최적화
 피그마 플러그인의 양방향 데이터 내보내기(Export)와 가져오기(Import) 네이밍 매칭 안정성을 강화했습니다.
