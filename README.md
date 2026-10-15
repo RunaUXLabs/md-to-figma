@@ -52,12 +52,12 @@ The Figma output image is maintained separately.
 
 | UI | Error Log |
 |---|---|
-| ![UI](./resources/UI.png) | ![ErrorLog](./resources/ErrorLog.png) |
+| ![UI](./resources/UI_v210.png) | ![ErrorLog](./resources/ErrorLog_v210.png) |
 | Intuitive dashboard with Export/Generate support | Error handling with AI briefing copy |
 
 | QA Log | Figma Output |
 |---|---|
-| ![Log](./resources/QALog.png) | ![Output](./resources/Variables&Styles.png) |
+| ![Log](./resources/QALog_v210.png) | ![Output](./resources/Variables&Styles.png) |
 | Execution summary & Smart Fallback alerts | Perfectly bound Variables & Styles in Figma |
 
 ---
