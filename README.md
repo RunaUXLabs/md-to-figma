@@ -6,7 +6,7 @@ Figma plugin that synchronizes your entire design system between Markdown and Fi
 Create Variables & Styles from MD, or export your existing Figma system back to MD — with smart bindings and zero configuration.
 
 [![Figma Plugin](https://img.shields.io/badge/Figma-Plugin-blue?logo=figma)](https://www.figma.com/community/plugin/YOUR_PLUGIN_ID)
-![Version](https://img.shields.io/badge/version-2.1.1-brightgreen)
+![Version](https://img.shields.io/badge/version-2.1.2-brightgreen)
 
 ![cover](./resources/cover_v2.png)
 
@@ -75,9 +75,9 @@ The Figma output image is maintained separately.
 
 ## Figma Agent 스킬로 MD 준비하기
 
-[MD to Figma Assistant](https://www.figma.com/community/skill/142125/runa-md-to-figma)를 Figma Agent에 추가하면 기존 Export MD나 디자인 자료를 플러그인 입력 형식으로 정리할 수 있습니다. 플러그인 상단의 **AI 스킬 ↗** 버튼으로 커뮤니티 페이지를 열 수 있습니다.
+[MD to Figma Assistant](https://www.figma.com/community/skill/142125/md-to-figma)를 Figma Agent에 추가하면 기존 Export MD나 디자인 자료를 플러그인 입력 형식으로 정리할 수 있습니다. 플러그인 상단의 **AI 스킬 ↗** 버튼으로 커뮤니티 페이지를 열 수 있습니다.
 
-1. 스킬을 추가한 뒤 Figma Agent 대화에서 `/runa-md-to-figma`를 호출하고 원본 자료를 첨부합니다.
+1. 스킬을 추가한 뒤 Figma Agent 대화에서 `/md-to-figma`를 호출하고 원본 자료를 첨부합니다.
 2. 원하는 변경을 요청하고 완성된 MD, 변경점과 필요한 Variables / Styles 선택을 확인합니다.
 3. MD를 기존 플러그인에 붙여넣어 Generate하고, QA 로그와 실제 값·모드·참조·바인딩을 확인합니다.
 
@@ -111,7 +111,7 @@ md-to-figma/
     │   ├── MD-TO-FIGMA-FOUNDATION.md # Foundation tokens
     │   └── MD-TO-FIGMA-COMPONENTS.md # Component Specifications
     ├── DESIGN-TEMPLATE.md       # DESIGN.md template (v2.1.0)
-    ├── AI-PROMPT-GUIDE.md       # AI prompt guide (v2.1.1)
+    ├── AI-PROMPT-GUIDE.md       # AI prompt guide (v2.1.2)
     ├── FINAL-INTEGRATION-SAMPLE.md      # Sample output generated from the template
     ├── cover_v2.png             # Plugin cover image
     ├── Icon_v2.png              # Plugin icon
@@ -183,7 +183,17 @@ Then replace `YOUR_PLUGIN_ID` in `manifest.json` with your actual Figma plugin I
 
 ---
 
-## v2.1.1 릴리즈 노트 (Latest)
+## v2.1.2 릴리즈 노트 (Latest)
+
+### ✨ 스킬 호출 이름 간소화
+- **스킬 이름**: 제작자 접두어를 빼고 `md-to-figma`로 통일했습니다. 게시 제목은 MD to Figma Assistant를 유지합니다.
+- **사용 안내**: 플러그인 입력 안내·다운로드 가이드·README·배포용 설명문을 `/md-to-figma` 기준으로 갱신했습니다.
+- **AI 패키지 v0.1.1**: 스킬 폴더와 배포 파일 이름을 함께 변경했습니다. 플러그인 패키지 ID와 기존 카탈로그 내부 ID는 유지합니다.
+- **게시 스킬 연결**: Figma에서 이름 변경 후 확인한 새 커뮤니티 주소를 버튼과 가이드에 반영했습니다. v2.1.1 릴리즈와 첨부 파일은 당시 이름 그대로 남깁니다.
+
+---
+
+## v2.1.1 릴리즈 노트
 
 ### ✨ Figma Agent 스킬 연결과 사용 안내 개선
 공개된 MD to Figma Assistant 스킬을 플러그인에서 바로 찾을 수 있도록 연결하고, 스킬로 준비한 MD를 등록하는 과정을 안내합니다. 변수·스타일 등록과 내보내기 형식은 v2.1.0을 유지하는 패치 업데이트입니다.

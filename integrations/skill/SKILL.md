@@ -1,5 +1,5 @@
 ---
-name: runa-md-to-figma
+name: md-to-figma
 description: Prepare, revise, and review design-system Markdown for the MD to Figma plugin. Use for converting existing exports, CSS or token data into importable variables and styles, preserving custom modes and bindings, or fixing the plugin's QA reports.
 ---
 

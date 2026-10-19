@@ -23,11 +23,11 @@ Distinguish “MD prepared” from “verified in Figma”; never claim actual i
 
 ## Figma Agent 스킬로 사용하기
 
-Figma Agent에서는 [MD to Figma Assistant 스킬](https://www.figma.com/community/skill/142125/runa-md-to-figma)을 추가하여 같은 형식으로 MD를 준비할 수 있습니다.
+Figma Agent에서는 [MD to Figma Assistant 스킬](https://www.figma.com/community/skill/142125/md-to-figma)을 추가하여 같은 형식으로 MD를 준비할 수 있습니다.
 플러그인 상단의 AI 스킬 버튼으로 커뮤니티 페이지를 열 수 있습니다.
 
 1. 커뮤니티에서 스킬을 추가합니다.
-2. Figma Agent 대화에서 /runa-md-to-figma를 호출하고 원본 MD나 디자인 자료를 첨부합니다.
+2. Figma Agent 대화에서 /md-to-figma를 호출하고 원본 MD나 디자인 자료를 첨부합니다.
 3. 원하는 변경을 요청하고, AI가 반환한 MD와 변경점·등록 옵션을 확인합니다.
 4. 완성된 MD를 MD to Figma 플러그인에 붙여넣고 안내받은 Variables / Styles를 선택해 Generate합니다.
 5. QA 로그와 실제 값·모드·참조·바인딩을 확인한 뒤 다시 Export하여 보관합니다.

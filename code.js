@@ -1,5 +1,5 @@
 /**
- * MD to Figma - v2.1.1 Official Stable Release
+ * MD to Figma - v2.1.2 Official Stable Release
  * The Complete Bidirectional Semantic Design System Engine
  * Featuring Smart Update & AI-Ready QA Reporting
  */
@@ -1389,7 +1389,7 @@ async function generateExportMD() {
 
 figma.ui.onmessage = async (msg) => {
   if (msg.type === "open_skill") {
-    figma.openExternal('https://www.figma.com/community/skill/142125/runa-md-to-figma');
+    figma.openExternal('https://www.figma.com/community/skill/142125/md-to-figma');
     return;
   }
   if (msg.type === "generate") {

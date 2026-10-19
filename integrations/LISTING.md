@@ -15,7 +15,7 @@ Use this skill with your design tokens, CSS, existing Markdown, or an MD to Figm
 The skill covers colors, typography, spacing, radius, effect styles and layout guide styles. Motion variables and motion styles are optional. Missing categories stay omitted, and example tokens are not added to your project automatically.
 
 How to use:
-1. Add the skill and invoke /runa-md-to-figma.
+1. Add the skill and invoke /md-to-figma.
 2. Attach your source data and describe the changes you want.
 3. Copy the resulting Markdown into the existing MD to Figma plugin.
 4. Select the recommended Variables and Styles options, then review the QA report and actual values and bindings in Figma.
@@ -23,7 +23,7 @@ How to use:
 
 This skill prepares Markdown. You choose the destination Figma file and perform the import using the separate MD to Figma plugin. Renamed items can create new entries while the originals remain. Figma API availability, installed fonts and destination-file bindings must be checked after import.
 
-Compatible with MD to Figma v2.1.0. Assistant package version: 0.1.0.
+Compatible with MD to Figma v2.1.0. Assistant package version: 0.1.1.
 
 ## AI plugin listing
 

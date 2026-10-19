@@ -7,7 +7,7 @@ const crypto = require('node:crypto');
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'dist/assistant');
 const plugin = path.join(out, 'marketplace/plugins/md-to-figma-assistant');
-const skill = path.join(plugin, 'skills/runa-md-to-figma');
+const skill = path.join(plugin, 'skills/md-to-figma');
 const { validate } = require(path.join(skill, 'scripts/validate-md.cjs'));
 const hash = data => crypto.createHash('sha256').update(data).digest('hex');
 const header = '# Test\n\n## Variable Modes\n\n| Category | Collection | Token | Type | Mode | Value | Description |\n|---|---|---|---|---|---|---|\n';
@@ -64,8 +64,8 @@ test('packaged references are exact copies; Figma skill is self contained', () =
     assert.equal(hash(fs.readFileSync(path.join(root, filename))), digest);
     if (filename.startsWith('resources/')) assert.equal(hash(fs.readFileSync(path.join(skill, 'assets', path.basename(filename)))), digest);
   }
-  const native = fs.readFileSync(path.join(out, 'figma/runa-md-to-figma.md'), 'utf8');
-  assert.match(native, /^---\nname: runa-md-to-figma\n/);
+  const native = fs.readFileSync(path.join(out, 'figma/md-to-figma.md'), 'utf8');
+  assert.match(native, /^---\nname: md-to-figma\n/);
   assert.doesNotMatch(native, /\]\((?:assets|references|scripts)\//);
   assert.doesNotMatch(native, /<skill-directory>/);
   assert.match(native, /no executable validator/);

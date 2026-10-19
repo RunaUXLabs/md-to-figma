@@ -12,7 +12,7 @@ const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, 'plugin.json'),
 const name = manifest.name, version = manifest.version;
 const marketplaceRoot = path.join(output, 'marketplace');
 const pluginRoot = path.join(marketplaceRoot, 'plugins', name);
-const skillRoot = path.join(pluginRoot, 'skills', 'runa-md-to-figma');
+const skillRoot = path.join(pluginRoot, 'skills', 'md-to-figma');
 const read = relative => fs.readFileSync(path.join(root, relative), 'utf8');
 const sha = data => crypto.createHash('sha256').update(data).digest('hex');
 const write = (file, value) => { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, value); };
@@ -46,6 +46,7 @@ write(path.join(pluginRoot, 'README.md'), fs.readFileSync(path.join(__dirname, '
 write(path.join(pluginRoot, 'DATA-HANDLING.md'), fs.readFileSync(path.join(__dirname, 'DATA-HANDLING.md')));
 write(path.join(marketplaceRoot, '.agents', 'plugins', 'marketplace.json'), json({
   name: 'runa-md-to-figma',
+  interface: { displayName: 'MD to Figma' },
   plugins: [{ name, source: { source: 'local', path: './plugins/' + name }, policy: { installation: 'AVAILABLE', authentication: 'ON_INSTALL' }, category: 'Productivity' }]
 }));
 
@@ -57,7 +58,7 @@ nativeSkill += '\n\n# Format reference (inline)\n\n' + read('integrations/skill/
   .replace('The existing integration sample', 'The Example appendix')
   .replace('The bundled preflight focuses', 'The AI plugin edition includes a preflight that focuses');
 nativeSkill += '\n\n# Example appendix — explicit test data only\n\nDo not copy this example into production user output. In particular, @first is not a production preset. This appendix reproduces the existing integration sample for syntax reference.\n\n````markdown\n' + read('resources/FINAL-INTEGRATION-SAMPLE.md').trim() + '\n````\n';
-const nativePath = path.join(output, 'figma', 'runa-md-to-figma.md');
+const nativePath = path.join(output, 'figma', 'md-to-figma.md');
 write(nativePath, nativeSkill);
 
 // Dependency-free, deterministic ZIP (stored entries, UTF-8 paths, fixed timestamp).
@@ -96,9 +97,9 @@ function zip(directory, destination, prefix = '') {
   write(destination, Buffer.concat([...chunks, directoryData, end]));
 }
 zip(pluginRoot, path.join(output, `${name}-${version}.zip`));
-zip(skillRoot, path.join(output, `runa-md-to-figma-skill-${version}.zip`), 'runa-md-to-figma/');
-zip(marketplaceRoot, path.join(output, `runa-md-to-figma-marketplace-${version}.zip`));
+zip(skillRoot, path.join(output, `md-to-figma-skill-${version}.zip`), 'md-to-figma/');
+zip(marketplaceRoot, path.join(output, `md-to-figma-marketplace-${version}.zip`));
 const artifacts = fs.readdirSync(output).filter(file => file.endsWith('.zip')).map(file => [file, sha(fs.readFileSync(path.join(output, file)))]);
-artifacts.push(['figma/runa-md-to-figma.md', sha(fs.readFileSync(nativePath))]);
+artifacts.push(['figma/md-to-figma.md', sha(fs.readFileSync(nativePath))]);
 write(path.join(output, 'SHA256SUMS.txt'), artifacts.map(([file, digest]) => `${digest}  ${file}`).join('\n') + '\n');
 console.log(`Built assistant ${version} (Figma importer 2.1.0 compatible): ${output}`);
