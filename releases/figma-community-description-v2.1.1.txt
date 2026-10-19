@@ -1,0 +1,135 @@
+📦 MD to Figma
+
+Create and manage Figma Variables and Styles with Markdown.
+
+Turn AI-prepared Markdown into a design system, or export your existing Figma variables and styles to MD for review, editing, and reuse.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+✨ What's New in v2.1.1
+
+Meet MD to Figma Assistant, a companion skill for Figma Agent.
+
+Open the published skill from the plugin's AI Skill button, invoke /runa-md-to-figma, and attach your source data. The skill helps prepare compatible Markdown while preserving existing names, custom modes, values, and references. It explains changes and import options in your language.
+
+Get the skill:
+https://www.figma.com/community/skill/142125/runa-md-to-figma
+
+The skill prepares Markdown. You choose the destination file and run the import with this plugin. The existing template and AI guide remain available for use with other AI tools.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 Variables, Styles, and Custom Modes
+
+Variables
+• Colors, typography, spacing, and radius
+• Optional motion timing and easing
+• Custom collection and mode names, including single-mode systems
+• Named aliases, cross-collection references, and color alpha
+
+Styles
+• Color styles connected to color variables
+• Text styles with supported font family, weight, size, line height, and letter spacing bindings
+• Seven effect types: drop shadow, inner shadow, layer blur, background blur, noise, texture, and glass
+• Three layout guide types: columns, rows, and grid
+• Optional motion styles based on Figma presets
+
+Effects and layout guides use explicit variable references where supported. Fields without bindings remain static. Feature availability depends on the Figma environment; unsupported items are reported in QA. Shader effects are not supported.
+
+Select only the Variables and Styles you need. Categories missing from your MD are skipped.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🔄 Edit, Import, Export, Repeat
+
+Export your current system to Markdown, ask your AI to make targeted changes, and import the updated document.
+
+The Variable Modes table preserves values by collection, token, and mode name. Custom modes are not limited to Light and Dark. Existing items and modes omitted from the MD remain in Figma.
+
+Renaming a collection, token, mode, or style may create a new item and leave the original. Review the destination file and QA report after import, then export again to keep your updated source.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+📖 Two Ways to Prepare Your Markdown
+
+With Figma Agent
+1. Open AI Skill in the plugin and add MD to Figma Assistant.
+2. Invoke /runa-md-to-figma and attach your source MD or design data.
+3. Describe the changes you want and review the returned Markdown and import guidance.
+
+With another AI
+1. Download the template and AI guide from the plugin.
+2. Give them to your AI together with your design data or existing Export MD.
+3. Ask for a complete MD document in the supported format.
+
+Then paste the MD into the plugin, choose the required Variables and Styles, and click Generate. Review the actual values, modes, fonts, and bindings in Figma. Use Export to save the result as MD.
+
+=================================
+
+한국어 안내
+
+📦 MD to Figma
+
+마크다운으로 Figma 배리어블과 스타일을 만들고 관리하세요.
+
+AI가 정리한 MD로 디자인 시스템을 등록하거나, 기존 Figma 배리어블과 스타일을 MD로 내보내 검토·수정·재사용할 수 있습니다.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+✨ v2.1.1 업데이트
+
+Figma Agent용 MD to Figma Assistant 스킬을 연결했습니다.
+
+플러그인의 AI 스킬 버튼에서 스킬을 추가하고, /runa-md-to-figma를 호출해 원본 자료를 첨부하세요. 기존 이름·사용자 지정 모드·값·참조를 보존하며 등록용 MD를 정리하고, 변경점과 필요한 등록 옵션을 사용자의 언어로 설명합니다.
+
+스킬 추가:
+https://www.figma.com/community/skill/142125/runa-md-to-figma
+
+스킬은 MD 작성을 돕습니다. 이식할 Figma 파일 선택과 플러그인 등록은 사용자가 진행합니다. 다른 AI에서 사용할 수 있는 기존 템플릿과 AI 가이드도 계속 제공합니다.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 지원하는 항목
+
+배리어블
+• 컬러, 타이포그래피, 스페이싱, 래디우스
+• 선택형 모션 타이밍과 이징
+• 자유로운 컬렉션·모드 이름과 단일 모드
+• 이름 기반 별칭, 컬렉션 간 참조, 색상 투명도
+
+스타일
+• 컬러 배리어블에 연결하는 컬러 스타일
+• 지원되는 폰트명·두께·크기·행간·자간을 연결하는 텍스트 스타일
+• 그림자, 내부 그림자, 레이어 블러, 배경 블러, 노이즈, 텍스처, 글래스 등 효과 7종
+• 컬럼, 로우, 그리드 등 레이아웃 가이드 3종
+• Figma 프리셋 기반의 선택형 모션 스타일
+
+효과와 레이아웃 가이드는 지원되는 속성에 명시적 변수 참조를 사용할 수 있습니다. 바인딩이 없는 값은 정적 값으로 적용합니다. 기능 지원 여부는 Figma 환경에 따라 달라지며, 지원되지 않는 항목은 QA 로그로 안내합니다. Shader는 지원하지 않습니다.
+
+필요한 Variables와 Styles만 선택하세요. MD에 없는 항목은 생성하지 않습니다.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🔄 내보내고, 수정하고, 다시 등록하기
+
+현재 디자인 시스템을 MD로 내보낸 뒤 AI에게 필요한 수정을 요청하고, 결과를 다시 등록할 수 있습니다.
+
+Variable Modes 표는 컬렉션·토큰·모드 이름을 기준으로 값을 보존합니다. Light/Dark뿐 아니라 사용자 지정 모드도 사용할 수 있습니다. MD에 없는 기존 항목과 모드는 삭제하지 않습니다.
+
+컬렉션·토큰·모드·스타일 이름을 바꾸면 새 항목이 생성되고 원본은 남을 수 있습니다. 등록 후 대상 파일과 QA 로그를 확인하고, 다시 Export하여 변경된 MD를 보관하세요.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+📖 MD를 준비하는 두 가지 방법
+
+Figma Agent에서 사용하기
+1. 플러그인의 AI 스킬 버튼에서 MD to Figma Assistant를 추가합니다.
+2. /runa-md-to-figma를 호출하고 원본 MD나 디자인 자료를 첨부합니다.
+3. 원하는 변경을 요청하고 완성된 MD와 등록 안내를 확인합니다.
+
+다른 AI에서 사용하기
+1. 플러그인에서 템플릿과 AI 가이드를 다운로드합니다.
+2. 원본 디자인 자료나 기존 Export MD와 함께 AI에 제공합니다.
+3. 플러그인 형식에 맞는 완전한 MD 문서를 요청합니다.
+
+완성된 MD를 플러그인에 붙여넣고 필요한 Variables와 Styles를 선택한 뒤 Generate를 누르세요. 실제 값·모드·폰트·바인딩을 Figma에서 확인하고, Export로 결과를 보관하면 됩니다.

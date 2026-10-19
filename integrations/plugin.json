@@ -1,0 +1,31 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "md-to-figma-assistant",
+  "version": "0.1.0",
+  "description": "Prepare and review design-system Markdown for MD to Figma, preserving custom modes, variables, styles and bindings.",
+  "author": {
+    "name": "RunaUXLabs",
+    "url": "https://github.com/RunaUXLabs"
+  },
+  "homepage": "https://github.com/RunaUXLabs/md-to-figma",
+  "repository": "https://github.com/RunaUXLabs/md-to-figma",
+  "license": "MIT",
+  "keywords": ["figma", "design-system", "markdown", "variables", "tokens"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "MD to Figma Assistant",
+        "shortDescription": "Prepare design-system MD for Figma import",
+        "longDescription": "Convert design tokens or revise MD to Figma exports while preserving collection names, arbitrary modes and explicit style bindings. Explains changes and import choices in the user's language. Includes format references and a local preflight checker. Import is performed by the user with the existing Figma plugin.",
+        "developerName": "RunaUXLabs",
+        "category": "Productivity",
+        "capabilities": ["Prepare Markdown", "Review modes and bindings", "Check local Markdown"],
+        "websiteURL": "https://github.com/RunaUXLabs/md-to-figma",
+        "supportURL": "https://github.com/RunaUXLabs/md-to-figma/issues",
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/icon.png",
+        "defaultPrompt": ["Convert my design tokens into MD to Figma Markdown.", "Revise this exported MD while preserving names, modes and bindings."]
+      }
+    }
+  }
+}
