@@ -1,6 +1,6 @@
 # MD to Figma 스킬 · AI 플러그인 배포
 
-Figma 플러그인 **v2.1.2**의 기존 템플릿 다운로드와 v2.1.0 MD 형식을 유지하면서, 같은 규칙을 사용하는 AI 배포물을 별도로 만듭니다. AI 패키지 버전은 **0.1.1**입니다. 이 버전은 Figma 플러그인의 업데이트 번호가 아닙니다.
+Figma 플러그인 **v2.2.0**의 기존 템플릿 다운로드와 v2.1.0 MD 형식을 유지하면서, 같은 규칙을 사용하는 AI 배포물을 별도로 만듭니다. AI 패키지 버전은 **0.1.2**입니다. 이 버전은 Figma 플러그인의 업데이트 번호가 아닙니다.
 
 ## 배포물
 
@@ -9,9 +9,9 @@ Figma 플러그인 **v2.1.2**의 기존 템플릿 다운로드와 v2.1.0 MD 형�
 | 파일 | 용도 |
 |---|---|
 | `figma/md-to-figma.md` | Figma에 업로드하는 단일 파일 스킬. 규칙과 예시를 파일 안에 포함 |
-| `md-to-figma-assistant-0.1.1.zip` | OpenAI portable plugin. ZIP 루트에 plugin.json 포함 |
-| `md-to-figma-skill-0.1.1.zip` | Agent Skills 폴더를 지원하는 AI에 설치할 독립 스킬 |
-| `md-to-figma-marketplace-0.1.1.zip` | 로컬 설치 테스트용 카탈로그와 플러그인을 함께 포함 |
+| `md-to-figma-assistant-0.1.2.zip` | OpenAI portable plugin. ZIP 루트에 plugin.json 포함 |
+| `md-to-figma-skill-0.1.2.zip` | Agent Skills 폴더를 지원하는 AI에 설치할 독립 스킬 |
+| `md-to-figma-marketplace-0.1.2.zip` | 로컬 설치 테스트용 카탈로그와 플러그인을 함께 포함 |
 | `SHA256SUMS.txt` | 배포 파일의 SHA-256 해시 |
 
 소스는 이 integrations 폴더에서 관리합니다. 기존 `code.js`, `ui.html`, Figma manifest, 템플릿, AI 가이드 및 통합 샘플은 수정하지 않습니다. 빌드가 현재 템플릿·가이드·샘플을 그대로 복사하므로 별도 사본을 수작업으로 갱신할 필요가 없습니다. 검사기에 필요한 MD 파서만 현재 code.js에서 추출하며, Figma 실행 코드는 패키지에 넣지 않습니다. compatibility.json에 원본 파일과 파서의 해시를 기록합니다. 기존 런타임이나 형식이 바뀌면 참조 문서와 호환 버전을 검토하고 다시 빌드하세요.
@@ -22,7 +22,7 @@ Figma 플러그인 **v2.1.2**의 기존 템플릿 다운로드와 v2.1.0 MD 형�
 
 이름 변경 적용 시 기존 게시 스킬은 Manage skills → 해당 스킬 → Edit에서 이름을 `md-to-figma`로 바꾸고 저장합니다. 이어 Manage skill → Publish changes에서 공개 이름도 확인한 뒤 게시합니다. 게시할 때만 이름을 바꾸면 작성자 본인의 스킬 이름은 그대로 남을 수 있으므로, 본인 대화에서도 `/md-to-figma`로 호출되는지 확인하세요. 기존 게시 항목을 수정하며 새 스킬을 중복 등록할 필요는 없습니다. 커뮤니티 주소가 변경되면 버튼과 안내 링크도 해당 주소로 갱신합니다.
 
-AI 패키지 v0.1.0에서 업데이트하는 경우 기존 `runa-md-to-figma` 독립 스킬 폴더를 새 `md-to-figma` 폴더로 교체합니다. 두 폴더를 함께 두면 호출 이름이 중복으로 남습니다. 플러그인 설치 방식에서는 같은 패키지의 v0.1.1로 업데이트합니다.
+AI 패키지 v0.1.0에서 업데이트하는 경우 기존 `runa-md-to-figma` 독립 스킬 폴더를 새 `md-to-figma` 폴더로 교체합니다. 두 폴더를 함께 두면 호출 이름이 중복으로 남습니다. 플러그인 설치 방식에서는 같은 패키지의 v0.1.2로 업데이트합니다.
 
 1. Figma의 AI 대화 입력창에서 Skills → Add skill → Upload a file을 엽니다.
 2. 생성된 `figma/md-to-figma.md`를 업로드하고 내용 확인 후 Add를 누릅니다. ZIP 파일을 업로드하지 않습니다.

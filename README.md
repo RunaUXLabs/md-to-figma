@@ -6,7 +6,7 @@ Figma plugin that synchronizes your entire design system between Markdown and Fi
 Create Variables & Styles from MD, or export your existing Figma system back to MD — with smart bindings and zero configuration.
 
 [![Figma Plugin](https://img.shields.io/badge/Figma-Plugin-blue?logo=figma)](https://www.figma.com/community/plugin/YOUR_PLUGIN_ID)
-![Version](https://img.shields.io/badge/version-2.1.2-brightgreen)
+![Version](https://img.shields.io/badge/version-2.2.0-brightgreen)
 
 ![cover](./resources/cover_v2.png)
 
@@ -46,7 +46,8 @@ AI / Documentation  ⇄  DESIGN.md  ⇄  MD to Figma  ⇄  Figma Variables & Sty
 
 ## 📸 Screenshots
 
-UI and report screenshots show the current plugin UI rendered in a local browser.
+UI and report screenshots below show the v2.1.0 interface rendered in a local browser.
+The v2.2.0 interface adds language selectors and localized option tooltips.
 Report examples use the final sample in an automated test harness with a simulated Figma API.
 The Figma output image is maintained separately.
 
@@ -103,6 +104,8 @@ The Figma output image is maintained separately.
 md-to-figma/
 ├── code.js                      # Plugin main logic (ES6 Standard)
 ├── ui.html                      # Plugin UI & Modals
+├── i18n/                        # Five-language catalog and shared runtimes
+├── scripts/build-i18n.cjs        # Embed translations into plugin files
 ├── manifest.example.json        # Manifest template (rename and fill in your plugin ID)
 ├── .gitignore                   # manifest.json excluded
 ├── README.md
@@ -124,6 +127,50 @@ md-to-figma/
 ---
 
 ## 🛠 Development
+
+### UI languages
+
+The plugin includes Korean, English, Japanese, Simplified Chinese and Spanish UI
+translations without a translation API or network request. First use defaults to
+Automatic; saved language choices are restored. Automatic mode follows
+the browser/runtime language preferences, falling back to English. Traditional
+Chinese is not included yet; its locale is skipped when selecting a supported
+preferred language. Users can choose a language in the main window or run report.
+The preference is saved with Figma client storage; a failed save does not prevent
+using the selected language in the current session.
+
+Checkbox option labels stay in English (Colors, Typography, Color Styles, etc.).
+Variables, Collection and Styles remain English in section headings. Each option
+has a translated purpose tooltip on hover and checkbox keyboard focus; Escape
+dismisses it. General UI labels, progress, summaries, plugin-owned QA and copied reports use the selected
+language. Logs retain message keys and values, so an open report can also change
+language. User names, MD syntax, values and original external errors remain intact.
+Downloaded templates, AI guides and skill documents retain their existing content;
+this change localizes the plugin interface, not those reference documents.
+
+Edit `i18n/messages.json` (columns: `ko`, `en`, `ja`, `zh-CN`, `es`),
+`i18n/runtime.js` and `i18n/ui.js`, then run:
+
+```bash
+node scripts/build-i18n.cjs
+node integrations/build.cjs
+node --test tests/modes.test.cjs tests/i18n.test.cjs integrations/tests/package.test.cjs
+```
+
+The build checks all translations and interpolation placeholders, then embeds the
+catalog/runtime into `code.js` and `ui.html`. Commit these generated blocks too:
+the Figma plugin still loads just those two files, with no runtime dependencies.
+Do not edit inside their `BEGIN I18N` or `BEGIN UI RUNTIME` blocks directly.
+New plugin messages should use `localizedMessage(key, params)` and known validation
+errors should use `messageError(key, params)`. Pass caught errors through
+`errorDetail(error)` to preserve either a structured reason or the original text.
+
+Browser checks use installed Microsoft Edge and Playwright:
+`node tests/i18n-browser.cjs` (make Playwright available through `NODE_PATH` if
+needed). They cover all languages at 500px and 390px, state preservation, report
+copying and literal rendering of user data. Screenshots go to `dist/i18n-qa/`.
+Final Figma Desktop validation and native-language editorial review remain release
+checks; browser tests simulate the plugin message bridge.
 
 ### 모드 보존 업데이트 (작업본)
 
@@ -183,7 +230,22 @@ Then replace `YOUR_PLUGIN_ID` in `manifest.json` with your actual Figma plugin I
 
 ---
 
-## v2.1.2 릴리즈 노트 (Latest)
+## v2.2.0 릴리즈 노트 (Latest)
+
+### 다국어 UI와 옵션 도움말
+- **5개 언어**: 한국어·영어·일본어·중국어 간체·스페인어로 UI 안내, 실행 상태, QA, 오류 설명과 복사 리포트를 제공합니다.
+- **자동 감지 기본값**: 첫 실행은 실행 환경의 선호 언어를 따릅니다. 지원 언어가 없으면 영어를 사용하며, 사용자가 선택한 언어는 다음 실행에도 유지됩니다. 위치나 Figma 메뉴 언어를 감지하지 않습니다.
+- **영어 레이블 유지**: 체크 옵션과 Variables·Collection·Styles 제목 용어는 영어로 유지합니다. 레이블 텍스트 호버 또는 체크박스 키보드 포커스에서 선택 언어의 용도 설명을 제공합니다.
+- **리포트 언어 전환**: 입력 MD와 옵션 선택을 유지하면서 기존 QA·등록 요약·복사 결과를 새 언어로 표시합니다. 사용자 이름·MD 규격·Figma 원본 오류는 보존합니다.
+- **오프라인 번역**: 외부 번역 API 없이 포함된 번역 문구를 사용합니다. 템플릿·AI 가이드·Figma Agent 스킬의 본문과 v2.1.0 MD 형식은 유지합니다.
+- **AI 패키지 v0.1.2**: 사전 검사기에 파서의 구조화된 오류 처리 함수를 함께 포함합니다.
+- **검증**: 자동 테스트 23개, 5개 언어의 브라우저 레이아웃·툴팁·리포트 검사 통과. Figma 사용자 확인 및 Community 배포 완료.
+
+[English release notes](releases/v2.2.0.md)
+
+---
+
+## v2.1.2 릴리즈 노트
 
 ### ✨ 스킬 호출 이름 간소화
 - **스킬 이름**: 제작자 접두어를 빼고 `md-to-figma`로 통일했습니다. 게시 제목은 MD to Figma Assistant를 유지합니다.

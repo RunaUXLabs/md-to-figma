@@ -1,0 +1,730 @@
+{
+  "language": [
+    "언어",
+    "Language",
+    "言語",
+    "语言",
+    "Idioma"
+  ],
+  "auto": [
+    "자동 감지",
+    "Automatic",
+    "自動",
+    "自动",
+    "Automático"
+  ],
+  "template": [
+    "템플릿 받기",
+    "Get template",
+    "テンプレート",
+    "下载模板",
+    "Plantilla"
+  ],
+  "guide": [
+    "AI 가이드",
+    "AI guide",
+    "AIガイド",
+    "AI指南",
+    "Guía de IA"
+  ],
+  "skill": [
+    "AI 스킬 ↗",
+    "AI skill ↗",
+    "AIスキル ↗",
+    "AI技能 ↗",
+    "Skill de IA ↗"
+  ],
+  "skillTitle": [
+    "MD to Figma Assistant 커뮤니티 스킬 페이지 열기",
+    "Open the MD to Figma Assistant community skill",
+    "MD to Figma Assistantのコミュニティスキルを開く",
+    "打开MD to Figma Assistant社区技能",
+    "Abrir el skill de MD to Figma Assistant"
+  ],
+  "intro": [
+    "템플릿과 AI 가이드로 디자인 데이터를 MD로 정리하세요.\nFigma Agent에서는 AI 스킬을 추가하고 /md-to-figma를 호출하세요.\n완성된 DESIGN.md 내용을 아래에 붙여넣으세요.",
+    "Prepare your design data as MD with the template and AI guide.\nIn Figma Agent, add the AI skill and run /md-to-figma.\nPaste your completed DESIGN.md below.",
+    "テンプレートとAIガイドでデザインデータをMDにまとめます。\nFigma AgentではAIスキルを追加し、/md-to-figmaを実行します。\n完成したDESIGN.mdを下に貼り付けてください。",
+    "使用模板和AI指南将设计数据整理为MD。\n在Figma Agent中添加AI技能并运行 /md-to-figma。\n将完成的DESIGN.md粘贴到下方。",
+    "Prepara tus datos de diseño en MD con la plantilla y la guía de IA.\nEn Figma Agent, añade el skill y ejecuta /md-to-figma.\nPega el contenido de DESIGN.md a continuación."
+  ],
+  "variables": [
+    "Variables (Collection별 생성)",
+    "Variables (by Collection)",
+    "Variables（Collection別に生成）",
+    "Variables（按Collection生成）",
+    "Variables (por Collection)"
+  ],
+  "styles": [
+    "Styles (Variable 연동)",
+    "Styles (linked to Variables)",
+    "Styles（Variableに連携）",
+    "Styles（关联Variable）",
+    "Styles (vinculados a Variables)"
+  ],
+  "colors": [
+    "색상",
+    "Colors",
+    "色",
+    "颜色",
+    "Colores"
+  ],
+  "spacing": [
+    "간격",
+    "Spacing",
+    "間隔",
+    "间距",
+    "Espaciado"
+  ],
+  "radius": [
+    "모서리 반경",
+    "Radius",
+    "角丸",
+    "圆角",
+    "Radio"
+  ],
+  "typography": [
+    "타이포그래피",
+    "Typography",
+    "タイポグラフィ",
+    "排版",
+    "Tipografía"
+  ],
+  "motion": [
+    "모션",
+    "Motion",
+    "モーション",
+    "动效",
+    "Movimiento"
+  ],
+  "color": [
+    "색상",
+    "Color",
+    "色",
+    "颜色",
+    "Color"
+  ],
+  "text": [
+    "텍스트",
+    "Text",
+    "テキスト",
+    "文本",
+    "Texto"
+  ],
+  "effect": [
+    "효과",
+    "Effect",
+    "エフェクト",
+    "效果",
+    "Efecto"
+  ],
+  "grid": [
+    "그리드",
+    "Grid",
+    "グリッド",
+    "网格",
+    "Cuadrícula"
+  ],
+  "generate": [
+    "등록 (MD → Figma)",
+    "Generate (MD → Figma)",
+    "登録 (MD → Figma)",
+    "生成 (MD → Figma)",
+    "Generar (MD → Figma)"
+  ],
+  "export": [
+    "추출 (Figma → MD)",
+    "Export (Figma → MD)",
+    "書き出し (Figma → MD)",
+    "导出 (Figma → MD)",
+    "Exportar (Figma → MD)"
+  ],
+  "report": [
+    "실행 리포트",
+    "Run report",
+    "実行レポート",
+    "执行报告",
+    "Informe de ejecución"
+  ],
+  "qa": [
+    "실행 로그/QA",
+    "Run log / QA",
+    "実行ログ / QA",
+    "执行日志 / QA",
+    "Registro / QA"
+  ],
+  "issues": [
+    "해결 필요",
+    "Needs attention",
+    "要確認",
+    "需要处理",
+    "Requiere atención"
+  ],
+  "copyQA": [
+    "리포트 복사",
+    "Copy report",
+    "レポートをコピー",
+    "复制报告",
+    "Copiar informe"
+  ],
+  "copyError": [
+    "브리핑 복사",
+    "Copy errors",
+    "エラーをコピー",
+    "复制错误",
+    "Copiar errores"
+  ],
+  "close": [
+    "닫기",
+    "Close",
+    "閉じる",
+    "关闭",
+    "Cerrar"
+  ],
+  "running": [
+    "진행 중",
+    "Running",
+    "実行中",
+    "处理中",
+    "En curso"
+  ],
+  "done": [
+    "완료",
+    "Complete",
+    "完了",
+    "完成",
+    "Completado"
+  ],
+  "hasErrors": [
+    "에러 있음",
+    "Errors found",
+    "エラーあり",
+    "存在错误",
+    "Con errores"
+  ],
+  "generating": [
+    "등록 중...",
+    "Generating…",
+    "登録中…",
+    "生成中…",
+    "Generando…"
+  ],
+  "exporting": [
+    "데이터 추출 중...",
+    "Exporting…",
+    "書き出し中…",
+    "导出中…",
+    "Exportando…"
+  ],
+  "generated": [
+    "등록 완료",
+    "Generation complete",
+    "登録完了",
+    "生成完成",
+    "Generación completada"
+  ],
+  "exported": [
+    "추출 완료",
+    "Export complete",
+    "書き出し完了",
+    "导出完成",
+    "Exportación completada"
+  ],
+  "downloaded": [
+    "다운로드 요청 완료",
+    "Download requested",
+    "ダウンロードを開始しました",
+    "已请求下载",
+    "Descarga solicitada"
+  ],
+  "empty": [
+    "MD 내용을 붙여넣으세요.",
+    "Paste your MD content.",
+    "MDを貼り付けてください。",
+    "请粘贴MD内容。",
+    "Pega el contenido MD."
+  ],
+  "copied": [
+    "복사 완료",
+    "Copied",
+    "コピーしました",
+    "已复制",
+    "Copiado"
+  ],
+  "copyFailed": [
+    "복사에 실패했습니다.",
+    "Copy failed.",
+    "コピーできませんでした。",
+    "复制失败。",
+    "No se pudo copiar."
+  ],
+  "saveFailed": [
+    "언어 설정을 저장하지 못했습니다. 이번 실행에는 적용됩니다.",
+    "Could not save the language. It applies for this session.",
+    "言語を保存できませんでした。今回の実行には適用されます。",
+    "无法保存语言设置。本次运行仍会使用此语言。",
+    "No se pudo guardar el idioma. Se aplicará en esta sesión."
+  ],
+  "detail": [
+    "상세",
+    "Details",
+    "詳細",
+    "详情",
+    "Detalles"
+  ],
+  "errorReport": [
+    "에러 리포트",
+    "Error report",
+    "エラーレポート",
+    "错误报告",
+    "Informe de errores"
+  ],
+  "summary": [
+    "등록 요약",
+    "Generation summary",
+    "登録の概要",
+    "生成摘要",
+    "Resumen de generación"
+  ],
+  "varCounts": [
+    "배리어블 [적용/검사]",
+    "Variables [applied/checked]",
+    "変数 [適用/確認]",
+    "变量 [应用/检查]",
+    "Variables [aplicadas/revisadas]"
+  ],
+  "varNote": [
+    "새로 등록되거나 값이 변경된 수 / 검사한 수입니다.",
+    "New or changed variables / checked variables.",
+    "新規または値を変更した変数の数 / 確認した数です。",
+    "新建或值已更改的变量数 / 已检查的变量数。",
+    "Variables nuevas o modificadas / variables revisadas."
+  ],
+  "styleCounts": [
+    "스타일 [신규/처리]",
+    "Styles [new/processed]",
+    "スタイル [新規/処理]",
+    "样式 [新建/处理]",
+    "Estilos [nuevos/procesados]"
+  ],
+  "styleNote": [
+    "새로 만든 수 / 처리한 수입니다. 기존 스타일은 값 변경 여부와 무관하게 다시 적용됩니다.",
+    "New / processed styles. Existing styles are reapplied even if unchanged.",
+    "新規作成数 / 処理数です。既存のスタイルは変更がなくても再適用されます。",
+    "新建数 / 已处理数。现有样式即使未更改也会重新应用。",
+    "Estilos nuevos / procesados. Los existentes se vuelven a aplicar aunque no cambien."
+  ],
+  "noItems": [
+    "처리한 항목이 없습니다. MD 내용과 선택 항목을 확인해 주세요.",
+    "No items processed. Check your MD and selected options.",
+    "処理した項目はありません。MDと選択項目を確認してください。",
+    "没有处理任何项目。请检查MD内容和所选选项。",
+    "No se procesaron elementos. Revisa el MD y las opciones seleccionadas."
+  ],
+  "exportDone": [
+    "디자인 시스템 데이터를 추출하고 다운로드를 요청했습니다.",
+    "Design system data exported; download requested.",
+    "デザインシステムを書き出し、ダウンロードを開始しました。",
+    "设计系统数据已导出，并已请求下载。",
+    "Datos del sistema de diseño exportados; descarga solicitada."
+  ],
+  "columns": [
+    "Variable Modes에는 7개 열이 필요합니다.",
+    "Variable Modes: expected 7 columns.",
+    "Variable Modesには7列必要です。",
+    "Variable Modes需要7列。",
+    "Variable Modes requiere 7 columnas."
+  ],
+  "json": [
+    "Variable Modes의 JSON 셀이 올바르지 않습니다: {0}",
+    "Variable Modes: invalid JSON cell: {0}",
+    "Variable ModesのJSONセルが無効です: {0}",
+    "Variable Modes的JSON单元格无效：{0}",
+    "Celda JSON no válida en Variable Modes: {0}"
+  ],
+  "motionColumns": [
+    "Motion Styles에는 Token / Entries 두 열이 필요합니다.",
+    "Motion Styles requires Token / Entries columns.",
+    "Motion StylesにはToken / Entriesの2列が必要です。",
+    "Motion Styles需要Token / Entries两列。",
+    "Motion Styles requiere las columnas Token / Entries."
+  ],
+  "identity": [
+    "Variable Modes의 이름 또는 타입이 올바르지 않습니다.",
+    "Variable Modes: invalid identity or type.",
+    "Variable Modesの名前または型が無効です。",
+    "Variable Modes的名称或类型无效。",
+    "Nombre o tipo no válido en Variable Modes."
+  ],
+  "duplicate": [
+    "Variable Modes에 중복 행이 있습니다: {0} / {1}",
+    "Variable Modes: duplicate row for {0} / {1}",
+    "Variable Modesに重複行があります: {0} / {1}",
+    "Variable Modes存在重复行：{0} / {1}",
+    "Fila duplicada en Variable Modes: {0} / {1}"
+  ],
+  "inconsistent": [
+    "변수의 행마다 타입이 다릅니다: {0}",
+    "Variable Modes: inconsistent type for {0}",
+    "行によって変数の型が異なります: {0}",
+    "变量各行的类型不一致：{0}",
+    "El tipo de variable varía entre filas: {0}"
+  ],
+  "conflict": [
+    "기존 변수와 타입이 다릅니다: {0}/{1}",
+    "Variable Modes: type conflict for {0}/{1}",
+    "既存の変数と型が異なります: {0}/{1}",
+    "与现有变量的类型冲突：{0}/{1}",
+    "Conflicto con el tipo existente: {0}/{1}"
+  ],
+  "modeSkip": [
+    "모드를 처리하지 못했습니다: {0} / {1}\n{2}",
+    "Mode skipped: {0} / {1}: {2}",
+    "モードを処理できませんでした: {0} / {1}\n{2}",
+    "无法处理模式：{0} / {1}\n{2}",
+    "Modo omitido: {0} / {1}\n{2}"
+  ],
+  "variableSkip": [
+    "변수를 처리하지 못했습니다: {0}\n{1}",
+    "Variable skipped: {0}: {1}",
+    "変数を処理できませんでした: {0}\n{1}",
+    "无法处理变量：{0}\n{1}",
+    "Variable omitida: {0}\n{1}"
+  ],
+  "aliasSkip": [
+    "참조 대상이 없거나 타입이 달라 연결을 건너뛰었습니다: {0} / {1}",
+    "Alias skipped (missing target or type mismatch): {0} / {1}",
+    "参照先がないか型が異なるため、参照をスキップしました: {0} / {1}",
+    "引用目标缺失或类型不匹配，已跳过：{0} / {1}",
+    "Referencia omitida por destino ausente o tipo incompatible: {0} / {1}"
+  ],
+  "valueSkip": [
+    "값을 적용하지 못했습니다: {0} / {1}\n{2}",
+    "Value skipped: {0} / {1}: {2}",
+    "値を適用できませんでした: {0} / {1}\n{2}",
+    "无法应用值：{0} / {1}\n{2}",
+    "Valor omitido: {0} / {1}\n{2}"
+  ],
+  "matched": [
+    "기존 변수 값을 변경했습니다: {0} / {1}",
+    "Smart Match: updated {0} / {1}",
+    "既存の変数値を変更しました: {0} / {1}",
+    "已更新现有变量值：{0} / {1}",
+    "Valor existente actualizado: {0} / {1}"
+  ],
+  "syncSkip": [
+    "모드 동기화를 건너뛰었습니다: {0}\n{1}",
+    "Skipped mode sync for {0}: {1}",
+    "モード同期をスキップしました: {0}\n{1}",
+    "已跳过模式同步：{0}\n{1}",
+    "Sincronización de modos omitida: {0}\n{1}"
+  ],
+  "syncing": [
+    "{0} 동기화 중...",
+    "Syncing {0}…",
+    "{0}を同期中…",
+    "正在同步{0}…",
+    "Sincronizando {0}…"
+  ],
+  "motionValue": [
+    "모션 값을 해석하지 못했습니다: {0} = {1}\n{2}",
+    "Invalid Motion value: {0} = {1}\n{2}",
+    "モーション値を解釈できません: {0} = {1}\n{2}",
+    "无法解析动效值：{0} = {1}\n{2}",
+    "Valor de movimiento no válido: {0} = {1}\n{2}"
+  ],
+  "easingHint": [
+    "프리셋 또는 cubic-bezier(x1, y1, x2, y2) / spring(0~1) 형식을 사용하세요.",
+    "Use a preset or cubic-bezier(x1, y1, x2, y2) / spring(0~1).",
+    "プリセット、cubic-bezier(x1, y1, x2, y2)、spring(0~1)を使用してください。",
+    "请使用预设或cubic-bezier(x1, y1, x2, y2) / spring(0~1)。",
+    "Usa un preset o cubic-bezier(x1, y1, x2, y2) / spring(0~1)."
+  ],
+  "timingHint": [
+    "150ms처럼 밀리초 단위를 사용하세요.",
+    "Use milliseconds, e.g. 150ms.",
+    "150msのようにミリ秒で指定してください。",
+    "请使用毫秒，例如150ms。",
+    "Usa milisegundos, por ejemplo 150ms."
+  ],
+  "motionFailed": [
+    "Motion 변수를 생성하지 못했습니다. 실행 환경의 지원 여부와 원본 오류를 확인하세요.\n{0}",
+    "Could not create Motion variables. Check runtime support and the original error.\n{0}",
+    "Motion変数を作成できませんでした。実行環境の対応状況と元のエラーを確認してください。\n{0}",
+    "无法创建Motion变量。请检查运行环境支持情况及原始错误。\n{0}",
+    "No se pudieron crear variables de movimiento. Revisa la compatibilidad y el error original.\n{0}"
+  ],
+  "created": [
+    "{0} 컬렉션에 토큰 {1}개를 새로 생성했습니다.",
+    "Created {1} tokens in collection {0}.",
+    "{0}にトークンを{1}個作成しました。",
+    "已在集合{0}中创建{1}个令牌。",
+    "Se crearon {1} tokens en la colección {0}."
+  ],
+  "missingEffect": [
+    "효과 참조 변수가 없습니다: {0}",
+    "Effect reference variable not found: {0}",
+    "エフェクトの参照変数がありません: {0}",
+    "找不到效果引用变量：{0}",
+    "No se encontró la variable del efecto: {0}"
+  ],
+  "bindingField": [
+    "지원하지 않는 바인딩 속성입니다.",
+    "Unsupported binding property.",
+    "未対応のバインドプロパティです。",
+    "不支持此绑定属性。",
+    "Propiedad de vinculación no compatible."
+  ],
+  "bindingTarget": [
+    "참조 대상이 없거나 타입이 다릅니다.",
+    "Missing reference target or type mismatch.",
+    "参照先がないか、型が異なります。",
+    "引用目标缺失或类型不匹配。",
+    "Destino de referencia ausente o tipo incompatible."
+  ],
+  "bindingSkip": [
+    "바인딩을 건너뛰고 정적 값을 사용합니다: {0}/{1}\n{2}",
+    "Binding skipped: {0}/{1}: {2}. Using the static value.",
+    "バインドをスキップし、固定値を使用します: {0}/{1}\n{2}",
+    "已跳过绑定并使用静态值：{0}/{1}\n{2}",
+    "Vinculación omitida; se usa el valor estático: {0}/{1}\n{2}"
+  ],
+  "creating": [
+    "{0} 스타일 생성 중...",
+    "Creating {0} styles…",
+    "{0}スタイルを作成中…",
+    "正在创建{0}样式…",
+    "Creando estilos de {0}…"
+  ],
+  "fontFallback": [
+    "폰트 {0}을 불러오지 못해 {1} 스타일에 Inter를 사용합니다.",
+    "Font fallback: could not load {0}. Style {1} uses Inter.",
+    "フォント{0}を読み込めないため、{1}にInterを使用します。",
+    "无法加载字体{0}，样式{1}将使用Inter。",
+    "No se pudo cargar {0}. El estilo {1} usa Inter."
+  ],
+  "bindingError": [
+    "바인딩 실패: {0}\n{1}",
+    "Binding Error ({0}): {1}",
+    "バインド失敗: {0}\n{1}",
+    "绑定失败：{0}\n{1}",
+    "Error de vinculación: {0}\n{1}"
+  ],
+  "colorMissing": [
+    "컬러 변수가 없어 스타일을 건너뜁니다: {0}/{1}. 색상 변수도 선택하거나 기존 변수를 확인하세요.",
+    "Color Style skipped: missing variable {0}/{1}. Select color variables or check existing variables.",
+    "色変数がないためスキップします: {0}/{1}。色変数も選択するか、既存の変数を確認してください。",
+    "缺少颜色变量，已跳过样式：{0}/{1}。请选择颜色变量或检查现有变量。",
+    "Estilo de color omitido: falta {0}/{1}. Selecciona las variables de color o revisa las existentes."
+  ],
+  "colorAmbiguous": [
+    "여러 컬렉션에 같은 이름이 있어 스타일을 건너뜁니다: {0}. MD 토큰에 그룹 경로를 명시하세요.",
+    "Color Style skipped: {0} exists in several collections. Specify a group path in the MD token.",
+    "複数のコレクションに同名があるためスキップします: {0}。MDにグループパスを指定してください。",
+    "多个集合中存在同名项，已跳过样式：{0}。请在MD令牌中指定分组路径。",
+    "Estilo omitido: {0} existe en varias colecciones. Indica la ruta del grupo en el token MD."
+  ],
+  "colorCollision": [
+    "같은 이름의 다른 스타일이 있어 건너뜁니다: {0}",
+    "Color Style skipped: another style already uses {0}.",
+    "同名の別スタイルがあるためスキップします: {0}",
+    "已有其他样式使用此名称，已跳过：{0}",
+    "Estilo de color omitido: otro estilo ya usa {0}."
+  ],
+  "styleSkip": [
+    "{0} 스타일을 건너뛰었습니다: {1}\n{2}",
+    "{0} Style skipped: {1}: {2}",
+    "{0}スタイルをスキップしました: {1}\n{2}",
+    "已跳过{0}样式：{1}\n{2}",
+    "Estilo de {0} omitido: {1}\n{2}"
+  ],
+  "unsupportedEffect": [
+    "Shader 또는 지원하지 않는 효과 종류입니다.",
+    "Shader or unsupported effect type.",
+    "Shaderまたは未対応のエフェクトです。",
+    "Shader或不支持的效果类型。",
+    "Shader o tipo de efecto no compatible."
+  ],
+  "settings": [
+    "Settings JSON에 효과 종류별 속성을 명시하세요.",
+    "Specify effect properties in Settings JSON.",
+    "Settings JSONにエフェクトのプロパティを指定してください。",
+    "请在Settings JSON中指定效果属性。",
+    "Especifica las propiedades del efecto en Settings JSON."
+  ],
+  "noise": [
+    "{0}의 기본 혼합 모드를 현재 Figma API 형식에 맞춰 등록했습니다.",
+    "Noise compatibility: adapted the default blend mode of {0} to this Figma API.",
+    "{0}の既定の描画モードを現在のFigma API形式に合わせました。",
+    "已将{0}的默认混合模式调整为当前Figma API格式。",
+    "Se adaptó el modo de mezcla predeterminado de {0} a esta API de Figma."
+  ],
+  "gridType": [
+    "지원하지 않는 그리드 종류입니다.",
+    "Unsupported grid type.",
+    "未対応のグリッドです。",
+    "不支持此网格类型。",
+    "Tipo de cuadrícula no compatible."
+  ],
+  "motionAPI": [
+    "이 Figma 환경은 Motion Styles API를 지원하지 않습니다.",
+    "This Figma environment does not support the Motion Styles API.",
+    "このFigma環境はMotion Styles APIに対応していません。",
+    "此Figma环境不支持Motion Styles API。",
+    "Este entorno de Figma no admite la API de Motion Styles."
+  ],
+  "entries": [
+    "Entries는 비어 있지 않은 JSON 배열이어야 합니다.",
+    "Entries must be a non-empty JSON array.",
+    "Entriesには空でないJSON配列が必要です。",
+    "Entries必须是非空JSON数组。",
+    "Entries debe ser un array JSON no vacío."
+  ],
+  "preset": [
+    "프리셋을 찾을 수 없습니다: {0}. 사용 가능: {1}",
+    "Preset not found: {0}. Available: {1}",
+    "プリセットがありません: {0}。使用可能: {1}",
+    "找不到预设：{0}。可用预设：{1}",
+    "Preset no encontrado: {0}. Disponibles: {1}"
+  ],
+  "motionSkip": [
+    "Motion Styles 처리를 건너뛰었습니다: {0}",
+    "Motion Styles skipped: {0}",
+    "Motion Stylesの処理をスキップしました: {0}",
+    "已跳过Motion Styles处理：{0}",
+    "Procesamiento de Motion Styles omitido: {0}"
+  ],
+  "aliasExport": [
+    "참조를 확인할 수 없어 내보내지 못했습니다: {0}",
+    "Cannot export unresolved alias: {0}",
+    "参照を解決できないため書き出せません: {0}",
+    "无法解析引用，导出失败：{0}",
+    "No se puede exportar la referencia sin resolver: {0}"
+  ],
+  "effectExport": [
+    "효과 내보내기를 건너뛰었습니다: {0}\n{1}",
+    "Effect export skipped: {0}: {1}",
+    "エフェクトの書き出しをスキップしました: {0}\n{1}",
+    "已跳过效果导出：{0}\n{1}",
+    "Exportación del efecto omitida: {0}\n{1}"
+  ],
+  "motionExport": [
+    "Motion Styles 내보내기를 건너뛰었습니다: {0}",
+    "Motion Styles export skipped: {0}",
+    "Motion Stylesの書き出しをスキップしました: {0}",
+    "已跳过Motion Styles导出：{0}",
+    "Exportación de Motion Styles omitida: {0}"
+  ],
+  "start": [
+    "MD 분석과 등록을 시작합니다...",
+    "MD parsing and generation started…",
+    "MDの解析と登録を開始します…",
+    "开始解析MD并生成…",
+    "Iniciando análisis y generación de MD…"
+  ],
+  "modeSync": [
+    "컬렉션과 모드 이름을 기준으로 변수를 동기화합니다.",
+    "Syncing variables by collection and mode name.",
+    "コレクション名とモード名で変数を同期します。",
+    "按集合和模式名称同步变量。",
+    "Sincronizando variables por nombre de colección y modo."
+  ],
+  "finished": [
+    "처리가 끝났습니다. QA에서 건너뛴 항목을 확인하세요.",
+    "Processing finished. Check QA for skipped items.",
+    "処理が終了しました。スキップした項目はQAで確認してください。",
+    "处理结束。请在QA中检查跳过的项目。",
+    "Procesamiento finalizado. Revisa los elementos omitidos en QA."
+  ],
+  "syncFailed": [
+    "등록에 실패했습니다.",
+    "Sync failed",
+    "登録に失敗しました。",
+    "生成失败。",
+    "Error de sincronización"
+  ],
+  "exportStart": [
+    "Figma 데이터를 분석하고 추출합니다...",
+    "Analyzing and exporting Figma data…",
+    "Figmaデータを解析して書き出します…",
+    "正在分析并导出Figma数据…",
+    "Analizando y exportando datos de Figma…"
+  ],
+  "exportFailed": [
+    "추출에 실패했습니다.",
+    "Export failed",
+    "書き出しに失敗しました。",
+    "导出失败。",
+    "Error de exportación"
+  ],
+  "helpVarColors": [
+    "MD의 색상 토큰을 Color Variables로 생성하거나 기존 값을 갱신합니다.",
+    "Create Color Variables from MD color tokens, or update existing values.",
+    "MDの色トークンからColor Variablesを作成し、既存の値を更新します。",
+    "根据MD中的颜色令牌创建Color Variables，或更新现有值。",
+    "Crea Color Variables a partir de los tokens de color del MD o actualiza los valores existentes."
+  ],
+  "helpVarSpacing": [
+    "여백과 요소 사이 간격에 사용할 숫자 Variables를 생성하거나 갱신합니다.",
+    "Create or update numeric Variables for padding and gaps between elements.",
+    "余白や要素間の間隔に使う数値Variablesを作成・更新します。",
+    "创建或更新用于内边距和元素间距的数值Variables。",
+    "Crea o actualiza Variables numéricas para el espacio interior y entre elementos."
+  ],
+  "helpVarRadius": [
+    "모서리 둥글기에 사용할 숫자 Variables를 생성하거나 갱신합니다.",
+    "Create or update numeric Variables for corner radii.",
+    "角丸に使う数値Variablesを作成・更新します。",
+    "创建或更新用于圆角半径的数值Variables。",
+    "Crea o actualiza Variables numéricas para el radio de las esquinas."
+  ],
+  "helpVarTypography": [
+    "MD에 정의된 글꼴 관련 Variables를 생성하거나 갱신합니다. Text Styles는 별도 옵션입니다.",
+    "Create or update typography Variables defined in the MD. Text Styles is a separate option.",
+    "MDに定義された文字関連のVariablesを作成・更新します。Text Stylesは別のオプションです。",
+    "创建或更新MD中定义的排版Variables。Text Styles是单独的选项。",
+    "Crea o actualiza las Variables tipográficas del MD. Text Styles es una opción independiente."
+  ],
+  "helpVarMotion": [
+    "MD에 정의된 Timing·Easing Variables를 생성하거나 갱신합니다. 애니메이션 적용은 별도입니다.",
+    "Create or update Timing and Easing Variables defined in the MD. This does not apply animations to layers.",
+    "MDのTiming・Easing Variablesを作成・更新します。レイヤーへのアニメーション適用は行いません。",
+    "创建或更新MD中定义的Timing和Easing Variables，不会将动画应用到图层。",
+    "Crea o actualiza las Variables Timing y Easing del MD. No aplica animaciones a las capas."
+  ],
+  "helpColorStyles": [
+    "MD의 색상으로 Color Styles를 생성하거나 갱신합니다. Variable Modes 표를 사용하면 대응하는 Color Variables가 필요합니다.",
+    "Create or update Color Styles from MD colors. A Variable Modes table requires matching Color Variables.",
+    "MDの色からColor Stylesを作成・更新します。Variable Modes表を使う場合は対応するColor Variablesが必要です。",
+    "根据MD中的颜色创建或更新Color Styles。使用Variable Modes表时，需要对应的Color Variables。",
+    "Crea o actualiza Color Styles con los colores del MD. La tabla Variable Modes requiere las Color Variables correspondientes."
+  ],
+  "helpTextStyles": [
+    "Typography 표로 글꼴·크기·행간 등의 Text Styles를 생성하거나 갱신합니다. 사용 가능한 Variables를 연결합니다.",
+    "Create or update Text Styles for fonts, sizes and line heights from the Typography table, linking available Variables.",
+    "Typography表からフォント・サイズ・行間などのText Stylesを作成・更新し、利用可能なVariablesを関連付けます。",
+    "根据Typography表创建或更新字体、字号、行高等Text Styles，并关联可用的Variables。",
+    "Crea o actualiza Text Styles de fuente, tamaño e interlineado desde la tabla Typography y vincula las Variables disponibles."
+  ],
+  "helpEffectStyles": [
+    "MD에 정의된 그림자·블러 등 지원되는 효과를 Effect Styles로 생성하거나 갱신합니다.",
+    "Create or update Effect Styles for supported MD effects, such as shadows and blur.",
+    "MDに定義されたシャドウ・ぼかしなど、対応する効果のEffect Stylesを作成・更新します。",
+    "为MD中定义的阴影、模糊等受支持效果创建或更新Effect Styles。",
+    "Crea o actualiza Effect Styles con los efectos compatibles del MD, como sombras y desenfoque."
+  ],
+  "helpGridStyles": [
+    "MD의 열·행·격자 설정으로 Grid Styles를 생성하거나 갱신합니다.",
+    "Create or update Grid Styles from the MD column, row and grid settings.",
+    "MDの列・行・グリッド設定からGrid Stylesを作成・更新します。",
+    "根据MD中的列、行和网格设置创建或更新Grid Styles。",
+    "Crea o actualiza Grid Styles con la configuración de columnas, filas y cuadrículas del MD."
+  ],
+  "helpMotionStyles": [
+    "Motion Styles 표의 프리셋과 속성으로 애니메이션 스타일을 생성하거나 갱신합니다. 지원되는 Figma 환경이 필요합니다.",
+    "Create or update animation styles from the presets and properties in the Motion Styles table. Requires a supported Figma environment.",
+    "Motion Styles表のプリセットとプロパティからアニメーションスタイルを作成・更新します。対応するFigma環境が必要です。",
+    "根据Motion Styles表中的预设和属性创建或更新动画样式。需要Figma运行环境支持。",
+    "Crea o actualiza estilos de animación con los presets y propiedades de la tabla Motion Styles. Requiere un entorno de Figma compatible."
+  ]
+}

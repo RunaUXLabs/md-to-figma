@@ -23,7 +23,7 @@ How to use:
 
 This skill prepares Markdown. You choose the destination Figma file and perform the import using the separate MD to Figma plugin. Renamed items can create new entries while the originals remain. Figma API availability, installed fonts and destination-file bindings must be checked after import.
 
-Compatible with MD to Figma v2.1.0. Assistant package version: 0.1.1.
+Compatible with MD to Figma v2.1.0. Assistant package version: 0.1.2.
 
 ## AI plugin listing
 

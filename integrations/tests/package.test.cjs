@@ -38,6 +38,13 @@ test('bad identities, values and JSON are errors, not successful imports', () =>
   assert.equal(validate(header + row + row.replace('FLOAT', 'STRING').replace('12', '"Inter"').replace('작은 화면', 'Other')).ok, false);
 });
 
+test('packaged parser reports actionable errors with all runtime helpers included', () => {
+  const { parseMD } = require(path.join(skill, 'scripts/parser.cjs'));
+  assert.throws(() => parseMD('## Variable Modes\n| bad | row |'), /expected 7 columns/);
+  assert.throws(() => parseMD(header + row.replace('"Layout"', 'Layout')), /invalid JSON cell/);
+  assert.throws(() => parseMD('## Motion Styles\n| bad | row | extra |'), /Token \/ Entries/);
+});
+
 test('aliases preserve external dependencies and reject wrong types or cycles', () => {
   const aliasRow = row.replace('"gap"', '"linked"').replace('12', '{"alias":{"collection":"Layout","token":"gap"}}');
   assert.equal(validate(header + row + aliasRow).ok, true);

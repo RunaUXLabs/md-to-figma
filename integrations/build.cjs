@@ -34,7 +34,9 @@ const start = runtime.indexOf('function parseMD(content) {');
 const end = runtime.indexOf('\nasync function getOrCreateCollection', start);
 if (start === -1 || end === -1) throw new Error('Importer parser boundary changed; review the extraction before building.');
 const parser = runtime.slice(start, end).trim();
-write(path.join(skillRoot, 'scripts', 'parser.cjs'), "'use strict';\n// Generated from the unchanged Figma runtime.\n" + parser + '\nmodule.exports = { parseMD };\n');
+const localization = runtime.match(/\/\/ BEGIN I18N\r?\n([\s\S]*?)\/\/ END I18N/);
+if (!localization) throw new Error('Importer message helpers are missing. Run scripts/build-i18n.cjs first.');
+write(path.join(skillRoot, 'scripts', 'parser.cjs'), "'use strict';\n// Generated from the Figma runtime with its structured error helpers.\n" + localization[1] + '\n' + parser + '\nmodule.exports = { parseMD };\n');
 const provenance = {
   packageVersion: version,
   compatibleImporter: '2.1.0',

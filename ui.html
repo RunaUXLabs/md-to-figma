@@ -595,10 +595,25 @@
         transform: rotate(360deg);
       }
     }
+
+    .language-row { display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-bottom:10px; font-size:12px; }
+    .language-row select { font:inherit; color:var(--text-default); background:var(--white); border:1px solid var(--gray-300); border-radius:4px; padding:5px 8px; }
+    .textarea-label { white-space:pre-line; }
+    .btn, .btn-template { min-width:0; white-space:normal; }
+    .btn .ico, .btn-template .ico { flex-shrink:0; }
+    .modal-footer { flex-wrap:wrap; }
+    .modal-title-row { flex-wrap:wrap; }
+    .log-entry { overflow-wrap:anywhere; }
+    select:focus-visible { outline:2px solid var(--blue-500); outline-offset:2px; }
+    .option-help { position:fixed; z-index:2500; width:280px; max-width:calc(100vw - 16px); padding:10px 12px; border-radius:6px; background:var(--gray-900); color:var(--white); font-size:12px; line-height:1.6; box-shadow:0 3px 12px rgba(0,0,0,.18); }
+    .option-help[hidden] { display:none; }
   </style>
 </head>
 
 <body>
+  <div class="language-row"><label for="languageSelect" data-i18n="language">언어</label>
+    <select id="languageSelect"><option value="auto" data-i18n="auto">자동 감지</option><option value="ko">한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh-CN">简体中文</option><option value="es">Español</option></select>
+  </div>
   <div class="template-section">
     <button class="btn-template" id="downloadTemplateBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24"
           fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -607,7 +622,7 @@
             <path d="M12 15V3" />
           </g>
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" style="stroke:var(--gray-500)" />
-        </svg></span>템플릿 받기</button>
+        </svg></span><span data-i18n="template">템플릿 받기</span></button>
     <button class="btn-template" id="downloadGuideBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none"
           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <g opacity="0.8" style="stroke:var(--gray-500)">
@@ -616,16 +631,16 @@
           <path
             d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
             style="stroke:var(--gray-600)" />
-        </svg></span>AI 가이드</button>
+        </svg></span><span data-i18n="guide">AI 가이드</span></button>
     <button class="btn-template" id="openSkillBtn" title="MD to Figma Assistant 커뮤니티 스킬 페이지 열기">
       <span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z" />
-        </svg></span>AI 스킬 ↗</button>
+        </svg></span><span data-i18n="skill">AI 스킬 ↗</span></button>
   </div>
 
   <div class="textarea-section">
-    <div class="textarea-label">템플릿과 AI 가이드로 디자인 데이터를 MD로 정리하세요.<br>Figma Agent에서는 AI 스킬을 추가하고 /md-to-figma를 호출하세요.<br>완성된 DESIGN.md 내용을 아래에 붙여넣으세요.</div>
+    <div class="textarea-label" data-i18n="intro"></div>
     <textarea id="mdContent" placeholder="# Design System..."></textarea>
   </div>
 
@@ -641,18 +656,13 @@
             <path
               d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"
               style="stroke:var(--gray-600)" />
-          </svg></span>Variables (컬렉션 분리 생성)</div>
+          </svg></span><span data-i18n="variables">Variables</span></div>
       <div class="options-grid">
-        <div class="option-item"><input type="checkbox" id="optVarColors" checked><label
-            for="optVarColors">Colors</label></div>
-        <div class="option-item"><input type="checkbox" id="optVarSpacing" checked><label
-            for="optVarSpacing">Spacing</label></div>
-        <div class="option-item"><input type="checkbox" id="optVarRadius" checked><label
-            for="optVarRadius">Radius</label></div>
-        <div class="option-item"><input type="checkbox" id="optVarTypography" checked><label
-            for="optVarTypography">Typography</label></div>
-        <div class="option-item"><input type="checkbox" id="optVarMotion" checked><label
-            for="optVarMotion">Motion</label></div>
+        <div class="option-item"><input type="checkbox" id="optVarColors" checked><label for="optVarColors" lang="en">Colors</label></div>
+        <div class="option-item"><input type="checkbox" id="optVarSpacing" checked><label for="optVarSpacing" lang="en">Spacing</label></div>
+        <div class="option-item"><input type="checkbox" id="optVarRadius" checked><label for="optVarRadius" lang="en">Radius</label></div>
+        <div class="option-item"><input type="checkbox" id="optVarTypography" checked><label for="optVarTypography" lang="en">Typography</label></div>
+        <div class="option-item"><input type="checkbox" id="optVarMotion" checked><label for="optVarMotion" lang="en">Motion</label></div>
       </div>
     </div>
     <div class="options-divider"></div>
@@ -668,18 +678,13 @@
               <circle cx="6.5" cy="12.5" r="1.4" style="fill:var(--feedback-warning)" />
               <circle cx="8.5" cy="7.5" r="1.4" style="fill:var(--feedback-error)" />
             </g>
-          </svg></span>Styles (Variable 연동)</div>
+          </svg></span><span data-i18n="styles">Styles</span></div>
       <div class="options-grid">
-        <div class="option-item"><input type="checkbox" id="optColorStyles"><label for="optColorStyles">Color
-            Styles</label></div>
-        <div class="option-item"><input type="checkbox" id="optTextStyles" checked><label for="optTextStyles">Text
-            Styles</label></div>
-        <div class="option-item"><input type="checkbox" id="optEffectStyles" checked><label for="optEffectStyles">Effect
-            Styles</label></div>
-        <div class="option-item"><input type="checkbox" id="optGridStyles" checked><label for="optGridStyles">Grid
-            Styles</label></div>
-        <div class="option-item"><input type="checkbox" id="optMotionStyles"><label for="optMotionStyles">Motion
-            Styles</label></div>
+        <div class="option-item"><input type="checkbox" id="optColorStyles"><label for="optColorStyles" lang="en">Color Styles</label></div>
+        <div class="option-item"><input type="checkbox" id="optTextStyles" checked><label for="optTextStyles" lang="en">Text Styles</label></div>
+        <div class="option-item"><input type="checkbox" id="optEffectStyles" checked><label for="optEffectStyles" lang="en">Effect Styles</label></div>
+        <div class="option-item"><input type="checkbox" id="optGridStyles" checked><label for="optGridStyles" lang="en">Grid Styles</label></div>
+        <div class="option-item"><input type="checkbox" id="optMotionStyles"><label for="optMotionStyles" lang="en">Motion Styles</label></div>
       </div>
     </div>
   </div>
@@ -696,7 +701,7 @@
           </g>
           <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"
             style="stroke:var(--gray-300)" />
-        </svg></span>등록 (MD → Figma)</button>
+        </svg></span><span data-i18n="generate">등록 (MD → Figma)</span></button>
     <button class="btn btn-export" id="exportBtn"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none"
           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <g opacity="0.8" style="stroke:var(--indigo-500)">
@@ -704,7 +709,7 @@
             <path d="M12 3v12" />
           </g>
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" style="stroke:var(--gray-300)" />
-        </svg></span>추출 (Figma → MD)</button>
+        </svg></span><span data-i18n="export">추출 (Figma → MD)</span></button>
   </div>
 
   <div class="modal-overlay" id="modalOverlay">
@@ -723,21 +728,21 @@
                 <circle cx="12" cy="12" r="10" fill="none" stroke-width="2"
                   style="stroke:var(--feedback-info-surface)" />
                 <circle cx="12" cy="12" r="6" stroke="none" style="fill:var(--feedback-info)" />
-              </svg></span>실행 로그/QA<span class="tab-badge" id="badgeQA">0</span></div>
+              </svg></span><span data-i18n="qa">실행 로그/QA</span><span class="tab-badge" id="badgeQA">0</span></div>
           <div class="tab" id="tabError" onclick="switchTab('error')"><span class="ico"><svg width="10" height="10"
                 viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="10" fill="none" stroke-width="2"
                   style="stroke:var(--feedback-error-surface)" />
                 <circle cx="12" cy="12" r="6" stroke="none" style="fill:var(--feedback-error)" />
-              </svg></span>해결 필요<span class="tab-badge" id="badgeError">0</span></div>
+              </svg></span><span data-i18n="issues">해결 필요</span><span class="tab-badge" id="badgeError">0</span></div>
         </div>
       </div>
       <div class="tab-content" id="contentQA"></div>
       <div class="tab-content" id="contentError"></div>
       <div class="modal-footer">
-        <button class="btn btn-copy-qa" id="copyQABtn">리포트 복사</button>
-        <button class="btn btn-copy-error" id="copyErrorBtn">브리핑 복사</button>
-        <button class="btn btn-close-modal" id="closeModalBtn" disabled>닫기</button>
+        <button class="btn btn-copy-qa" id="copyQABtn"><span data-i18n="copyQA">리포트 복사</span></button>
+        <button class="btn btn-copy-error" id="copyErrorBtn"><span data-i18n="copyError">브리핑 복사</span></button>
+        <button class="btn btn-close-modal" id="closeModalBtn" disabled><span data-i18n="close">닫기</span></button>
       </div>
     </div>
   </div>
@@ -745,235 +750,285 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    function buildRegistrationSummary(results) {
-      var summary = "\n--- [등록 요약] ---\n";
-      var variables = results.variables;
-      var scanned = variables.scanned || {};
-      var variableItems = [];
-      [['colors', 'Color'], ['spacing', 'Spacing'], ['radius', 'Radius'], ['typography', 'Typography'], ['motion', 'Motion']].forEach(function (item) {
-        var applied = variables[item[0]] || 0;
-        var total = scanned[item[0]];
-        if (applied > 0 || total > 0) variableItems.push(item[1] + '(' + applied + (total === undefined ? '' : '/' + total) + ')');
-      });
-      var styles = results.styles;
-      var styleItems = [];
-      [['color', 'Color'], ['text', 'Text'], ['effect', 'Effect'], ['grid', 'Grid'], ['motion', 'Motion']].forEach(function (item) {
-        var total = styles[item[0]] || 0;
-        var created = styles[item[0] + 'New'];
-        if (total > 0) styleItems.push(item[1] + '(' + (created === undefined ? '' : created + '/') + total + ')');
-      });
-      if (variableItems.length > 0) {
-        summary += '• 배리어블 [적용/검사]: ' + variableItems.join(', ') + '\n';
-        summary += '  ※ 새로 등록되거나 값이 변경된 수 / 검사한 수입니다.\n';
-      }
-      if (styleItems.length > 0) {
-        summary += '• 스타일 [신규/처리]: ' + styleItems.join(', ') + '\n';
-        summary += '  ※ 새로 만든 수 / 처리한 수입니다. 기존 스타일은 값 변경 여부와 무관하게 다시 적용됩니다.\n';
-      }
-      if (variableItems.length === 0 && styleItems.length === 0) summary += '처리한 항목이 없습니다. MD 내용과 선택 항목을 확인해 주세요.\n';
-      return summary;
+// BEGIN I18N
+var I18N_MESSAGES = {"language":["언어","Language","言語","语言","Idioma"],"auto":["자동 감지","Automatic","自動","自动","Automático"],"template":["템플릿 받기","Get template","テンプレート","下载模板","Plantilla"],"guide":["AI 가이드","AI guide","AIガイド","AI指南","Guía de IA"],"skill":["AI 스킬 ↗","AI skill ↗","AIスキル ↗","AI技能 ↗","Skill de IA ↗"],"skillTitle":["MD to Figma Assistant 커뮤니티 스킬 페이지 열기","Open the MD to Figma Assistant community skill","MD to Figma Assistantのコミュニティスキルを開く","打开MD to Figma Assistant社区技能","Abrir el skill de MD to Figma Assistant"],"intro":["템플릿과 AI 가이드로 디자인 데이터를 MD로 정리하세요.\nFigma Agent에서는 AI 스킬을 추가하고 /md-to-figma를 호출하세요.\n완성된 DESIGN.md 내용을 아래에 붙여넣으세요.","Prepare your design data as MD with the template and AI guide.\nIn Figma Agent, add the AI skill and run /md-to-figma.\nPaste your completed DESIGN.md below.","テンプレートとAIガイドでデザインデータをMDにまとめます。\nFigma AgentではAIスキルを追加し、/md-to-figmaを実行します。\n完成したDESIGN.mdを下に貼り付けてください。","使用模板和AI指南将设计数据整理为MD。\n在Figma Agent中添加AI技能并运行 /md-to-figma。\n将完成的DESIGN.md粘贴到下方。","Prepara tus datos de diseño en MD con la plantilla y la guía de IA.\nEn Figma Agent, añade el skill y ejecuta /md-to-figma.\nPega el contenido de DESIGN.md a continuación."],"variables":["Variables (Collection별 생성)","Variables (by Collection)","Variables（Collection別に生成）","Variables（按Collection生成）","Variables (por Collection)"],"styles":["Styles (Variable 연동)","Styles (linked to Variables)","Styles（Variableに連携）","Styles（关联Variable）","Styles (vinculados a Variables)"],"colors":["색상","Colors","色","颜色","Colores"],"spacing":["간격","Spacing","間隔","间距","Espaciado"],"radius":["모서리 반경","Radius","角丸","圆角","Radio"],"typography":["타이포그래피","Typography","タイポグラフィ","排版","Tipografía"],"motion":["모션","Motion","モーション","动效","Movimiento"],"color":["색상","Color","色","颜色","Color"],"text":["텍스트","Text","テキスト","文本","Texto"],"effect":["효과","Effect","エフェクト","效果","Efecto"],"grid":["그리드","Grid","グリッド","网格","Cuadrícula"],"generate":["등록 (MD → Figma)","Generate (MD → Figma)","登録 (MD → Figma)","生成 (MD → Figma)","Generar (MD → Figma)"],"export":["추출 (Figma → MD)","Export (Figma → MD)","書き出し (Figma → MD)","导出 (Figma → MD)","Exportar (Figma → MD)"],"report":["실행 리포트","Run report","実行レポート","执行报告","Informe de ejecución"],"qa":["실행 로그/QA","Run log / QA","実行ログ / QA","执行日志 / QA","Registro / QA"],"issues":["해결 필요","Needs attention","要確認","需要处理","Requiere atención"],"copyQA":["리포트 복사","Copy report","レポートをコピー","复制报告","Copiar informe"],"copyError":["브리핑 복사","Copy errors","エラーをコピー","复制错误","Copiar errores"],"close":["닫기","Close","閉じる","关闭","Cerrar"],"running":["진행 중","Running","実行中","处理中","En curso"],"done":["완료","Complete","完了","完成","Completado"],"hasErrors":["에러 있음","Errors found","エラーあり","存在错误","Con errores"],"generating":["등록 중...","Generating…","登録中…","生成中…","Generando…"],"exporting":["데이터 추출 중...","Exporting…","書き出し中…","导出中…","Exportando…"],"generated":["등록 완료","Generation complete","登録完了","生成完成","Generación completada"],"exported":["추출 완료","Export complete","書き出し完了","导出完成","Exportación completada"],"downloaded":["다운로드 요청 완료","Download requested","ダウンロードを開始しました","已请求下载","Descarga solicitada"],"empty":["MD 내용을 붙여넣으세요.","Paste your MD content.","MDを貼り付けてください。","请粘贴MD内容。","Pega el contenido MD."],"copied":["복사 완료","Copied","コピーしました","已复制","Copiado"],"copyFailed":["복사에 실패했습니다.","Copy failed.","コピーできませんでした。","复制失败。","No se pudo copiar."],"saveFailed":["언어 설정을 저장하지 못했습니다. 이번 실행에는 적용됩니다.","Could not save the language. It applies for this session.","言語を保存できませんでした。今回の実行には適用されます。","无法保存语言设置。本次运行仍会使用此语言。","No se pudo guardar el idioma. Se aplicará en esta sesión."],"detail":["상세","Details","詳細","详情","Detalles"],"errorReport":["에러 리포트","Error report","エラーレポート","错误报告","Informe de errores"],"summary":["등록 요약","Generation summary","登録の概要","生成摘要","Resumen de generación"],"varCounts":["배리어블 [적용/검사]","Variables [applied/checked]","変数 [適用/確認]","变量 [应用/检查]","Variables [aplicadas/revisadas]"],"varNote":["새로 등록되거나 값이 변경된 수 / 검사한 수입니다.","New or changed variables / checked variables.","新規または値を変更した変数の数 / 確認した数です。","新建或值已更改的变量数 / 已检查的变量数。","Variables nuevas o modificadas / variables revisadas."],"styleCounts":["스타일 [신규/처리]","Styles [new/processed]","スタイル [新規/処理]","样式 [新建/处理]","Estilos [nuevos/procesados]"],"styleNote":["새로 만든 수 / 처리한 수입니다. 기존 스타일은 값 변경 여부와 무관하게 다시 적용됩니다.","New / processed styles. Existing styles are reapplied even if unchanged.","新規作成数 / 処理数です。既存のスタイルは変更がなくても再適用されます。","新建数 / 已处理数。现有样式即使未更改也会重新应用。","Estilos nuevos / procesados. Los existentes se vuelven a aplicar aunque no cambien."],"noItems":["처리한 항목이 없습니다. MD 내용과 선택 항목을 확인해 주세요.","No items processed. Check your MD and selected options.","処理した項目はありません。MDと選択項目を確認してください。","没有处理任何项目。请检查MD内容和所选选项。","No se procesaron elementos. Revisa el MD y las opciones seleccionadas."],"exportDone":["디자인 시스템 데이터를 추출하고 다운로드를 요청했습니다.","Design system data exported; download requested.","デザインシステムを書き出し、ダウンロードを開始しました。","设计系统数据已导出，并已请求下载。","Datos del sistema de diseño exportados; descarga solicitada."],"columns":["Variable Modes에는 7개 열이 필요합니다.","Variable Modes: expected 7 columns.","Variable Modesには7列必要です。","Variable Modes需要7列。","Variable Modes requiere 7 columnas."],"json":["Variable Modes의 JSON 셀이 올바르지 않습니다: {0}","Variable Modes: invalid JSON cell: {0}","Variable ModesのJSONセルが無効です: {0}","Variable Modes的JSON单元格无效：{0}","Celda JSON no válida en Variable Modes: {0}"],"motionColumns":["Motion Styles에는 Token / Entries 두 열이 필요합니다.","Motion Styles requires Token / Entries columns.","Motion StylesにはToken / Entriesの2列が必要です。","Motion Styles需要Token / Entries两列。","Motion Styles requiere las columnas Token / Entries."],"identity":["Variable Modes의 이름 또는 타입이 올바르지 않습니다.","Variable Modes: invalid identity or type.","Variable Modesの名前または型が無効です。","Variable Modes的名称或类型无效。","Nombre o tipo no válido en Variable Modes."],"duplicate":["Variable Modes에 중복 행이 있습니다: {0} / {1}","Variable Modes: duplicate row for {0} / {1}","Variable Modesに重複行があります: {0} / {1}","Variable Modes存在重复行：{0} / {1}","Fila duplicada en Variable Modes: {0} / {1}"],"inconsistent":["변수의 행마다 타입이 다릅니다: {0}","Variable Modes: inconsistent type for {0}","行によって変数の型が異なります: {0}","变量各行的类型不一致：{0}","El tipo de variable varía entre filas: {0}"],"conflict":["기존 변수와 타입이 다릅니다: {0}/{1}","Variable Modes: type conflict for {0}/{1}","既存の変数と型が異なります: {0}/{1}","与现有变量的类型冲突：{0}/{1}","Conflicto con el tipo existente: {0}/{1}"],"modeSkip":["모드를 처리하지 못했습니다: {0} / {1}\n{2}","Mode skipped: {0} / {1}: {2}","モードを処理できませんでした: {0} / {1}\n{2}","无法处理模式：{0} / {1}\n{2}","Modo omitido: {0} / {1}\n{2}"],"variableSkip":["변수를 처리하지 못했습니다: {0}\n{1}","Variable skipped: {0}: {1}","変数を処理できませんでした: {0}\n{1}","无法处理变量：{0}\n{1}","Variable omitida: {0}\n{1}"],"aliasSkip":["참조 대상이 없거나 타입이 달라 연결을 건너뛰었습니다: {0} / {1}","Alias skipped (missing target or type mismatch): {0} / {1}","参照先がないか型が異なるため、参照をスキップしました: {0} / {1}","引用目标缺失或类型不匹配，已跳过：{0} / {1}","Referencia omitida por destino ausente o tipo incompatible: {0} / {1}"],"valueSkip":["값을 적용하지 못했습니다: {0} / {1}\n{2}","Value skipped: {0} / {1}: {2}","値を適用できませんでした: {0} / {1}\n{2}","无法应用值：{0} / {1}\n{2}","Valor omitido: {0} / {1}\n{2}"],"matched":["기존 변수 값을 변경했습니다: {0} / {1}","Smart Match: updated {0} / {1}","既存の変数値を変更しました: {0} / {1}","已更新现有变量值：{0} / {1}","Valor existente actualizado: {0} / {1}"],"syncSkip":["모드 동기화를 건너뛰었습니다: {0}\n{1}","Skipped mode sync for {0}: {1}","モード同期をスキップしました: {0}\n{1}","已跳过模式同步：{0}\n{1}","Sincronización de modos omitida: {0}\n{1}"],"syncing":["{0} 동기화 중...","Syncing {0}…","{0}を同期中…","正在同步{0}…","Sincronizando {0}…"],"motionValue":["모션 값을 해석하지 못했습니다: {0} = {1}\n{2}","Invalid Motion value: {0} = {1}\n{2}","モーション値を解釈できません: {0} = {1}\n{2}","无法解析动效值：{0} = {1}\n{2}","Valor de movimiento no válido: {0} = {1}\n{2}"],"easingHint":["프리셋 또는 cubic-bezier(x1, y1, x2, y2) / spring(0~1) 형식을 사용하세요.","Use a preset or cubic-bezier(x1, y1, x2, y2) / spring(0~1).","プリセット、cubic-bezier(x1, y1, x2, y2)、spring(0~1)を使用してください。","请使用预设或cubic-bezier(x1, y1, x2, y2) / spring(0~1)。","Usa un preset o cubic-bezier(x1, y1, x2, y2) / spring(0~1)."],"timingHint":["150ms처럼 밀리초 단위를 사용하세요.","Use milliseconds, e.g. 150ms.","150msのようにミリ秒で指定してください。","请使用毫秒，例如150ms。","Usa milisegundos, por ejemplo 150ms."],"motionFailed":["Motion 변수를 생성하지 못했습니다. 실행 환경의 지원 여부와 원본 오류를 확인하세요.\n{0}","Could not create Motion variables. Check runtime support and the original error.\n{0}","Motion変数を作成できませんでした。実行環境の対応状況と元のエラーを確認してください。\n{0}","无法创建Motion变量。请检查运行环境支持情况及原始错误。\n{0}","No se pudieron crear variables de movimiento. Revisa la compatibilidad y el error original.\n{0}"],"created":["{0} 컬렉션에 토큰 {1}개를 새로 생성했습니다.","Created {1} tokens in collection {0}.","{0}にトークンを{1}個作成しました。","已在集合{0}中创建{1}个令牌。","Se crearon {1} tokens en la colección {0}."],"missingEffect":["효과 참조 변수가 없습니다: {0}","Effect reference variable not found: {0}","エフェクトの参照変数がありません: {0}","找不到效果引用变量：{0}","No se encontró la variable del efecto: {0}"],"bindingField":["지원하지 않는 바인딩 속성입니다.","Unsupported binding property.","未対応のバインドプロパティです。","不支持此绑定属性。","Propiedad de vinculación no compatible."],"bindingTarget":["참조 대상이 없거나 타입이 다릅니다.","Missing reference target or type mismatch.","参照先がないか、型が異なります。","引用目标缺失或类型不匹配。","Destino de referencia ausente o tipo incompatible."],"bindingSkip":["바인딩을 건너뛰고 정적 값을 사용합니다: {0}/{1}\n{2}","Binding skipped: {0}/{1}: {2}. Using the static value.","バインドをスキップし、固定値を使用します: {0}/{1}\n{2}","已跳过绑定并使用静态值：{0}/{1}\n{2}","Vinculación omitida; se usa el valor estático: {0}/{1}\n{2}"],"creating":["{0} 스타일 생성 중...","Creating {0} styles…","{0}スタイルを作成中…","正在创建{0}样式…","Creando estilos de {0}…"],"fontFallback":["폰트 {0}을 불러오지 못해 {1} 스타일에 Inter를 사용합니다.","Font fallback: could not load {0}. Style {1} uses Inter.","フォント{0}を読み込めないため、{1}にInterを使用します。","无法加载字体{0}，样式{1}将使用Inter。","No se pudo cargar {0}. El estilo {1} usa Inter."],"bindingError":["바인딩 실패: {0}\n{1}","Binding Error ({0}): {1}","バインド失敗: {0}\n{1}","绑定失败：{0}\n{1}","Error de vinculación: {0}\n{1}"],"colorMissing":["컬러 변수가 없어 스타일을 건너뜁니다: {0}/{1}. 색상 변수도 선택하거나 기존 변수를 확인하세요.","Color Style skipped: missing variable {0}/{1}. Select color variables or check existing variables.","色変数がないためスキップします: {0}/{1}。色変数も選択するか、既存の変数を確認してください。","缺少颜色变量，已跳过样式：{0}/{1}。请选择颜色变量或检查现有变量。","Estilo de color omitido: falta {0}/{1}. Selecciona las variables de color o revisa las existentes."],"colorAmbiguous":["여러 컬렉션에 같은 이름이 있어 스타일을 건너뜁니다: {0}. MD 토큰에 그룹 경로를 명시하세요.","Color Style skipped: {0} exists in several collections. Specify a group path in the MD token.","複数のコレクションに同名があるためスキップします: {0}。MDにグループパスを指定してください。","多个集合中存在同名项，已跳过样式：{0}。请在MD令牌中指定分组路径。","Estilo omitido: {0} existe en varias colecciones. Indica la ruta del grupo en el token MD."],"colorCollision":["같은 이름의 다른 스타일이 있어 건너뜁니다: {0}","Color Style skipped: another style already uses {0}.","同名の別スタイルがあるためスキップします: {0}","已有其他样式使用此名称，已跳过：{0}","Estilo de color omitido: otro estilo ya usa {0}."],"styleSkip":["{0} 스타일을 건너뛰었습니다: {1}\n{2}","{0} Style skipped: {1}: {2}","{0}スタイルをスキップしました: {1}\n{2}","已跳过{0}样式：{1}\n{2}","Estilo de {0} omitido: {1}\n{2}"],"unsupportedEffect":["Shader 또는 지원하지 않는 효과 종류입니다.","Shader or unsupported effect type.","Shaderまたは未対応のエフェクトです。","Shader或不支持的效果类型。","Shader o tipo de efecto no compatible."],"settings":["Settings JSON에 효과 종류별 속성을 명시하세요.","Specify effect properties in Settings JSON.","Settings JSONにエフェクトのプロパティを指定してください。","请在Settings JSON中指定效果属性。","Especifica las propiedades del efecto en Settings JSON."],"noise":["{0}의 기본 혼합 모드를 현재 Figma API 형식에 맞춰 등록했습니다.","Noise compatibility: adapted the default blend mode of {0} to this Figma API.","{0}の既定の描画モードを現在のFigma API形式に合わせました。","已将{0}的默认混合模式调整为当前Figma API格式。","Se adaptó el modo de mezcla predeterminado de {0} a esta API de Figma."],"gridType":["지원하지 않는 그리드 종류입니다.","Unsupported grid type.","未対応のグリッドです。","不支持此网格类型。","Tipo de cuadrícula no compatible."],"motionAPI":["이 Figma 환경은 Motion Styles API를 지원하지 않습니다.","This Figma environment does not support the Motion Styles API.","このFigma環境はMotion Styles APIに対応していません。","此Figma环境不支持Motion Styles API。","Este entorno de Figma no admite la API de Motion Styles."],"entries":["Entries는 비어 있지 않은 JSON 배열이어야 합니다.","Entries must be a non-empty JSON array.","Entriesには空でないJSON配列が必要です。","Entries必须是非空JSON数组。","Entries debe ser un array JSON no vacío."],"preset":["프리셋을 찾을 수 없습니다: {0}. 사용 가능: {1}","Preset not found: {0}. Available: {1}","プリセットがありません: {0}。使用可能: {1}","找不到预设：{0}。可用预设：{1}","Preset no encontrado: {0}. Disponibles: {1}"],"motionSkip":["Motion Styles 처리를 건너뛰었습니다: {0}","Motion Styles skipped: {0}","Motion Stylesの処理をスキップしました: {0}","已跳过Motion Styles处理：{0}","Procesamiento de Motion Styles omitido: {0}"],"aliasExport":["참조를 확인할 수 없어 내보내지 못했습니다: {0}","Cannot export unresolved alias: {0}","参照を解決できないため書き出せません: {0}","无法解析引用，导出失败：{0}","No se puede exportar la referencia sin resolver: {0}"],"effectExport":["효과 내보내기를 건너뛰었습니다: {0}\n{1}","Effect export skipped: {0}: {1}","エフェクトの書き出しをスキップしました: {0}\n{1}","已跳过效果导出：{0}\n{1}","Exportación del efecto omitida: {0}\n{1}"],"motionExport":["Motion Styles 내보내기를 건너뛰었습니다: {0}","Motion Styles export skipped: {0}","Motion Stylesの書き出しをスキップしました: {0}","已跳过Motion Styles导出：{0}","Exportación de Motion Styles omitida: {0}"],"start":["MD 분석과 등록을 시작합니다...","MD parsing and generation started…","MDの解析と登録を開始します…","开始解析MD并生成…","Iniciando análisis y generación de MD…"],"modeSync":["컬렉션과 모드 이름을 기준으로 변수를 동기화합니다.","Syncing variables by collection and mode name.","コレクション名とモード名で変数を同期します。","按集合和模式名称同步变量。","Sincronizando variables por nombre de colección y modo."],"finished":["처리가 끝났습니다. QA에서 건너뛴 항목을 확인하세요.","Processing finished. Check QA for skipped items.","処理が終了しました。スキップした項目はQAで確認してください。","处理结束。请在QA中检查跳过的项目。","Procesamiento finalizado. Revisa los elementos omitidos en QA."],"syncFailed":["등록에 실패했습니다.","Sync failed","登録に失敗しました。","生成失败。","Error de sincronización"],"exportStart":["Figma 데이터를 분석하고 추출합니다...","Analyzing and exporting Figma data…","Figmaデータを解析して書き出します…","正在分析并导出Figma数据…","Analizando y exportando datos de Figma…"],"exportFailed":["추출에 실패했습니다.","Export failed","書き出しに失敗しました。","导出失败。","Error de exportación"],"helpVarColors":["MD의 색상 토큰을 Color Variables로 생성하거나 기존 값을 갱신합니다.","Create Color Variables from MD color tokens, or update existing values.","MDの色トークンからColor Variablesを作成し、既存の値を更新します。","根据MD中的颜色令牌创建Color Variables，或更新现有值。","Crea Color Variables a partir de los tokens de color del MD o actualiza los valores existentes."],"helpVarSpacing":["여백과 요소 사이 간격에 사용할 숫자 Variables를 생성하거나 갱신합니다.","Create or update numeric Variables for padding and gaps between elements.","余白や要素間の間隔に使う数値Variablesを作成・更新します。","创建或更新用于内边距和元素间距的数值Variables。","Crea o actualiza Variables numéricas para el espacio interior y entre elementos."],"helpVarRadius":["모서리 둥글기에 사용할 숫자 Variables를 생성하거나 갱신합니다.","Create or update numeric Variables for corner radii.","角丸に使う数値Variablesを作成・更新します。","创建或更新用于圆角半径的数值Variables。","Crea o actualiza Variables numéricas para el radio de las esquinas."],"helpVarTypography":["MD에 정의된 글꼴 관련 Variables를 생성하거나 갱신합니다. Text Styles는 별도 옵션입니다.","Create or update typography Variables defined in the MD. Text Styles is a separate option.","MDに定義された文字関連のVariablesを作成・更新します。Text Stylesは別のオプションです。","创建或更新MD中定义的排版Variables。Text Styles是单独的选项。","Crea o actualiza las Variables tipográficas del MD. Text Styles es una opción independiente."],"helpVarMotion":["MD에 정의된 Timing·Easing Variables를 생성하거나 갱신합니다. 애니메이션 적용은 별도입니다.","Create or update Timing and Easing Variables defined in the MD. This does not apply animations to layers.","MDのTiming・Easing Variablesを作成・更新します。レイヤーへのアニメーション適用は行いません。","创建或更新MD中定义的Timing和Easing Variables，不会将动画应用到图层。","Crea o actualiza las Variables Timing y Easing del MD. No aplica animaciones a las capas."],"helpColorStyles":["MD의 색상으로 Color Styles를 생성하거나 갱신합니다. Variable Modes 표를 사용하면 대응하는 Color Variables가 필요합니다.","Create or update Color Styles from MD colors. A Variable Modes table requires matching Color Variables.","MDの色からColor Stylesを作成・更新します。Variable Modes表を使う場合は対応するColor Variablesが必要です。","根据MD中的颜色创建或更新Color Styles。使用Variable Modes表时，需要对应的Color Variables。","Crea o actualiza Color Styles con los colores del MD. La tabla Variable Modes requiere las Color Variables correspondientes."],"helpTextStyles":["Typography 표로 글꼴·크기·행간 등의 Text Styles를 생성하거나 갱신합니다. 사용 가능한 Variables를 연결합니다.","Create or update Text Styles for fonts, sizes and line heights from the Typography table, linking available Variables.","Typography表からフォント・サイズ・行間などのText Stylesを作成・更新し、利用可能なVariablesを関連付けます。","根据Typography表创建或更新字体、字号、行高等Text Styles，并关联可用的Variables。","Crea o actualiza Text Styles de fuente, tamaño e interlineado desde la tabla Typography y vincula las Variables disponibles."],"helpEffectStyles":["MD에 정의된 그림자·블러 등 지원되는 효과를 Effect Styles로 생성하거나 갱신합니다.","Create or update Effect Styles for supported MD effects, such as shadows and blur.","MDに定義されたシャドウ・ぼかしなど、対応する効果のEffect Stylesを作成・更新します。","为MD中定义的阴影、模糊等受支持效果创建或更新Effect Styles。","Crea o actualiza Effect Styles con los efectos compatibles del MD, como sombras y desenfoque."],"helpGridStyles":["MD의 열·행·격자 설정으로 Grid Styles를 생성하거나 갱신합니다.","Create or update Grid Styles from the MD column, row and grid settings.","MDの列・行・グリッド設定からGrid Stylesを作成・更新します。","根据MD中的列、行和网格设置创建或更新Grid Styles。","Crea o actualiza Grid Styles con la configuración de columnas, filas y cuadrículas del MD."],"helpMotionStyles":["Motion Styles 표의 프리셋과 속성으로 애니메이션 스타일을 생성하거나 갱신합니다. 지원되는 Figma 환경이 필요합니다.","Create or update animation styles from the presets and properties in the Motion Styles table. Requires a supported Figma environment.","Motion Styles表のプリセットとプロパティからアニメーションスタイルを作成・更新します。対応するFigma環境が必要です。","根据Motion Styles表中的预设和属性创建或更新动画样式。需要Figma运行环境支持。","Crea o actualiza estilos de animación con los presets y propiedades de la tabla Motion Styles. Requiere un entorno de Figma compatible."]};
+// Plain JavaScript: embedded into code.js and ui.html by scripts/build-i18n.cjs.
+var I18N_LANGUAGES = ['ko', 'en', 'ja', 'zh-CN', 'es'];
+function localizedMessage(key, params) { return { key: key, params: params || [] }; }
+function formatMessage(value, language) {
+  if (!value || typeof value !== 'object' || typeof value.key !== 'string') return String(value == null ? '' : value);
+  var row = I18N_MESSAGES[value.key];
+  var index = I18N_LANGUAGES.indexOf(language);
+  var template = row ? (row[index] || row[1]) : value.key;
+  return template.replace(/\{(\d+)\}/g, function (_, n) {
+    return formatMessage((value.params || [])[Number(n)], language);
+  });
+}
+function messageError(key, params) {
+  var error = new Error(formatMessage(localizedMessage(key, params), 'en'));
+  error.localized = localizedMessage(key, params);
+  return error;
+}
+function errorDetail(error) {
+  return error && error.localized ? error.localized : String(error && error.message !== undefined ? error.message : error);
+}
+function detectLanguage(languages) {
+  for (var i = 0; i < languages.length; i++) {
+    var tag = String(languages[i]).toLowerCase().replace(/_/g, '-');
+    var base = tag.split('-')[0];
+    // Traditional Chinese is not shipped yet; continue to the next preferred language.
+    if (base === 'zh') {
+      if (tag.indexOf('hant') !== -1 || /-(tw|hk|mo)(-|$)/.test(tag)) continue;
+      return 'zh-CN';
     }
+    if (I18N_LANGUAGES.indexOf(base) !== -1) return base;
+  }
+  return 'en';
+}
+// END I18N
     var TEMPLATE_MD = "# Design System\n\n<!--\nMD to Figma 입력 템플릿 — 아래 데이터는 형식을 보여주는 예시입니다.\n\n[AI conversion rules]\nConvert the user's data to this schema and follow their requested changes.\nDo not copy example data or invent missing items. Preserve existing names, modes, types, categories, values and references unless asked to change them.\nKeep schema headings, column headers, JSON keys and enums unchanged.\nReturn one complete importable MD block; explain changes and unresolved points outside it in the user's language.\nDetailed prompts and workflow: AI-PROMPT-GUIDE.md.\n-->\n\n이 파일은 데이터 형식과 필드 설명을 담은 참고 템플릿입니다. 필요한 섹션만 사용하세요.\n기존 자료와 함께 AI에 전달할 수 있으며, 상세 요청 예시는 AI-PROMPT-GUIDE.md를 참고하세요.\n\n\n## Variable Modes\n\n<!--\n[변수 형식 선택]\n1. Variable Modes 표가 있으면 그 표만 변수 생성·수정의 기준으로 사용한다.\n   아래 Colors/Spacing/Radius/Motion 요약 표를 수정해도 변수 변경에 사용되지 않는다.\n2. 사용자 지정 모드와 모든 변수 타입은 Variable Modes로 작성하는 것을 권장한다.\n3. 구버전 표도 지원한다. 기존 Colors의 Primitive(Value)/Semantic(Light, Dark),\n   Spacing·Radius의 Primitive(Value)/Semantic(Alias), Typography 표 형식을 유지할 수 있다.\n   자유로운 모드가 필요하면 Variable Modes로 변환하고 모든 모드별 값을 명시한다.\n4. Variable Modes를 선택했다면 Typography 표는 텍스트 스타일 정의로만 사용한다.\n   이 표에만 있는 폰트 크기·행간·자간은 자동으로 모드별 변수로 생성되지 않는다.\n5. 필요하지 않은 섹션과 행은 제거해도 된다. 모든 카테고리를 채울 필요가 없다.\n   선택돼 있어도 정의가 없는 항목은 처리하지 않는다.\n\n[Variable Modes의 7개 열]\n열 이름과 순서: Category, Collection, Token, Type, Mode, Value, Description.\nCategory: colors / spacing / radius / typography / motion. 선택 체크박스와 연결된다.\nCollection, Token, Mode, Description: JSON 문자열. 큰따옴표를 반드시 포함한다.\nType과 Value:\n- COLOR: 0~1 범위 RGBA 객체. 예: {\"r\":1,\"g\":1,\"b\":1,\"a\":1}. HEX 문자열을 쓰지 않는다.\n- FLOAT: 단위 없는 숫자. 16px가 아니라 16.\n- STRING: \"Inter\", \"Regular\" 같은 JSON 문자열.\n- BOOLEAN: true 또는 false.\n- TIMING: 초 단위 숫자. 150ms는 0.15.\n- EASING: MotionEasing 객체. 예: {\"type\":\"EASE_OUT\"}.\n- 변수 참조: {\"alias\":{\"collection\":\"Color\",\"token\":\"primitive/canvas\"}}.\n  참조 대상의 타입은 같아야 한다. 대상은 MD에 포함하거나 Figma 파일에 이미 있어야 한다.\n한 행은 변수 하나의 모드 하나다. Collection + Token + Mode 조합은 중복하지 않는다.\n한 변수의 Type과 Description은 모든 모드 행에서 같게 작성한다.\n모드 이름은 한글·영문·사용자 지정 이름을 그대로 보존한다. 순서로 Light/Dark를 추정하지 않는다.\n새 컬렉션은 첫 번째로 작성된 모드가 기본 모드이며 기존 컬렉션의 기본 모드는 유지한다.\nMD에 없는 기존 모드와 변수는 삭제하지 않는다. 이름 변경은 새 항목으로 취급될 수 있다.\n기존 데이터 변경은 원래 이름을 유지한다. 명시적 이름 변경은 Figma에서 수행한 뒤 Export를 권장한다.\nValue에 빈 값이나 -를 넣지 않는다. 빈 설명은 \"\"이다. 빈 셀 때문에 열을 이동시키지 않는다.\nJSON 문자열의 따옴표와 줄바꿈은 JSON 이스케이프를 쓰며, 표 안 파이프 문자는 &#124;로 쓴다.\n-->\n\n| Category | Collection | Token | Type | Mode | Value | Description |\n|---|---|---|---|---|---|---|\n| colors | \"Color\" | \"primitive/canvas\" | COLOR | \"주간\" | {\"r\":1,\"g\":1,\"b\":1,\"a\":1} | \"원시 배경\" |\n| colors | \"Color\" | \"primitive/canvas\" | COLOR | \"야간\" | {\"r\":0.08,\"g\":0.1,\"b\":0.14,\"a\":1} | \"원시 배경\" |\n| colors | \"Color\" | \"semantic/surface\" | COLOR | \"주간\" | {\"alias\":{\"collection\":\"Color\",\"token\":\"primitive/canvas\"}} | \"화면 배경\" |\n| colors | \"Color\" | \"semantic/surface\" | COLOR | \"야간\" | {\"alias\":{\"collection\":\"Color\",\"token\":\"primitive/canvas\"}} | \"화면 배경\" |\n| spacing | \"Spacing\" | \"space/12\" | FLOAT | \"기본\" | 12 | \"기본 간격\" |\n| radius | \"Radius\" | \"corner/md\" | FLOAT | \"기본\" | 8 | \"기본 곡률\" |\n| typography | \"Typography\" | \"body/Size\" | FLOAT | \"기본\" | 16 | \"본문 크기\" |\n| typography | \"Typography\" | \"fontFamily/primary\" | STRING | \"기본\" | \"Inter\" | \"의도한 폰트\" |\n| typography | \"Typography\" | \"fontFamily/secondary\" | STRING | \"기본\" | \"Inter\" | \"폴백 폰트\" |\n| typography | \"Typography\" | \"fontWeight/400\" | STRING | \"기본\" | \"Regular\" | \"본문 두께\" |\n\n## Typography\n\n<!--\n[스타일과 그룹]\nColor Styles: Variable Modes의 COLOR 변수마다 변수에 바인딩된 스타일을 만든다.\n  스타일 이름은 Token 경로를 따른다. 컬렉션 이름을 자동 그룹으로 추가하지 않는다.\n  다른 변수의 동일 이름 스타일과 충돌하면 자동으로 합치지 말고 사용자에게 확인한다.\nText Styles: Typography 표로 정의한다. 그룹 없는 body는 최상위 body 스타일이다.\n  그룹 Body 아래 md는 Body/md가 되며 대소문자를 보존한다.\n  Token에 Body/md를 직접 쓰는 방법도 가능하지만 그룹 Body와 중복하지 않는다.\n  크기 변수는 스타일이름/Size, 행간은 스타일이름/LineHeight, 자간은 스타일이름/LetterSpacing.\n  폰트명은 fontFamily/primary 또는 폴백용 fontFamily/secondary, 두께는 fontWeight/400 같은 STRING 변수.\n  두께 값은 Regular/Bold 등 Figma 폰트 스타일 이름이다. 폰트 변수는 없을 때 보완하고 바인딩한다.\n  폰트명·두께·크기의 바인딩을 우선한다. 행간·자간 연결 실패는 다른 바인딩을 중단하지 않는다.\n  LineHeight는 150% 또는 24px처럼 명시한다. %는 정적 스타일 값, px는 변수 바인딩 가능.\n  모드별 변수와 모드마다 별도로 생성되는 텍스트 스타일을 혼동하지 않는다.\n-->\n\n| Token | Font | Size | Weight | LineHeight | LetterSpacing |\n|---|---|---|---|---|---|\n| body | Inter | 16px | 400 | 150% | 0px |\n\n## Effects\n\n<!--\nEffect Styles: drop-shadow / inner-shadow / layer-blur / background-blur / noise / texture / glass.\n  종류별 상위 그룹을 붙인다. 예: card → drop-shadow/card.\n  이미 같은 종류 접두어가 있으면 중복해서 붙이지 않는다. 기존 하위 경로는 유지한다.\n  Shader는 이번 버전에서 제외한다. Beta 효과는 환경에 따라 QA 안내 후 건너뛸 수 있다.\n\n[Effects / Grid의 Settings]\nToken, Type, Settings 3개 열을 사용한다. Settings는 JSON 객체 또는 Export의 JSON 배열이다.\n단일 객체의 type/pattern은 Type 열에서 정한다. 배열은 각 항목에 type/pattern을 유지한다.\n복합 스타일은 배열의 모든 항목과 순서를 보존한다. 한 스타일의 그룹은 첫 항목 종류를 따른다.\n정적 속성값은 항상 작성한다. 연결할 속성만 boundVariables에 명시한다.\n예: \"boundVariables\":{\"radius\":{\"alias\":{\"collection\":\"Spacing\",\"token\":\"space/12\"}}}\n참조가 없으면 정적 값. 값이 같은 변수에 자동 연결하지 않는다.\n참조 누락·타입 불일치는 해당 바인딩만 QA로 안내하고 정적 값을 사용한다.\nExport 참조는 파일 내부 ID 대신 Collection과 Token 이름으로 관리한다.\n지원 바인딩:\n- 그림자 color(COLOR), radius/spread/offsetX/offsetY(FLOAT).\n- Layer Blur·Background Blur radius(FLOAT).\n- Noise·Texture·Glass는 현재 정적 값만 지원.\n- Grid Size는 sectionSize(FLOAT).\n- Columns·Rows Gutter는 gutterSize(FLOAT), Margin은 offset(FLOAT).\n  STRETCH에서 count/offset/gutterSize, MIN/MAX에서 sectionSize/count/offset/gutterSize,\n  CENTER에서 sectionSize/count/gutterSize를 지원한다.\n-->\n\n| Token | Type | Settings |\n|---|---|---|\n| card | drop-shadow | {\"color\":{\"r\":0,\"g\":0,\"b\":0,\"a\":0.12},\"offset\":{\"x\":0,\"y\":4},\"radius\":12,\"spread\":0,\"visible\":true,\"blendMode\":\"NORMAL\",\"boundVariables\":{\"radius\":{\"alias\":{\"collection\":\"Spacing\",\"token\":\"space/12\"}}}} |\n| soft | layer-blur | {\"radius\":8,\"visible\":true,\"blurType\":\"NORMAL\"} |\n\n## Grid\n\n<!--\nGrid Styles: columns / rows / grid 3종. 종류별 상위 그룹을 같은 방식으로 붙인다.\nSettings의 JSON 형식과 속성별 바인딩 규칙은 위 Effects 설명을 함께 참고합니다.\n-->\n\n| Token | Type | Settings |\n|---|---|---|\n| desktop | columns | {\"count\":12,\"alignment\":\"STRETCH\",\"offset\":48,\"gutterSize\":12,\"color\":{\"r\":1,\"g\":0,\"b\":0,\"a\":0.1},\"boundVariables\":{\"gutterSize\":{\"alias\":{\"collection\":\"Spacing\",\"token\":\"space/12\"}}}} |\n| baseline | rows | {\"count\":8,\"alignment\":\"STRETCH\",\"offset\":12,\"gutterSize\":8,\"color\":{\"r\":1,\"g\":0,\"b\":0,\"a\":0.1},\"boundVariables\":{\"offset\":{\"alias\":{\"collection\":\"Spacing\",\"token\":\"space/12\"}}}} |\n| square | grid | {\"sectionSize\":12,\"color\":{\"r\":1,\"g\":0,\"b\":0,\"a\":0.1},\"boundVariables\":{\"sectionSize\":{\"alias\":{\"collection\":\"Spacing\",\"token\":\"space/12\"}}}} |\n\n<!-- Motion은 옵션입니다. 아래 빈 표는 필요 없으면 삭제하고, 필요한 경우 기존 Export의 내용을 보완합니다. -->\n## Motion Styles\n\n<!--\n[Motion Styles]\n열은 Token, Entries. Entries는 Figma 프리셋을 조합하는 JSON 배열이다.\n각 항목은 {\"preset\":\"기존 Export의 정확한 프리셋 이름\",\"props\":{...}} 형태.\nExport의 styleId가 있으면 보존하되 다른 파일에서는 프리셋 이름으로 다시 찾는다.\nprops는 해당 프리셋이 지원하는 속성만 사용한다. 명시적 변수 참조도 사용할 수 있다.\n프리셋 이름과 props 키를 추측하지 않는다. 모르는 경우 기존 Motion Style을 Export하도록 안내한다.\n@first는 API 확인용 테스트 값이다. 사용자 실사용 문서에 임의로 넣지 않는다.\n모션 스타일은 로컬 스타일로만 등록하며 선택 레이어에 자동 적용하지 않는다.\nTIMING 변수의 단위는 초. 구버전 Motion/Timing 표의 150ms 표기와 혼용하지 않는다.\n-->\n\n| Token | Entries |\n|---|---|\n";
 
     var AI_PROMPT_GUIDE = "# MD to Figma — 초심자를 위한 AI 가이드\n\n## Instructions for the user's AI — multilingual assistance\n\nRead this guide and DESIGN-TEMPLATE.md as format references. The user's request determines the changes to make.\nExplain the workflow in the language the user uses in the conversation. If it is unclear, ask their preferred language once.\nUse friendly, plain language and explain unfamiliar Figma terms briefly. Do not require the user to understand JSON or the Plugin API.\nTranslate your explanations, not the machine-readable schema: keep section headings, column headers, Category/Type values, JSON keys and API enums exactly as specified.\nPreserve existing collection names, token paths, mode names, descriptions, font names, preset names and references in their original language unless the user requests a change.\n\nBefore returning the MD, briefly explain what you found, what you will preserve and what you will reorganize.\nAn exported single-mode or loosely organized source is valid input. Fit its existing data to the template without inventing missing tokens, modes or styles.\nSeparate format conversion from proposed restructuring. Explain proposed renames, category changes, collection changes and style grouping with concrete before/after examples.\nAsk only when a missing decision materially affects the result; preserve uncertain data and list unresolved points instead of guessing.\n\nReturn one complete importable MD code block. Put user-facing explanations outside it, in the user's language.\nAfter the block, give a short change summary and the exact Variables/Styles options needed, including categories that create referenced variables.\nTell the user that they inspect the destination Figma file: the AI cannot confirm its existing collections, modes, styles, fonts, duplicates or actual bindings from the source MD alone.\nExplain that import does not delete or move existing items. Renaming a collection/token/mode/style or changing a collection may create new items and leave the originals.\nDo not require a new file or another approval step. Let the user choose the destination after understanding these effects.\nRecommend checking the generated QA report, mode values, style groups and bindings in Figma, then exporting again to compare with the intended result.\nDistinguish “MD prepared” from “verified in Figma”; never claim actual import success without evidence from the user or Figma.\n\n## Figma Agent 스킬로 사용하기\n\nFigma Agent에서는 [MD to Figma Assistant 스킬](https://www.figma.com/community/skill/142125/md-to-figma)을 추가하여 같은 형식으로 MD를 준비할 수 있습니다.\n플러그인 상단의 AI 스킬 버튼으로 커뮤니티 페이지를 열 수 있습니다.\n\n1. 커뮤니티에서 스킬을 추가합니다.\n2. Figma Agent 대화에서 /md-to-figma를 호출하고 원본 MD나 디자인 자료를 첨부합니다.\n3. 원하는 변경을 요청하고, AI가 반환한 MD와 변경점·등록 옵션을 확인합니다.\n4. 완성된 MD를 MD to Figma 플러그인에 붙여넣고 안내받은 Variables / Styles를 선택해 Generate합니다.\n5. QA 로그와 실제 값·모드·참조·바인딩을 확인한 뒤 다시 Export하여 보관합니다.\n\n스킬은 MD 작성과 검토를 돕습니다. 대상 Figma 파일 선택과 플러그인 등록·결과 확인은 사용자가 진행합니다.\n다른 AI를 사용할 때는 기존처럼 이 가이드와 DESIGN-TEMPLATE.md를 함께 첨부하면 됩니다.\n\n## 사용자와 AI의 역할\n\nAI는 원본 데이터를 템플릿 형식에 맞추고 변경점과 등록 방법을 사용자의 언어로 설명합니다.\n이식 대상 Figma 파일 선택과 기존 항목·중복·모드·폰트·바인딩의 확인은 사용자가 맡습니다.\nAI는 원본 MD만 보고 대상 파일 상태를 확인했다고 단정하지 않습니다.\n단일 모드나 정리가 덜 된 원본도 사용할 수 있습니다. 애매한 구조는 원본을 보존하면서 정리안을 설명합니다.\n이름이나 컬렉션을 바꾸면 새 항목이 생성되고 기존 항목은 남을 수 있으므로, 사용자가 설명을 보고 이식 방법을 결정합니다.\n\n이 가이드와 DESIGN-TEMPLATE.md를 AI에 함께 첨부하세요. 처음 만들기와 Export MD 수정은 서로 다른 방법을 사용합니다.\n\n## 처음 디자인 시스템 만들기\n\n1. 템플릿과 디자인 자료(CSS, 토큰 JSON, 브랜드 문서 등)를 AI에 첨부합니다.\n2. 아래 프롬프트의 대괄호 부분을 바꿔 요청합니다.\n3. 결과 MD 본문을 플러그인에 붙여넣습니다. 코드블록을 감싸는 백틱 표시는 제외합니다.\n4. 필요한 Variables와 Styles만 선택한 뒤 Generate를 누릅니다.\n5. QA 로그를 확인하고 Export하여 원본을 보관합니다.\n\n### 처음 만들기용 복사 프롬프트\n\n첨부한 템플릿과 자료로 MD to Figma용 MD를 만들어줘.\n목적: [예: 웹 서비스의 기본 디자인 시스템]\n항목: [컬러, 타이포그래피, 스페이싱, 래디우스]\n모드: [예: 주간, 야간 / 필요 없으면 단일 모드]\n\n- 자료에 없는 값은 임의로 확정하지 말고 질문하거나 제안이라고 밝혀줘.\n- 새 변수는 단일 모드도 Variable Modes 형식으로 작성해줘. 기존 구버전 자료는 값을 보존하며 변환해줘.\n- 의미 컬러는 가능한 한 원시 컬러를 참조하고 참조 대상도 작성해줘.\n- 스타일이 필요하면 기존 Typography/Effects/Grid 표를 별도로 작성해줘.\n- Motion은 요청한 경우에만 추가해줘.\n- 완전한 MD를 하나의 코드블록으로 출력해줘.\n\n## 기존 MD를 템플릿 형식으로 변환하기\n\n기존 보관 MD, DESIGN-TEMPLATE.md와 이 가이드를 AI에 함께 첨부합니다.\n값을 바꾸지 않고 형식만 맞추려면 변경 요청에 “형식만 변환하고 기존 데이터 유지”라고 적으세요.\n이름이나 그룹을 재구성하려면 원하는 변경을 별도로 명시하세요.\n\n### 기존 MD 형식 변환용 복사 프롬프트\n첨부한 기존 MD를 MD to Figma에 등록할 수 있도록 이 템플릿의 규칙으로 수정해줘.\n변경 요청: [여기에 변경하려는 값·모드·스타일을 적으세요]\n기존 컬렉션, 토큰 경로, 모드 이름, 타입, 카테고리, 참조와 스타일 설정은 요청한 부분 외에는 보존해줘.\n이 템플릿의 예시 값이나 컬렉션 이름을 내 문서에 추가하지 마.\n기존 자료에 없는 항목은 질문하거나 생략하고, 그림자·그리드·모션을 임의로 만들어 넣지 마.\n플러그인에 붙여넣을 완전한 MD 본문을 하나의 코드블록으로 출력해줘.\n변경점과 확인이 필요한 항목은 코드블록 밖에 짧게 설명해줘.\n\n## Export MD를 AI로 수정하기\n\n1. 플러그인의 Export로 받은 MD를 원본으로 따로 보관합니다.\n2. Export MD와 이 가이드를 AI에 첨부하고 아래 프롬프트를 사용합니다.\n3. 결과를 붙여넣고 관련 Variables 카테고리를 선택합니다.\n4. 다시 Export하여 변경한 모드와 다른 모드의 값이 맞는지 비교합니다.\n\n### 기존 데이터 수정용 복사 프롬프트\n\n첨부한 Export MD를 다시 가져올 수 있도록 수정해줘.\n변경 요청: [예: Layout 컬렉션의 작은 화면 모드에서 gap 값을 12로 변경]\n\n- Variable Modes 표가 있으면 변수 변경은 그 표에서 해줘.\n- 요청하지 않은 Collection, Token, Type, Mode, Category, 값, 참조와 설명을 보존해줘.\n- 다른 컬렉션의 동일 이름 토큰은 별개의 변수로 처리해줘.\n- 아래 Colors/Spacing/Radius/Motion 요약 표만 수정해서 변수 변경을 시도하지 마.\n- 스타일 변경을 요청한 경우에만 스타일 표도 수정해줘.\n- 완전한 MD를 하나의 코드블록으로 출력하고 변경점을 밖에 짧게 설명해줘.\n\n## Variable Modes 작성 규칙\n\n제목은 정확히 ## Variable Modes를 사용합니다. 각 행은 변수 하나의 모드 하나입니다.\n7개 열의 이름과 순서는 아래와 같습니다.\n\n| Category | Collection | Token | Type | Mode | Value | Description |\n|---|---|---|---|---|---|---|\n| spacing | \"Layout\" | \"gap\" | FLOAT | \"넓은 화면\" | 24 | \"기본 간격\" |\n| spacing | \"Layout\" | \"gap\" | FLOAT | \"작은 화면\" | 12 | \"기본 간격\" |\n\n- Category: colors, spacing, radius, typography, motion 중 하나. UI의 Variables 선택과 연결됩니다.\n- Collection, Token, Mode, Description: 큰따옴표를 포함하는 JSON 문자열.\n- FLOAT: 단위 없는 숫자. 12px가 아니라 12.\n- STRING: \"Inter\", \"Regular\" 같은 JSON 문자열.\n- BOOLEAN: true 또는 false.\n- COLOR: {\"r\":1,\"g\":0,\"b\":0,\"a\":0.5} 같은 0~1 범위의 RGBA 객체. HEX는 사용하지 않습니다.\n- TIMING: 초 단위 숫자. 150ms는 0.15.\n- EASING: {\"type\":\"EASE_OUT\"} 같은 Figma MotionEasing 객체.\n- Alias: {\"alias\":{\"collection\":\"Color\",\"token\":\"primitive/blue\"}}. 대상 변수 타입은 같아야 합니다.\n- 같은 Collection + Token + Mode는 한 번만 작성합니다. 한 변수의 Type과 Description은 모든 행에서 같게 적습니다.\n- 빈 설명은 \"\"입니다. Value에 -를 쓰지 않습니다. 변경하지 않을 모드는 원래 값을 유지하거나 행을 생략합니다.\n- JSON 문자열의 큰따옴표와 줄바꿈은 JSON 이스케이프를 사용합니다. 표 안 파이프는 &#124;로 적습니다.\n- 새 컬렉션은 표에 먼저 나오는 모드가 기본 모드입니다. 기존 기본 모드는 유지합니다.\n\n## 기존 템플릿 및 스타일과의 관계\n\nVariable Modes 표가 없으면 기존 2.0.2 형식으로 변수를 생성합니다.\n기존 Semantic 컬러의 Light/Dark 열은 해당 이름의 모드에 연결됩니다.\n단일 Value는 기본 모드에 적용하며 다른 모드를 같은 값으로 덮어쓰지 않습니다.\n\nVariable Modes 표가 있으면 변수 동기화는 그 표만 사용합니다.\nColor Styles를 선택하면 이 표의 COLOR 변수마다 컬러 스타일을 생성합니다.\n스타일 이름은 MD 토큰 이름입니다. slash 경로를 쓴 경우에만 해당 그룹을 만듭니다.\nTypography의 ### 그룹명도 스타일 그룹으로 반영하며 대소문자를 유지합니다. 그룹이 없으면 최상위에 등록합니다.\n같은 이름의 다른 컬러 변수나 스타일이 충돌하면 자동 그룹을 추가하지 않고 QA 로그로 안내합니다.\n변수에 바인딩되어 사용하는 레이어의 모드에 따라 값이 달라집니다.\n모드마다 별도의 컬러 스타일을 만들지 않습니다. 반복 실행하면 같은 이름의 스타일을 갱신합니다.\nColors Variables도 선택하거나, 해당 컬러 변수가 파일에 이미 있어야 합니다.\n텍스트 스타일이 필요하면 기존 Typography 표를 함께 작성하고 Text Styles를 선택하세요.\n모드별 타이포그래피 변수 보존과 모드별 텍스트 스타일 생성은 별개이며,\n현재 스타일은 모드마다 별도로 생성되지 않습니다.\n텍스트 스타일의 폰트명과 두께는 STRING 변수에 바인딩합니다. 필요한 폰트 변수만 없으면\n스타일의 Font/Weight 값으로 보완합니다. 기존 모드별 폰트 변수 값은 유지합니다.\n행간·자간 바인딩 오류가 다른 폰트 속성의 바인딩을 중단하지 않습니다.\n\nStyles의 모든 항목을 선택해도 MD에 정의된 스타일만 생성합니다.\n- Color Styles: Variable Modes의 COLOR 변수 또는 기존 Colors/Semantic 표.\n- Text Styles: Typography 표의 Font, Size, Weight, LineHeight, LetterSpacing.\n- Effect Styles: Effects 표의 Type, Color, X, Y, Blur, Spread.\n- Grid Styles: Grid 표의 Type, Count, Width, Gutter, Margin, Alignment.\nSpacing과 Radius 변수만으로 그림자나 그리드 스타일을 자동으로 추정하지 않습니다.\n네 종류를 함께 시험하려면 FINAL-INTEGRATION-SAMPLE.md를 사용하세요.\n\n효과와 레이아웃 가이드는 종류별 상위 그룹을 자동으로 만듭니다.\n효과: drop-shadow, inner-shadow, layer-blur, background-blur, noise, texture, glass.\nShader는 추후 지원합니다. 효과 종류별 설정은 Effects의 Token / Type / Settings 표에서\nSettings에 JSON 객체를 작성합니다. Export는 복합 효과도 보존하도록 JSON 배열을 사용합니다.\n기존 그림자 표도 계속 지원합니다. Noise, Texture, Glass는 Figma 환경의 베타 지원 여부에 따라 실패할 수 있으며 QA 로그를 확인합니다.\n가이드: columns, rows, grid. 기존 MD 경로는 종류 그룹 아래에서 유지합니다.\n같은 종류 접두어가 이미 있으면 중복해서 붙이지 않습니다.\nFINAL-INTEGRATION-SAMPLE.md로 효과 7종과 가이드 3종, 명시적 바인딩과 정적 값을 함께 시험할 수 있습니다.\n\n## 효과와 가이드의 변수 바인딩\n\nEffects와 Grid 모두 Token / Type / Settings JSON 표를 사용할 수 있습니다.\nSettings의 정적 값은 항상 작성하고, 연결할 속성만 boundVariables에 추가합니다.\n예: {\"radius\":12,\"visible\":true,\"blurType\":\"NORMAL\",\"boundVariables\":{\"radius\":{\"alias\":{\"collection\":\"Style metrics\",\"token\":\"amount\"}}}}\n참조를 쓰지 않은 속성은 정적 값입니다. 같은 값의 변수를 자동으로 찾지 않습니다.\n대상 변수가 없거나 타입이 다르면 해당 바인딩만 QA로 안내하고 작성한 정적 값을 사용합니다.\nExport 시 참조는 파일 ID 대신 컬렉션과 토큰 이름으로 보존합니다.\n\n- 그림자: color(COLOR), radius/spread/offsetX/offsetY(FLOAT).\n- Layer/Background Blur: radius(FLOAT).\n- Noise, Texture, Glass: 현재 API에서는 변수 바인딩을 지원하지 않아 정적 값만 사용합니다.\n- Grid: sectionSize(FLOAT).\n- Columns/Rows: count/gutterSize(FLOAT), MIN/MAX는 sectionSize/offset도 지원,\n  CENTER는 sectionSize, STRETCH는 offset을 지원합니다.\n- FINAL-INTEGRATION-SAMPLE.md는 명시적 참조와 정적 값을 나란히 비교하는 샘플입니다.\n\n## Motion Styles 등록\n\nMotion Variables(TIMING/EASING)와 Motion Styles는 별도 선택 항목입니다.\nStyles에서 Motion Styles를 선택하고 아래 형식으로 로컬 재사용 모션 스타일을 등록합니다.\n\n## Motion Styles\n\n| Token | Entries |\n|---|---|\n| motion/test-preset | [{\"preset\":\"@first\",\"props\":{}}] |\n\nEntries는 Figma 프리셋 이름(preset)과 설정값(props)을 담는 JSON 배열입니다.\n@first는 첫 번째 사용 가능 프리셋을 사용하는 테스트 전용 값입니다.\n실사용에는 Export에 기록된 프리셋 이름과 해당 프리셋이 지원하는 속성만 사용하세요.\n모르는 프리셋 이름이나 props 속성을 AI가 임의로 만들지 않도록 요청하세요.\nprops 값은 정적 값 또는 {\"alias\":{\"collection\":\"Motion\",\"token\":\"easing/out\"}}처럼\n명시적인 변수 참조를 사용할 수 있습니다. 해당 프리셋 속성의 타입과 맞아야 합니다.\n선택 레이어에 자동으로 적용하지 않습니다. 스타일 생성 후 Figma에서 적용하세요.\n미지원 환경은 QA 로그에 표시합니다. MD에 이 표가 없으면 선택돼 있어도 처리하지 않습니다.\nFINAL-INTEGRATION-SAMPLE.md로 생성, 재등록, Export 왕복을 확인할 수 있습니다.\n\n기존 Typography 표의 LineHeight는 150% 또는 24px처럼 단위를 명시하세요.\n퍼센트는 스타일 값으로 적용하고 px는 변수 바인딩을 사용할 수 있습니다.\n폰트가 없으면 폴백이 적용될 수 있으므로 QA 로그를 확인하세요.\n\nMotion은 옵션입니다. 기존 Motion 표에서는 ### Timing에 150ms,\n### Easing에 Ease out, cubic-bezier(0.2, 0, 0, 1), spring(0.6) 등을 씁니다.\nVariable Modes 표의 TIMING/EASING 값 표기와 혼용하지 마세요.\n\n## 테스트와 문제 해결\n\n- 첫 테스트는 새 Figma 파일에서 Variables만 선택하면 비교하기 쉽습니다.\n- 모드 생성 제한이 있으면 QA 로그를 확인하세요. 실패한 모드 값은 다른 모드에 대신 쓰지 않습니다.\n- 참조 대상의 카테고리도 선택하세요. 선택하지 않으면 대상이 파일에 이미 있어야 합니다.\n- 가져오기는 삭제 기능이 아닙니다. MD에서 지운 변수와 모드는 Figma에서 자동 삭제되지 않습니다.\n- 모드 이름을 바꿔 가져오면 새 모드로 취급될 수 있습니다. 이름 변경은 Figma에서 한 뒤 다시 Export하세요.\n- 같은 MD를 두 번 실행하면 두 번째에는 값 변경이 없어야 합니다.\n- 오류가 있으면 MD와 QA 로그를 AI에 전달하고 이름·모드·참조를 보존하며 문제 행을 수정해 달라고 요청하세요.\n";
 
-    var mdContent = document.getElementById('mdContent');
-    var modalOverlay = document.getElementById('modalOverlay');
-    var contentError = document.getElementById('contentError');
-    var contentQA = document.getElementById('contentQA');
-    var badgeError = document.getElementById('badgeError');
-    var badgeQA = document.getElementById('badgeQA');
-    var copyErrorBtn = document.getElementById('copyErrorBtn');
-    var copyQABtn = document.getElementById('copyQABtn');
-    var closeModalBtn = document.getElementById('closeModalBtn');
-    var statusBadge = document.getElementById('statusBadge');
-    var toast = document.getElementById('toast');
-
-    var errorLogs = [];
-    var qaLogs = [];
-
-    document.getElementById('downloadTemplateBtn').onclick = function () { downloadFile('DESIGN-TEMPLATE.md', TEMPLATE_MD); };
-    document.getElementById('downloadGuideBtn').onclick = function () { downloadFile('AI-PROMPT-GUIDE.md', AI_PROMPT_GUIDE); };
-    document.getElementById('openSkillBtn').onclick = function () {
-      parent.postMessage({ pluginMessage: { type: 'open_skill' } }, '*');
-    };
-
-    function downloadFile(filename, content) {
-      var blob = new Blob([content], { type: 'text/markdown' });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url; a.download = filename;
-      document.body.appendChild(a); a.click();
-      document.body.removeChild(a); showToast('📥 다운로드 완료!');
-    }
-
-    document.getElementById('generateBtn').onclick = function () {
-      var content = mdContent.value.trim();
-      if (!content) { showToast('⚠️ 내용을 붙여넣으세요'); return; }
-      openModal('등록 중...');
-      var options = {
-        variables: {
-          colors: document.getElementById('optVarColors').checked,
-          spacing: document.getElementById('optVarSpacing').checked,
-          radius: document.getElementById('optVarRadius').checked,
-          typography: document.getElementById('optVarTypography').checked,
-          motion: document.getElementById('optVarMotion').checked
-        },
-        styles: {
-          color: document.getElementById('optColorStyles').checked,
-          text: document.getElementById('optTextStyles').checked,
-          effect: document.getElementById('optEffectStyles').checked,
-          grid: document.getElementById('optGridStyles').checked,
-          motion: document.getElementById('optMotionStyles').checked
-        }
-      };
-      parent.postMessage({ pluginMessage: { type: 'generate', content: content, options: options } }, '*');
-    };
-
-    document.getElementById('exportBtn').onclick = function () {
-      openModal('데이터 추출 중...');
-      parent.postMessage({ pluginMessage: { type: 'export' } }, '*');
-    };
-
-    // StatusBadge icons (loader / circle-check / alert-triangle) — inherit badge color via currentColor
-    var STATUS_ICONS = {
+// BEGIN UI RUNTIME
+var activeLanguage = 'en';
+var languageTouched = false;
+var languagePreference = 'auto';
+var reportEntries = [];
+var runState = 'running';
+var reportTitle = 'report';
+var busy = false;
+var toastTimer;
+var STATUS_ICONS = {
       running: '<svg class="ic spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>',
       success: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" opacity="0.8"/><path d="m9 12 2 2 4-4"/></svg>',
       error: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><g opacity="0.8"><path d="M12 9v4"/><path d="M12 17h.01"/></g></svg>'
     };
-    function setStatus(state, text) {
-      statusBadge.className = 'status-badge ' + state;
-      statusBadge.innerHTML = STATUS_ICONS[state] + '<span>' + text + '</span>';
+function t(key, params) { return formatMessage(localizedMessage(key, params), activeLanguage); }
+function el(id) { return document.getElementById(id); }
+function post(value) { parent.postMessage({ pluginMessage: value }, '*'); }
+
+function buildRegistrationSummary(results) {
+  var summary = '\n--- [' + t('summary') + '] ---\n';
+  var variables = results.variables;
+  var scanned = variables.scanned || {};
+  var variableItems = [];
+  ['colors', 'spacing', 'radius', 'typography', 'motion'].forEach(function (key) {
+    var applied = variables[key] || 0;
+    var total = scanned[key];
+    if (applied > 0 || total > 0) variableItems.push(t(key) + '(' + applied + (total === undefined ? '' : '/' + total) + ')');
+  });
+  var styles = results.styles;
+  var styleItems = [];
+  ['color', 'text', 'effect', 'grid', 'motion'].forEach(function (key) {
+    var total = styles[key] || 0;
+    var created = styles[key + 'New'];
+    if (total > 0) styleItems.push(t(key) + '(' + (created === undefined ? '' : created + '/') + total + ')');
+  });
+  if (variableItems.length) summary += '• ' + t('varCounts') + ': ' + variableItems.join(', ') + '\n  ' + t('varNote') + '\n';
+  if (styleItems.length) summary += '• ' + t('styleCounts') + ': ' + styleItems.join(', ') + '\n  ' + t('styleNote') + '\n';
+  if (!variableItems.length && !styleItems.length) summary += t('noItems') + '\n';
+  return summary;
+}
+
+function applyLanguage(preference) {
+  languagePreference = preference === 'auto' || I18N_LANGUAGES.indexOf(preference) !== -1 ? preference : 'auto';
+  activeLanguage = languagePreference === 'auto' ? detectLanguage(navigator.languages || [navigator.language || 'en']) : languagePreference;
+  document.documentElement.lang = activeLanguage;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (node) { node.textContent = t(node.getAttribute('data-i18n')); });
+  el('openSkillBtn').title = t('skillTitle');
+  el('mdContent').setAttribute('aria-label', 'DESIGN.md');
+  el('languageSelect').value = languagePreference;
+  el('reportLanguageSelect').value = languagePreference;
+  hideOptionHelp();
+  renderReport();
+}
+function selectLanguage(event) {
+  languageTouched = true;
+  applyLanguage(event.target.value);
+  post({ type: 'set_language', language: languagePreference });
+}
+function entryText(entry) {
+  if (entry.results) return buildRegistrationSummary(entry.results);
+  var text = formatMessage(entry.localized || entry.message, activeLanguage);
+  if (entry.detail) text += '\n' + t('detail') + ': ' + formatMessage(entry.detail, activeLanguage);
+  return text;
+}
+function renderReport() {
+  el('contentQA').textContent = '';
+  el('contentError').textContent = '';
+  var errors = 0;
+  var qa = 0;
+  reportEntries.forEach(function (entry) {
+    var node = document.createElement('div');
+    var isError = entry.type === 'error';
+    node.className = 'log-entry ' + (isError ? 'error' : entry.type === 'qa_log' ? 'qa' : entry.results || entry.logType === 'success' ? 'success' : 'info');
+    node.textContent = entryText(entry);
+    el(isError ? 'contentError' : 'contentQA').appendChild(node);
+    if (isError) errors++; else qa++;
+  });
+  el('badgeQA').textContent = qa;
+  el('badgeError').textContent = errors;
+  el('modalTitle').textContent = t(reportTitle);
+  var status = runState === 'running' ? 'running' : errors ? 'error' : 'success';
+  el('statusBadge').className = 'status-badge ' + status;
+  el('statusBadge').innerHTML = STATUS_ICONS[status];
+  var statusText = document.createElement('span');
+  statusText.textContent = t(runState === 'running' ? 'running' : errors ? 'hasErrors' : 'done');
+  el('statusBadge').appendChild(statusText);
+  el('closeModalBtn').disabled = busy;
+  el('copyErrorBtn').style.display = errors ? 'block' : 'none';
+  el('copyQABtn').style.display = qa ? 'block' : 'none';
+}
+function switchTab(tabId) {
+  ['QA', 'Error'].forEach(function (name) {
+    el('tab' + name).classList.toggle('active', name.toLowerCase() === tabId);
+    el('content' + name).classList.toggle('active', name.toLowerCase() === tabId);
+  });
+}
+function openModal(title) {
+  hideOptionHelp();
+  reportTitle = title;
+  reportEntries = [];
+  runState = 'running';
+  busy = true;
+  el('generateBtn').disabled = true;
+  el('exportBtn').disabled = true;
+  renderReport();
+  switchTab('qa');
+  el('modalOverlay').classList.add('show');
+}
+function finishRun() {
+  busy = false;
+  runState = 'done';
+  el('generateBtn').disabled = false;
+  el('exportBtn').disabled = false;
+}
+function showToast(key) {
+  clearTimeout(toastTimer);
+  el('toast').textContent = t(key);
+  el('toast').classList.add('show');
+  toastTimer = setTimeout(function () { el('toast').classList.remove('show'); }, 2500);
+}
+function downloadFile(filename, content) {
+  var url = URL.createObjectURL(new Blob([content], { type: 'text/markdown' }));
+  var anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  showToast('downloaded');
+}
+function copyReport(errors) {
+  var text = '--- [' + t(errors ? 'errorReport' : 'report') + '] ---\n' + reportEntries.filter(function (entry) { return (entry.type === 'error') === errors; }).map(entryText).join('\n');
+  var textarea = document.createElement('textarea');
+  textarea.value = text;
+  document.body.appendChild(textarea);
+  textarea.select();
+  try { showToast(document.execCommand('copy') ? 'copied' : 'copyFailed'); }
+  catch (error) { showToast('copyFailed'); }
+  document.body.removeChild(textarea);
+}
+// The report has its own selector so language can be changed without closing it.
+var reportLanguageRow = document.createElement('div');
+reportLanguageRow.className = 'language-row';
+var reportLanguageLabel = document.createElement('label');
+reportLanguageLabel.htmlFor = 'reportLanguageSelect';
+reportLanguageLabel.setAttribute('data-i18n', 'language');
+var reportLanguageSelect = el('languageSelect').cloneNode(true);
+reportLanguageSelect.id = 'reportLanguageSelect';
+reportLanguageRow.appendChild(reportLanguageLabel);
+reportLanguageRow.appendChild(reportLanguageSelect);
+document.querySelector('.modal-header').appendChild(reportLanguageRow);
+el('languageSelect').onchange = selectLanguage;
+reportLanguageSelect.onchange = selectLanguage;
+el('downloadTemplateBtn').onclick = function () { downloadFile('DESIGN-TEMPLATE.md', TEMPLATE_MD); };
+el('downloadGuideBtn').onclick = function () { downloadFile('AI-PROMPT-GUIDE.md', AI_PROMPT_GUIDE); };
+el('openSkillBtn').onclick = function () { post({ type: 'open_skill' }); };
+el('copyErrorBtn').onclick = function () { copyReport(true); };
+el('copyQABtn').onclick = function () { copyReport(false); };
+el('closeModalBtn').onclick = function () { el('modalOverlay').classList.remove('show'); };
+el('generateBtn').onclick = function () {
+  if (busy) return;
+  var content = el('mdContent').value.trim();
+  if (!content) { showToast('empty'); return; }
+  var options = { variables: {}, styles: {} };
+  ['Colors', 'Spacing', 'Radius', 'Typography', 'Motion'].forEach(function (name) { options.variables[name.toLowerCase()] = el('optVar' + name).checked; });
+  ['Color', 'Text', 'Effect', 'Grid', 'Motion'].forEach(function (name) { options.styles[name.toLowerCase()] = el('opt' + name + 'Styles').checked; });
+  openModal('generating');
+  post({ type: 'generate', content: content, options: options });
+};
+el('exportBtn').onclick = function () {
+  if (busy) return;
+  openModal('exporting');
+  post({ type: 'export' });
+};
+window.onmessage = function (event) {
+  var msg = event.data && event.data.pluginMessage;
+  if (!msg) return;
+  if (msg.type === 'language') { if (!languageTouched) applyLanguage(msg.language); return; }
+  if (msg.type === 'language_save_failed') { showToast('saveFailed'); return; }
+  if (msg.type === 'log' || msg.type === 'qa_log' || msg.type === 'error') {
+    reportEntries.push(msg);
+    if (msg.type === 'error') { finishRun(); reportTitle = 'errorReport'; switchTab('error'); }
+  } else if (msg.type === 'complete' || msg.type === 'export_complete') {
+    finishRun();
+    reportTitle = msg.type === 'complete' ? 'generated' : 'exported';
+    if (msg.type === 'complete') reportEntries.push({ type: 'log', results: msg.results });
+    else {
+      reportEntries.push({ type: 'log', logType: 'success', localized: localizedMessage('exportDone') });
+      downloadFile('EXPORTED-DESIGN.md', msg.mdContent);
     }
-
-    function openModal(title) {
-      document.getElementById('modalTitle').textContent = title;
-      errorLogs = []; qaLogs = [];
-      contentError.innerHTML = ''; contentQA.innerHTML = '';
-      updateBadges();
-      closeModalBtn.disabled = true;
-      setStatus('running', '진행 중');
-      modalOverlay.classList.add('show');
-      switchTab('qa');
-    }
-
-    function switchTab(tabId) {
-      document.getElementById('tabError').classList.remove('active');
-      document.getElementById('tabQA').classList.remove('active');
-      contentError.classList.remove('active');
-      contentQA.classList.remove('active');
-      if (tabId === 'error') {
-        document.getElementById('tabError').classList.add('active');
-        contentError.classList.add('active');
-      } else {
-        document.getElementById('tabQA').classList.add('active');
-        contentQA.classList.add('active');
-      }
-    }
-
-    function updateBadges() {
-      badgeError.textContent = errorLogs.length;
-      badgeQA.textContent = qaLogs.length;
-      if (errorLogs.length > 0) switchTab('error');
-    }
-
-    copyErrorBtn.onclick = function () {
-      var prompt = "--- [에러 리포트] ---\n" + errorLogs.join('\n');
-      copyToClipboard(prompt, '🔴 에러 브리핑 복사 완료!');
-    };
-
-    copyQABtn.onclick = function () {
-      var prompt = "--- [디자인 시스템 실행 리포트] ---\n" + qaLogs.join('\n');
-      copyToClipboard(prompt, '🔵 리포트 복사 완료!');
-    };
-
-    function copyToClipboard(text, successMsg) {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
-      try {
-        const successful = document.execCommand('copy');
-        if (successful) showToast(successMsg);
-        else showToast('❌ 복사에 실패했습니다.');
-      } catch (err) {
-        showToast('❌ 복사 권한 에러');
-      }
-      document.body.removeChild(textarea);
-    }
-
-    function showToast(message) {
-      toast.textContent = message; toast.classList.add('show');
-      setTimeout(function () { toast.classList.remove('show'); }, 2500);
-    }
-
-    closeModalBtn.onclick = function () { modalOverlay.classList.remove('show'); };
-
-    window.onmessage = function (event) {
-      var msg = event.data.pluginMessage;
-      if (!msg) return;
-
-      if (msg.type === 'log') {
-        qaLogs.push(msg.message);
-        var entry = document.createElement('div');
-        entry.className = 'log-entry info';
-        entry.textContent = msg.message;
-        contentQA.appendChild(entry);
-        contentQA.scrollTop = contentQA.scrollHeight;
-        updateBadges();
-      }
-      else if (msg.type === 'qa_log') {
-        qaLogs.push("QA: " + msg.message);
-        var entry = document.createElement('div');
-        entry.className = 'log-entry qa';
-        entry.textContent = "ℹ️ " + msg.message;
-        contentQA.appendChild(entry);
-        contentQA.scrollTop = contentQA.scrollHeight;
-        updateBadges();
-      }
-      else if (msg.type === 'error') {
-        var fullError = msg.message + (msg.detail ? "\n상세: " + msg.detail : "");
-        errorLogs.push(fullError);
-        var entry = document.createElement('div');
-        entry.className = 'log-entry error';
-        entry.textContent = "❌ " + fullError;
-        contentError.appendChild(entry);
-        contentError.scrollTop = contentError.scrollHeight;
-        updateBadges();
-
-        closeModalBtn.disabled = false;
-        setStatus('error', '에러 발생');
-        copyErrorBtn.style.display = 'block';
-        copyQABtn.style.display = 'block';
-      }
-      else if (msg.type === 'complete' || msg.type === 'export_complete') {
-        closeModalBtn.disabled = false;
-        setStatus(errorLogs.length === 0 ? 'success' : 'error', errorLogs.length === 0 ? '완료' : '에러 있음');
-
-        if (msg.type === 'export_complete') {
-          document.getElementById('modalTitle').textContent = '✅ 추출 완료';
-          downloadFile('EXPORTED-DESIGN.md', msg.mdContent);
-          var entry = document.createElement('div');
-          entry.className = 'log-entry success';
-          entry.textContent = "\n✅ 디자인 시스템 데이터 추출 및 다운로드가 완료되었습니다.";
-          contentQA.appendChild(entry);
-          copyQABtn.style.display = 'block';
-        } else if (msg.type === 'complete') {
-          document.getElementById('modalTitle').textContent = '🎉 등록 완료';
-          var summary = buildRegistrationSummary(msg.results);
-
-          qaLogs.push(summary);
-          var entry = document.createElement('div');
-          entry.className = 'log-entry success';
-          entry.textContent = summary;
-          contentQA.appendChild(entry);
-          contentQA.scrollTop = contentQA.scrollHeight;
-          copyErrorBtn.style.display = 'block';
-          copyQABtn.style.display = 'block';
-        }
-      }
-    };
+  } else return;
+  renderReport();
+  el('contentQA').scrollTop = el('contentQA').scrollHeight;
+  el('contentError').scrollTop = el('contentError').scrollHeight;
+};
+// Labels stay in English; descriptions follow the selected UI language.
+var helpTimer;
+var visibleHelp;
+function hideOptionHelp() {
+  clearTimeout(helpTimer);
+  if (visibleHelp) visibleHelp.hidden = true;
+  visibleHelp = null;
+}
+function scheduleHideHelp() { helpTimer = setTimeout(hideOptionHelp, 120); }
+Array.prototype.forEach.call(document.querySelectorAll('.option-item'), function (item) {
+  var input = item.querySelector('input');
+  var label = item.querySelector('label');
+  var key = 'help' + input.id.slice(3);
+  var help = document.createElement('div');
+  help.id = input.id + 'Help';
+  help.className = 'option-help';
+  help.setAttribute('role', 'tooltip');
+  help.setAttribute('data-i18n', key);
+  help.hidden = true;
+  document.body.appendChild(help);
+  input.setAttribute('aria-describedby', help.id);
+  function showHelp() {
+    hideOptionHelp();
+    visibleHelp = help;
+    help.hidden = false;
+    var rect = label.getBoundingClientRect();
+    var width = help.offsetWidth;
+    var height = help.offsetHeight;
+    help.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8)) + 'px';
+    help.style.top = (rect.top >= height + 16 ? rect.top - height - 8 : Math.min(rect.bottom + 8, window.innerHeight - height - 8)) + 'px';
+  }
+  label.addEventListener('mouseenter', showHelp);
+  label.addEventListener('mouseleave', scheduleHideHelp);
+  input.addEventListener('focus', showHelp);
+  input.addEventListener('blur', hideOptionHelp);
+  help.addEventListener('mouseenter', function () { clearTimeout(helpTimer); });
+  help.addEventListener('mouseleave', scheduleHideHelp);
+});
+document.addEventListener('keydown', function (event) { if (event.key === 'Escape') hideOptionHelp(); });
+window.addEventListener('resize', hideOptionHelp);
+applyLanguage('auto');
+post({ type: 'get_language' });
+// END UI RUNTIME
   </script>
 </body>
-
 </html>

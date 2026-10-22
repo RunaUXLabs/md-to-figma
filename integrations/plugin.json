@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "md-to-figma-assistant",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Prepare and review design-system Markdown for MD to Figma, preserving custom modes, variables, styles and bindings.",
   "author": {
     "name": "RunaUXLabs",

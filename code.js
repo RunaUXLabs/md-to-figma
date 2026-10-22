@@ -1,14 +1,51 @@
 /**
- * MD to Figma - v2.1.2 Official Stable Release
+ * MD to Figma - v2.2.0 Official Stable Release
  * The Complete Bidirectional Semantic Design System Engine
  * Featuring Smart Update & AI-Ready QA Reporting
  */
 
 figma.showUI(__html__, { width: 500, height: 650 });
 
-const sendLog = (type, message) => figma.ui.postMessage({ type: 'log', logType: type, message: message });
-const sendQA = (message) => figma.ui.postMessage({ type: 'qa_log', message: message });
-const sendError = (message, detail) => figma.ui.postMessage({ type: 'error', message: message, detail: detail || '' });
+// BEGIN I18N
+var I18N_MESSAGES = {"language":["언어","Language","言語","语言","Idioma"],"auto":["자동 감지","Automatic","自動","自动","Automático"],"template":["템플릿 받기","Get template","テンプレート","下载模板","Plantilla"],"guide":["AI 가이드","AI guide","AIガイド","AI指南","Guía de IA"],"skill":["AI 스킬 ↗","AI skill ↗","AIスキル ↗","AI技能 ↗","Skill de IA ↗"],"skillTitle":["MD to Figma Assistant 커뮤니티 스킬 페이지 열기","Open the MD to Figma Assistant community skill","MD to Figma Assistantのコミュニティスキルを開く","打开MD to Figma Assistant社区技能","Abrir el skill de MD to Figma Assistant"],"intro":["템플릿과 AI 가이드로 디자인 데이터를 MD로 정리하세요.\nFigma Agent에서는 AI 스킬을 추가하고 /md-to-figma를 호출하세요.\n완성된 DESIGN.md 내용을 아래에 붙여넣으세요.","Prepare your design data as MD with the template and AI guide.\nIn Figma Agent, add the AI skill and run /md-to-figma.\nPaste your completed DESIGN.md below.","テンプレートとAIガイドでデザインデータをMDにまとめます。\nFigma AgentではAIスキルを追加し、/md-to-figmaを実行します。\n完成したDESIGN.mdを下に貼り付けてください。","使用模板和AI指南将设计数据整理为MD。\n在Figma Agent中添加AI技能并运行 /md-to-figma。\n将完成的DESIGN.md粘贴到下方。","Prepara tus datos de diseño en MD con la plantilla y la guía de IA.\nEn Figma Agent, añade el skill y ejecuta /md-to-figma.\nPega el contenido de DESIGN.md a continuación."],"variables":["Variables (Collection별 생성)","Variables (by Collection)","Variables（Collection別に生成）","Variables（按Collection生成）","Variables (por Collection)"],"styles":["Styles (Variable 연동)","Styles (linked to Variables)","Styles（Variableに連携）","Styles（关联Variable）","Styles (vinculados a Variables)"],"colors":["색상","Colors","色","颜色","Colores"],"spacing":["간격","Spacing","間隔","间距","Espaciado"],"radius":["모서리 반경","Radius","角丸","圆角","Radio"],"typography":["타이포그래피","Typography","タイポグラフィ","排版","Tipografía"],"motion":["모션","Motion","モーション","动效","Movimiento"],"color":["색상","Color","色","颜色","Color"],"text":["텍스트","Text","テキスト","文本","Texto"],"effect":["효과","Effect","エフェクト","效果","Efecto"],"grid":["그리드","Grid","グリッド","网格","Cuadrícula"],"generate":["등록 (MD → Figma)","Generate (MD → Figma)","登録 (MD → Figma)","生成 (MD → Figma)","Generar (MD → Figma)"],"export":["추출 (Figma → MD)","Export (Figma → MD)","書き出し (Figma → MD)","导出 (Figma → MD)","Exportar (Figma → MD)"],"report":["실행 리포트","Run report","実行レポート","执行报告","Informe de ejecución"],"qa":["실행 로그/QA","Run log / QA","実行ログ / QA","执行日志 / QA","Registro / QA"],"issues":["해결 필요","Needs attention","要確認","需要处理","Requiere atención"],"copyQA":["리포트 복사","Copy report","レポートをコピー","复制报告","Copiar informe"],"copyError":["브리핑 복사","Copy errors","エラーをコピー","复制错误","Copiar errores"],"close":["닫기","Close","閉じる","关闭","Cerrar"],"running":["진행 중","Running","実行中","处理中","En curso"],"done":["완료","Complete","完了","完成","Completado"],"hasErrors":["에러 있음","Errors found","エラーあり","存在错误","Con errores"],"generating":["등록 중...","Generating…","登録中…","生成中…","Generando…"],"exporting":["데이터 추출 중...","Exporting…","書き出し中…","导出中…","Exportando…"],"generated":["등록 완료","Generation complete","登録完了","生成完成","Generación completada"],"exported":["추출 완료","Export complete","書き出し完了","导出完成","Exportación completada"],"downloaded":["다운로드 요청 완료","Download requested","ダウンロードを開始しました","已请求下载","Descarga solicitada"],"empty":["MD 내용을 붙여넣으세요.","Paste your MD content.","MDを貼り付けてください。","请粘贴MD内容。","Pega el contenido MD."],"copied":["복사 완료","Copied","コピーしました","已复制","Copiado"],"copyFailed":["복사에 실패했습니다.","Copy failed.","コピーできませんでした。","复制失败。","No se pudo copiar."],"saveFailed":["언어 설정을 저장하지 못했습니다. 이번 실행에는 적용됩니다.","Could not save the language. It applies for this session.","言語を保存できませんでした。今回の実行には適用されます。","无法保存语言设置。本次运行仍会使用此语言。","No se pudo guardar el idioma. Se aplicará en esta sesión."],"detail":["상세","Details","詳細","详情","Detalles"],"errorReport":["에러 리포트","Error report","エラーレポート","错误报告","Informe de errores"],"summary":["등록 요약","Generation summary","登録の概要","生成摘要","Resumen de generación"],"varCounts":["배리어블 [적용/검사]","Variables [applied/checked]","変数 [適用/確認]","变量 [应用/检查]","Variables [aplicadas/revisadas]"],"varNote":["새로 등록되거나 값이 변경된 수 / 검사한 수입니다.","New or changed variables / checked variables.","新規または値を変更した変数の数 / 確認した数です。","新建或值已更改的变量数 / 已检查的变量数。","Variables nuevas o modificadas / variables revisadas."],"styleCounts":["스타일 [신규/처리]","Styles [new/processed]","スタイル [新規/処理]","样式 [新建/处理]","Estilos [nuevos/procesados]"],"styleNote":["새로 만든 수 / 처리한 수입니다. 기존 스타일은 값 변경 여부와 무관하게 다시 적용됩니다.","New / processed styles. Existing styles are reapplied even if unchanged.","新規作成数 / 処理数です。既存のスタイルは変更がなくても再適用されます。","新建数 / 已处理数。现有样式即使未更改也会重新应用。","Estilos nuevos / procesados. Los existentes se vuelven a aplicar aunque no cambien."],"noItems":["처리한 항목이 없습니다. MD 내용과 선택 항목을 확인해 주세요.","No items processed. Check your MD and selected options.","処理した項目はありません。MDと選択項目を確認してください。","没有处理任何项目。请检查MD内容和所选选项。","No se procesaron elementos. Revisa el MD y las opciones seleccionadas."],"exportDone":["디자인 시스템 데이터를 추출하고 다운로드를 요청했습니다.","Design system data exported; download requested.","デザインシステムを書き出し、ダウンロードを開始しました。","设计系统数据已导出，并已请求下载。","Datos del sistema de diseño exportados; descarga solicitada."],"columns":["Variable Modes에는 7개 열이 필요합니다.","Variable Modes: expected 7 columns.","Variable Modesには7列必要です。","Variable Modes需要7列。","Variable Modes requiere 7 columnas."],"json":["Variable Modes의 JSON 셀이 올바르지 않습니다: {0}","Variable Modes: invalid JSON cell: {0}","Variable ModesのJSONセルが無効です: {0}","Variable Modes的JSON单元格无效：{0}","Celda JSON no válida en Variable Modes: {0}"],"motionColumns":["Motion Styles에는 Token / Entries 두 열이 필요합니다.","Motion Styles requires Token / Entries columns.","Motion StylesにはToken / Entriesの2列が必要です。","Motion Styles需要Token / Entries两列。","Motion Styles requiere las columnas Token / Entries."],"identity":["Variable Modes의 이름 또는 타입이 올바르지 않습니다.","Variable Modes: invalid identity or type.","Variable Modesの名前または型が無効です。","Variable Modes的名称或类型无效。","Nombre o tipo no válido en Variable Modes."],"duplicate":["Variable Modes에 중복 행이 있습니다: {0} / {1}","Variable Modes: duplicate row for {0} / {1}","Variable Modesに重複行があります: {0} / {1}","Variable Modes存在重复行：{0} / {1}","Fila duplicada en Variable Modes: {0} / {1}"],"inconsistent":["변수의 행마다 타입이 다릅니다: {0}","Variable Modes: inconsistent type for {0}","行によって変数の型が異なります: {0}","变量各行的类型不一致：{0}","El tipo de variable varía entre filas: {0}"],"conflict":["기존 변수와 타입이 다릅니다: {0}/{1}","Variable Modes: type conflict for {0}/{1}","既存の変数と型が異なります: {0}/{1}","与现有变量的类型冲突：{0}/{1}","Conflicto con el tipo existente: {0}/{1}"],"modeSkip":["모드를 처리하지 못했습니다: {0} / {1}\n{2}","Mode skipped: {0} / {1}: {2}","モードを処理できませんでした: {0} / {1}\n{2}","无法处理模式：{0} / {1}\n{2}","Modo omitido: {0} / {1}\n{2}"],"variableSkip":["변수를 처리하지 못했습니다: {0}\n{1}","Variable skipped: {0}: {1}","変数を処理できませんでした: {0}\n{1}","无法处理变量：{0}\n{1}","Variable omitida: {0}\n{1}"],"aliasSkip":["참조 대상이 없거나 타입이 달라 연결을 건너뛰었습니다: {0} / {1}","Alias skipped (missing target or type mismatch): {0} / {1}","参照先がないか型が異なるため、参照をスキップしました: {0} / {1}","引用目标缺失或类型不匹配，已跳过：{0} / {1}","Referencia omitida por destino ausente o tipo incompatible: {0} / {1}"],"valueSkip":["값을 적용하지 못했습니다: {0} / {1}\n{2}","Value skipped: {0} / {1}: {2}","値を適用できませんでした: {0} / {1}\n{2}","无法应用值：{0} / {1}\n{2}","Valor omitido: {0} / {1}\n{2}"],"matched":["기존 변수 값을 변경했습니다: {0} / {1}","Smart Match: updated {0} / {1}","既存の変数値を変更しました: {0} / {1}","已更新现有变量值：{0} / {1}","Valor existente actualizado: {0} / {1}"],"syncSkip":["모드 동기화를 건너뛰었습니다: {0}\n{1}","Skipped mode sync for {0}: {1}","モード同期をスキップしました: {0}\n{1}","已跳过模式同步：{0}\n{1}","Sincronización de modos omitida: {0}\n{1}"],"syncing":["{0} 동기화 중...","Syncing {0}…","{0}を同期中…","正在同步{0}…","Sincronizando {0}…"],"motionValue":["모션 값을 해석하지 못했습니다: {0} = {1}\n{2}","Invalid Motion value: {0} = {1}\n{2}","モーション値を解釈できません: {0} = {1}\n{2}","无法解析动效值：{0} = {1}\n{2}","Valor de movimiento no válido: {0} = {1}\n{2}"],"easingHint":["프리셋 또는 cubic-bezier(x1, y1, x2, y2) / spring(0~1) 형식을 사용하세요.","Use a preset or cubic-bezier(x1, y1, x2, y2) / spring(0~1).","プリセット、cubic-bezier(x1, y1, x2, y2)、spring(0~1)を使用してください。","请使用预设或cubic-bezier(x1, y1, x2, y2) / spring(0~1)。","Usa un preset o cubic-bezier(x1, y1, x2, y2) / spring(0~1)."],"timingHint":["150ms처럼 밀리초 단위를 사용하세요.","Use milliseconds, e.g. 150ms.","150msのようにミリ秒で指定してください。","请使用毫秒，例如150ms。","Usa milisegundos, por ejemplo 150ms."],"motionFailed":["Motion 변수를 생성하지 못했습니다. 실행 환경의 지원 여부와 원본 오류를 확인하세요.\n{0}","Could not create Motion variables. Check runtime support and the original error.\n{0}","Motion変数を作成できませんでした。実行環境の対応状況と元のエラーを確認してください。\n{0}","无法创建Motion变量。请检查运行环境支持情况及原始错误。\n{0}","No se pudieron crear variables de movimiento. Revisa la compatibilidad y el error original.\n{0}"],"created":["{0} 컬렉션에 토큰 {1}개를 새로 생성했습니다.","Created {1} tokens in collection {0}.","{0}にトークンを{1}個作成しました。","已在集合{0}中创建{1}个令牌。","Se crearon {1} tokens en la colección {0}."],"missingEffect":["효과 참조 변수가 없습니다: {0}","Effect reference variable not found: {0}","エフェクトの参照変数がありません: {0}","找不到效果引用变量：{0}","No se encontró la variable del efecto: {0}"],"bindingField":["지원하지 않는 바인딩 속성입니다.","Unsupported binding property.","未対応のバインドプロパティです。","不支持此绑定属性。","Propiedad de vinculación no compatible."],"bindingTarget":["참조 대상이 없거나 타입이 다릅니다.","Missing reference target or type mismatch.","参照先がないか、型が異なります。","引用目标缺失或类型不匹配。","Destino de referencia ausente o tipo incompatible."],"bindingSkip":["바인딩을 건너뛰고 정적 값을 사용합니다: {0}/{1}\n{2}","Binding skipped: {0}/{1}: {2}. Using the static value.","バインドをスキップし、固定値を使用します: {0}/{1}\n{2}","已跳过绑定并使用静态值：{0}/{1}\n{2}","Vinculación omitida; se usa el valor estático: {0}/{1}\n{2}"],"creating":["{0} 스타일 생성 중...","Creating {0} styles…","{0}スタイルを作成中…","正在创建{0}样式…","Creando estilos de {0}…"],"fontFallback":["폰트 {0}을 불러오지 못해 {1} 스타일에 Inter를 사용합니다.","Font fallback: could not load {0}. Style {1} uses Inter.","フォント{0}を読み込めないため、{1}にInterを使用します。","无法加载字体{0}，样式{1}将使用Inter。","No se pudo cargar {0}. El estilo {1} usa Inter."],"bindingError":["바인딩 실패: {0}\n{1}","Binding Error ({0}): {1}","バインド失敗: {0}\n{1}","绑定失败：{0}\n{1}","Error de vinculación: {0}\n{1}"],"colorMissing":["컬러 변수가 없어 스타일을 건너뜁니다: {0}/{1}. 색상 변수도 선택하거나 기존 변수를 확인하세요.","Color Style skipped: missing variable {0}/{1}. Select color variables or check existing variables.","色変数がないためスキップします: {0}/{1}。色変数も選択するか、既存の変数を確認してください。","缺少颜色变量，已跳过样式：{0}/{1}。请选择颜色变量或检查现有变量。","Estilo de color omitido: falta {0}/{1}. Selecciona las variables de color o revisa las existentes."],"colorAmbiguous":["여러 컬렉션에 같은 이름이 있어 스타일을 건너뜁니다: {0}. MD 토큰에 그룹 경로를 명시하세요.","Color Style skipped: {0} exists in several collections. Specify a group path in the MD token.","複数のコレクションに同名があるためスキップします: {0}。MDにグループパスを指定してください。","多个集合中存在同名项，已跳过样式：{0}。请在MD令牌中指定分组路径。","Estilo omitido: {0} existe en varias colecciones. Indica la ruta del grupo en el token MD."],"colorCollision":["같은 이름의 다른 스타일이 있어 건너뜁니다: {0}","Color Style skipped: another style already uses {0}.","同名の別スタイルがあるためスキップします: {0}","已有其他样式使用此名称，已跳过：{0}","Estilo de color omitido: otro estilo ya usa {0}."],"styleSkip":["{0} 스타일을 건너뛰었습니다: {1}\n{2}","{0} Style skipped: {1}: {2}","{0}スタイルをスキップしました: {1}\n{2}","已跳过{0}样式：{1}\n{2}","Estilo de {0} omitido: {1}\n{2}"],"unsupportedEffect":["Shader 또는 지원하지 않는 효과 종류입니다.","Shader or unsupported effect type.","Shaderまたは未対応のエフェクトです。","Shader或不支持的效果类型。","Shader o tipo de efecto no compatible."],"settings":["Settings JSON에 효과 종류별 속성을 명시하세요.","Specify effect properties in Settings JSON.","Settings JSONにエフェクトのプロパティを指定してください。","请在Settings JSON中指定效果属性。","Especifica las propiedades del efecto en Settings JSON."],"noise":["{0}의 기본 혼합 모드를 현재 Figma API 형식에 맞춰 등록했습니다.","Noise compatibility: adapted the default blend mode of {0} to this Figma API.","{0}の既定の描画モードを現在のFigma API形式に合わせました。","已将{0}的默认混合模式调整为当前Figma API格式。","Se adaptó el modo de mezcla predeterminado de {0} a esta API de Figma."],"gridType":["지원하지 않는 그리드 종류입니다.","Unsupported grid type.","未対応のグリッドです。","不支持此网格类型。","Tipo de cuadrícula no compatible."],"motionAPI":["이 Figma 환경은 Motion Styles API를 지원하지 않습니다.","This Figma environment does not support the Motion Styles API.","このFigma環境はMotion Styles APIに対応していません。","此Figma环境不支持Motion Styles API。","Este entorno de Figma no admite la API de Motion Styles."],"entries":["Entries는 비어 있지 않은 JSON 배열이어야 합니다.","Entries must be a non-empty JSON array.","Entriesには空でないJSON配列が必要です。","Entries必须是非空JSON数组。","Entries debe ser un array JSON no vacío."],"preset":["프리셋을 찾을 수 없습니다: {0}. 사용 가능: {1}","Preset not found: {0}. Available: {1}","プリセットがありません: {0}。使用可能: {1}","找不到预设：{0}。可用预设：{1}","Preset no encontrado: {0}. Disponibles: {1}"],"motionSkip":["Motion Styles 처리를 건너뛰었습니다: {0}","Motion Styles skipped: {0}","Motion Stylesの処理をスキップしました: {0}","已跳过Motion Styles处理：{0}","Procesamiento de Motion Styles omitido: {0}"],"aliasExport":["참조를 확인할 수 없어 내보내지 못했습니다: {0}","Cannot export unresolved alias: {0}","参照を解決できないため書き出せません: {0}","无法解析引用，导出失败：{0}","No se puede exportar la referencia sin resolver: {0}"],"effectExport":["효과 내보내기를 건너뛰었습니다: {0}\n{1}","Effect export skipped: {0}: {1}","エフェクトの書き出しをスキップしました: {0}\n{1}","已跳过效果导出：{0}\n{1}","Exportación del efecto omitida: {0}\n{1}"],"motionExport":["Motion Styles 내보내기를 건너뛰었습니다: {0}","Motion Styles export skipped: {0}","Motion Stylesの書き出しをスキップしました: {0}","已跳过Motion Styles导出：{0}","Exportación de Motion Styles omitida: {0}"],"start":["MD 분석과 등록을 시작합니다...","MD parsing and generation started…","MDの解析と登録を開始します…","开始解析MD并生成…","Iniciando análisis y generación de MD…"],"modeSync":["컬렉션과 모드 이름을 기준으로 변수를 동기화합니다.","Syncing variables by collection and mode name.","コレクション名とモード名で変数を同期します。","按集合和模式名称同步变量。","Sincronizando variables por nombre de colección y modo."],"finished":["처리가 끝났습니다. QA에서 건너뛴 항목을 확인하세요.","Processing finished. Check QA for skipped items.","処理が終了しました。スキップした項目はQAで確認してください。","处理结束。请在QA中检查跳过的项目。","Procesamiento finalizado. Revisa los elementos omitidos en QA."],"syncFailed":["등록에 실패했습니다.","Sync failed","登録に失敗しました。","生成失败。","Error de sincronización"],"exportStart":["Figma 데이터를 분석하고 추출합니다...","Analyzing and exporting Figma data…","Figmaデータを解析して書き出します…","正在分析并导出Figma数据…","Analizando y exportando datos de Figma…"],"exportFailed":["추출에 실패했습니다.","Export failed","書き出しに失敗しました。","导出失败。","Error de exportación"],"helpVarColors":["MD의 색상 토큰을 Color Variables로 생성하거나 기존 값을 갱신합니다.","Create Color Variables from MD color tokens, or update existing values.","MDの色トークンからColor Variablesを作成し、既存の値を更新します。","根据MD中的颜色令牌创建Color Variables，或更新现有值。","Crea Color Variables a partir de los tokens de color del MD o actualiza los valores existentes."],"helpVarSpacing":["여백과 요소 사이 간격에 사용할 숫자 Variables를 생성하거나 갱신합니다.","Create or update numeric Variables for padding and gaps between elements.","余白や要素間の間隔に使う数値Variablesを作成・更新します。","创建或更新用于内边距和元素间距的数值Variables。","Crea o actualiza Variables numéricas para el espacio interior y entre elementos."],"helpVarRadius":["모서리 둥글기에 사용할 숫자 Variables를 생성하거나 갱신합니다.","Create or update numeric Variables for corner radii.","角丸に使う数値Variablesを作成・更新します。","创建或更新用于圆角半径的数值Variables。","Crea o actualiza Variables numéricas para el radio de las esquinas."],"helpVarTypography":["MD에 정의된 글꼴 관련 Variables를 생성하거나 갱신합니다. Text Styles는 별도 옵션입니다.","Create or update typography Variables defined in the MD. Text Styles is a separate option.","MDに定義された文字関連のVariablesを作成・更新します。Text Stylesは別のオプションです。","创建或更新MD中定义的排版Variables。Text Styles是单独的选项。","Crea o actualiza las Variables tipográficas del MD. Text Styles es una opción independiente."],"helpVarMotion":["MD에 정의된 Timing·Easing Variables를 생성하거나 갱신합니다. 애니메이션 적용은 별도입니다.","Create or update Timing and Easing Variables defined in the MD. This does not apply animations to layers.","MDのTiming・Easing Variablesを作成・更新します。レイヤーへのアニメーション適用は行いません。","创建或更新MD中定义的Timing和Easing Variables，不会将动画应用到图层。","Crea o actualiza las Variables Timing y Easing del MD. No aplica animaciones a las capas."],"helpColorStyles":["MD의 색상으로 Color Styles를 생성하거나 갱신합니다. Variable Modes 표를 사용하면 대응하는 Color Variables가 필요합니다.","Create or update Color Styles from MD colors. A Variable Modes table requires matching Color Variables.","MDの色からColor Stylesを作成・更新します。Variable Modes表を使う場合は対応するColor Variablesが必要です。","根据MD中的颜色创建或更新Color Styles。使用Variable Modes表时，需要对应的Color Variables。","Crea o actualiza Color Styles con los colores del MD. La tabla Variable Modes requiere las Color Variables correspondientes."],"helpTextStyles":["Typography 표로 글꼴·크기·행간 등의 Text Styles를 생성하거나 갱신합니다. 사용 가능한 Variables를 연결합니다.","Create or update Text Styles for fonts, sizes and line heights from the Typography table, linking available Variables.","Typography表からフォント・サイズ・行間などのText Stylesを作成・更新し、利用可能なVariablesを関連付けます。","根据Typography表创建或更新字体、字号、行高等Text Styles，并关联可用的Variables。","Crea o actualiza Text Styles de fuente, tamaño e interlineado desde la tabla Typography y vincula las Variables disponibles."],"helpEffectStyles":["MD에 정의된 그림자·블러 등 지원되는 효과를 Effect Styles로 생성하거나 갱신합니다.","Create or update Effect Styles for supported MD effects, such as shadows and blur.","MDに定義されたシャドウ・ぼかしなど、対応する効果のEffect Stylesを作成・更新します。","为MD中定义的阴影、模糊等受支持效果创建或更新Effect Styles。","Crea o actualiza Effect Styles con los efectos compatibles del MD, como sombras y desenfoque."],"helpGridStyles":["MD의 열·행·격자 설정으로 Grid Styles를 생성하거나 갱신합니다.","Create or update Grid Styles from the MD column, row and grid settings.","MDの列・行・グリッド設定からGrid Stylesを作成・更新します。","根据MD中的列、行和网格设置创建或更新Grid Styles。","Crea o actualiza Grid Styles con la configuración de columnas, filas y cuadrículas del MD."],"helpMotionStyles":["Motion Styles 표의 프리셋과 속성으로 애니메이션 스타일을 생성하거나 갱신합니다. 지원되는 Figma 환경이 필요합니다.","Create or update animation styles from the presets and properties in the Motion Styles table. Requires a supported Figma environment.","Motion Styles表のプリセットとプロパティからアニメーションスタイルを作成・更新します。対応するFigma環境が必要です。","根据Motion Styles表中的预设和属性创建或更新动画样式。需要Figma运行环境支持。","Crea o actualiza estilos de animación con los presets y propiedades de la tabla Motion Styles. Requiere un entorno de Figma compatible."]};
+// Plain JavaScript: embedded into code.js and ui.html by scripts/build-i18n.cjs.
+var I18N_LANGUAGES = ['ko', 'en', 'ja', 'zh-CN', 'es'];
+function localizedMessage(key, params) { return { key: key, params: params || [] }; }
+function formatMessage(value, language) {
+  if (!value || typeof value !== 'object' || typeof value.key !== 'string') return String(value == null ? '' : value);
+  var row = I18N_MESSAGES[value.key];
+  var index = I18N_LANGUAGES.indexOf(language);
+  var template = row ? (row[index] || row[1]) : value.key;
+  return template.replace(/\{(\d+)\}/g, function (_, n) {
+    return formatMessage((value.params || [])[Number(n)], language);
+  });
+}
+function messageError(key, params) {
+  var error = new Error(formatMessage(localizedMessage(key, params), 'en'));
+  error.localized = localizedMessage(key, params);
+  return error;
+}
+function errorDetail(error) {
+  return error && error.localized ? error.localized : String(error && error.message !== undefined ? error.message : error);
+}
+function detectLanguage(languages) {
+  for (var i = 0; i < languages.length; i++) {
+    var tag = String(languages[i]).toLowerCase().replace(/_/g, '-');
+    var base = tag.split('-')[0];
+    // Traditional Chinese is not shipped yet; continue to the next preferred language.
+    if (base === 'zh') {
+      if (tag.indexOf('hant') !== -1 || /-(tw|hk|mo)(-|$)/.test(tag)) continue;
+      return 'zh-CN';
+    }
+    if (I18N_LANGUAGES.indexOf(base) !== -1) return base;
+  }
+  return 'en';
+}
+// END I18N
+
+const sendLog = (type, value) => figma.ui.postMessage({ type: 'log', logType: type, message: formatMessage(value, 'en'), localized: value });
+const sendQA = (value) => figma.ui.postMessage({ type: 'qa_log', message: formatMessage(value, 'en'), localized: value });
+const sendError = (value, detail) => figma.ui.postMessage({ type: 'error', message: formatMessage(value, 'en'), localized: value, detail: detail || '' });
 
 const rgbToHex = (color) => {
   const r = Math.round(color.r * 255).toString(16);
@@ -191,10 +228,10 @@ function parseMD(content) {
       if (line.indexOf('|') !== 0 || /^\|\s*-/.test(line)) continue;
       const cells = line.split('|').slice(1, -1).map(x => x.trim().replace(/&#124;/g, '|'));
       if (cells[0] === 'Category') continue;
-      if (cells.length !== 7) throw new Error('Variable Modes: expected 7 columns.');
+      if (cells.length !== 7) throw messageError('columns', []);
       try {
         res.variableModes.push({ category: cells[0], collection: JSON.parse(cells[1]), token: JSON.parse(cells[2]), type: cells[3], mode: JSON.parse(cells[4]), value: JSON.parse(cells[5]), description: JSON.parse(cells[6]) });
-      } catch (e) { throw new Error('Variable Modes: invalid JSON cell: ' + e.message); }
+      } catch (e) { throw messageError('json', [errorDetail(e)]); }
       continue;
     }
     if (line.indexOf("### ") === 0) { 
@@ -228,7 +265,7 @@ function parseMD(content) {
           res.effects.push({ token: c[0], type: c[1], settings: JSON.parse(c[2].replace(/&#124;/g, '|')) });
         } else res.effects.push({ token: c[0], type: c[1] || "drop-shadow", color: c[2] || "rgba(0,0,0,0.1)", x: c[3] || "0", y: c[4] || "0", blur: c[5] || "0", spread: c[6] || "0" });
       } else if (sec === 'motion styles') {
-        if (c.length !== 2) throw new Error('Motion Styles: Token / Entries 두 열이 필요합니다.');
+        if (c.length !== 2) throw messageError('motionColumns', []);
         res.motionStyles.push({ token: c[0], entries: JSON.parse(c[1].replace(/&#124;/g, '|')) });
       } else if (sec.includes('motion')) {
         const mv = c[1] || "";
@@ -274,15 +311,15 @@ async function syncVariableModes(rows, options) {
   const seenRows = new Set();
   const incomingTypes = new Map();
   selected.forEach(r => {
-    if (typeof r.collection !== 'string' || !r.collection || typeof r.token !== 'string' || !r.token || typeof r.mode !== 'string' || !r.mode || typeof r.description !== 'string' || ['COLOR', 'FLOAT', 'STRING', 'BOOLEAN', 'TIMING', 'EASING'].indexOf(r.type) === -1) throw new Error('Variable Modes: invalid identity or type.');
+    if (typeof r.collection !== 'string' || !r.collection || typeof r.token !== 'string' || !r.token || typeof r.mode !== 'string' || !r.mode || typeof r.description !== 'string' || ['COLOR', 'FLOAT', 'STRING', 'BOOLEAN', 'TIMING', 'EASING'].indexOf(r.type) === -1) throw messageError('identity', []);
     const key = JSON.stringify([r.collection, r.token, r.mode]);
-    if (seenRows.has(key)) throw new Error('Variable Modes: duplicate row for ' + r.token + ' / ' + r.mode);
+    if (seenRows.has(key)) throw messageError('duplicate', [r.token, r.mode]);
     seenRows.add(key);
     const tokenKey = identity(r.collection, r.token);
-    if (incomingTypes.has(tokenKey) && incomingTypes.get(tokenKey) !== r.type) throw new Error('Variable Modes: inconsistent type for ' + r.token);
+    if (incomingTypes.has(tokenKey) && incomingTypes.get(tokenKey) !== r.type) throw messageError('inconsistent', [r.token]);
     incomingTypes.set(tokenKey, r.type);
     const existing = byName.get(identity(r.collection, r.token));
-    if (existing && existing.resolvedType !== r.type) throw new Error('Variable Modes: type conflict for ' + r.collection + '/' + r.token);
+    if (existing && existing.resolvedType !== r.type) throw messageError('conflict', [r.collection, r.token]);
   });
   const prepared = new Map();
   const failedModes = new Set();
@@ -296,7 +333,7 @@ async function syncVariableModes(rows, options) {
     const modeKey = identity(r.collection, r.mode);
     if (!col.modes.some(m => m.name === r.mode) && !failedModes.has(modeKey)) {
       try { col.addMode(r.mode); }
-      catch (e) { failedModes.add(modeKey); sendQA('Mode skipped: ' + r.collection + ' / ' + r.mode + ': ' + e.message); }
+      catch (e) { failedModes.add(modeKey); sendQA(localizedMessage('modeSkip', [r.collection, r.mode, errorDetail(e)])); }
     }
     const key = identity(r.collection, r.token);
     if (prepared.has(key)) return;
@@ -305,7 +342,7 @@ async function syncVariableModes(rows, options) {
       if (!v) { v = figma.variables.createVariable(r.token, col, r.type); byName.set(key, v); }
       if (typeof v.setPluginData === 'function') v.setPluginData('mdToFigmaCategory', r.category);
       prepared.set(key, { variable: v, category: r.category, touched: false });
-    } catch (e) { sendQA('Variable skipped: ' + r.token + ': ' + e.message); }
+    } catch (e) { sendQA(localizedMessage('variableSkip', [r.token, errorDetail(e)])); }
   });
   selected.forEach(r => {
     const entry = prepared.get(identity(r.collection, r.token));
@@ -316,7 +353,7 @@ async function syncVariableModes(rows, options) {
     let value = r.value;
     if (value && value.alias) {
       const target = byName.get(identity(value.alias.collection, value.alias.token));
-      if (!target || target.resolvedType !== r.type) { sendQA('Alias skipped: ' + r.token + ' / ' + r.mode); return; }
+      if (!target || target.resolvedType !== r.type) { sendQA(localizedMessage('aliasSkip', [r.token, r.mode])); return; }
       value = { type: 'VARIABLE_ALIAS', id: target.id };
     }
     try {
@@ -325,7 +362,7 @@ async function syncVariableModes(rows, options) {
         entry.touched = true;
       }
       if (entry.variable.description !== r.description) { entry.variable.description = r.description; entry.touched = true; }
-    } catch (e) { sendQA('Value skipped: ' + r.token + ' / ' + r.mode + ': ' + e.message); }
+    } catch (e) { sendQA(localizedMessage('valueSkip', [r.token, r.mode, errorDetail(e)])); }
   });
   prepared.forEach(entry => { scanned[entry.category]++; if (entry.touched) results[entry.category]++; });
   results.scanned = scanned;
@@ -497,7 +534,7 @@ async function createAllVariables(parsed, options) {
   // Emits the Smart Match line only for an existing token whose value really moved.
   const noteChange = (variable) => {
     if (pendingMatch.has(variable.id)) {
-      sendQA("Smart Match: '" + pendingMatch.get(variable.id) + "' 컬렉션의 '" + variable.name + "' 값 변경 적용.");
+      sendQA(localizedMessage('matched', [pendingMatch.get(variable.id), variable.name]));
       pendingMatch.delete(variable.id);
     }
   };
@@ -512,7 +549,7 @@ async function createAllVariables(parsed, options) {
       let mode = col.modes.find(m => m.name.toLowerCase() === modeIndex.toLowerCase());
       if (!mode) {
         try { mode = { modeId: col.addMode(modeIndex) }; }
-        catch (e) { sendQA("Mode skipped: " + col.name + " / " + modeIndex + ': ' + e.message); return false; }
+        catch (e) { sendQA(localizedMessage('modeSkip', [col.name, modeIndex, errorDetail(e)])); return false; }
       }
       modeId = mode.modeId;
     } else {
@@ -526,7 +563,7 @@ async function createAllVariables(parsed, options) {
       if (!newVarIds.has(variable.id)) noteChange(variable);
       return true;
     } catch (e) {
-      sendQA("Skipped mode sync for '" + variable.name + "': " + e.message);
+      sendQA(localizedMessage('syncSkip', [variable.name, errorDetail(e)]));
       return false;
     }
   };
@@ -535,7 +572,7 @@ async function createAllVariables(parsed, options) {
   const countIfTouched = (variable, touched) => touched || newVarIds.has(variable.id);
 
   if (options.colors && (parsed.colors.primitive.length > 0 || parsed.colors.semantic.length > 0)) {
-    sendLog('info', "Syncing Colors...");
+    sendLog('info', localizedMessage('syncing', [localizedMessage('colors')]));
     const primMap = new Map();
     const allParsedColors = [...parsed.colors.primitive, ...parsed.colors.semantic];
     
@@ -579,7 +616,7 @@ async function createAllVariables(parsed, options) {
 
   const processNumCol = async (data, colName, key) => {
     if (data.primitive.length === 0 && data.semantic.length === 0) return 0;
-    sendLog('info', "Syncing " + colName + "...");
+    sendLog('info', localizedMessage('syncing', [colName]));
     const pMap = new Map();
     let count = 0;
     for (var i = 0; i < data.primitive.length; i++) {
@@ -607,7 +644,7 @@ async function createAllVariables(parsed, options) {
   if (options.radius) results.radius = await processNumCol(parsed.radius, "Radius", "radius");
 
   if (options.typography && parsed.typography.length > 0) {
-    sendLog('info', "Syncing Typography...");
+    sendLog('info', localizedMessage('syncing', [localizedMessage('typography')]));
     const uniqueFonts = [];
     for (var i = 0; i < parsed.typography.length; i++) {
       if (uniqueFonts.indexOf(parsed.typography[i].font) === -1) uniqueFonts.push(parsed.typography[i].font);
@@ -647,7 +684,7 @@ async function createAllVariables(parsed, options) {
   }
 
   if (options.motion && (parsed.motion.timing.length > 0 || parsed.motion.easing.length > 0)) {
-    sendLog('info', "Syncing Motion...");
+    sendLog('info', localizedMessage('syncing', [localizedMessage('motion')]));
     // TIMING / EASING variable types shipped with Plugin API v1 update 133 (2026-08-05).
     // Older Figma clients throw on createVariable for these types, so fail soft.
     let motionUnsupported = false;
@@ -662,7 +699,7 @@ async function createAllVariables(parsed, options) {
           const hint = (type === "EASING")
             ? " 커브 프리셋(Hold, Linear, Ease in ...) 또는 스프링 프리셋(Gentle, Quick, Bouncy, Slow), 커스텀은 cubic-bezier(x1, y1, x2, y2) / spring(0~1) 형식으로 적어주세요."
             : " 150ms 처럼 밀리초 단위로 적어주세요.";
-          sendQA("Motion: '" + item.token + "' 의 값 '" + item.value + "' 을(를) 해석하지 못해 건너뛰었습니다." + hint);
+          sendQA(localizedMessage('motionValue', [item.token, item.value, hint]));
           continue;
         }
         const name = item.token.indexOf("/") !== -1 ? item.token : prefix + item.token;
@@ -673,7 +710,7 @@ async function createAllVariables(parsed, options) {
           if (countIfTouched(v, touched)) results.motion++;
         } catch (e) {
           motionUnsupported = true;
-          sendQA("Motion 배리어블(Timing/Easing)을 만들 수 없습니다. 피그마를 최신 버전으로 업데이트해 주세요. (" + e.message + ")");
+          sendQA(localizedMessage('motionFailed', [errorDetail(e)]));
         }
       }
     };
@@ -687,7 +724,7 @@ async function createAllVariables(parsed, options) {
   for (let i = 0; i < categories.length; i++) {
     const cat = categories[i];
     if (newCreations[cat] > 0) {
-      sendQA("✅ 신규 생성 요약: '" + cat + "' 컬렉션에 " + newCreations[cat] + "개의 토큰이 새로 생성되었습니다.");
+      sendQA(localizedMessage('created', [cat, newCreations[cat]]));
     }
   }
 
@@ -710,7 +747,7 @@ async function createStyles(parsed, options) {
     if (value.alias) {
       const col = styleCollections.find(c => c.name === value.alias.collection);
       const target = col && allVars.find(v => v.variableCollectionId === col.id && v.name === value.alias.token);
-      if (!target) throw new Error('효과 참조 변수가 없습니다: ' + value.alias.token);
+      if (!target) throw messageError('missingEffect', [value.alias.token]);
       return { type: 'VARIABLE_ALIAS', id: target.id };
     }
     if (Array.isArray(value)) return value.map(restoreEffectAliases);
@@ -724,19 +761,19 @@ async function createStyles(parsed, options) {
     const bindings = item.boundVariables || {};
     Object.keys(bindings).forEach(field => {
       try {
-        if (fields.indexOf(field) === -1) throw new Error('지원하지 않는 바인딩 속성');
+        if (fields.indexOf(field) === -1) throw messageError('bindingField', []);
         const alias = restoreEffectAliases(bindings[field]);
         const target = alias && allVars.find(v => v.id === alias.id);
-        if (!target || alias.type !== 'VARIABLE_ALIAS' || target.resolvedType !== (field === 'color' ? 'COLOR' : 'FLOAT')) throw new Error('참조 대상 누락 또는 타입 불일치');
+        if (!target || alias.type !== 'VARIABLE_ALIAS' || target.resolvedType !== (field === 'color' ? 'COLOR' : 'FLOAT')) throw messageError('bindingTarget', []);
         if (!output.boundVariables) output.boundVariables = {};
         output.boundVariables[field] = alias;
-      } catch (err) { sendQA('Binding skipped: ' + label + '/' + field + ': ' + err.message + '. 정적 값을 사용합니다.'); }
+      } catch (err) { sendQA(localizedMessage('bindingSkip', [label, field, errorDetail(err)])); }
     });
     return output;
   };
 
   if (options.text && parsed.typography.length > 0) {
-    sendLog('info', "Creating Text styles...");
+    sendLog('info', localizedMessage('creating', [localizedMessage('text')]));
     const existingTextStyles = await figma.getLocalTextStylesAsync();
     const textStyleMap = new Map();
     existingTextStyles.forEach(s => textStyleMap.set(s.name, s));
@@ -756,7 +793,7 @@ async function createStyles(parsed, options) {
         isFontLoaded = false;
         family = "Inter"; style = "Regular";
         await figma.loadFontAsync({ family, style });
-        sendQA("Font fallback: '" + t.font + "' not found. Style '" + name + "' switched to implementation fallback (Inter).");
+        sendQA(localizedMessage('fontFallback', [t.font, name]));
       });
 
       s.fontName = { family, style };
@@ -792,7 +829,7 @@ async function createStyles(parsed, options) {
         const bind = (field, variable) => {
           if (!variable) return;
           try { s.setBoundVariable(field, variable); }
-          catch (e) { sendQA('Binding Error (' + name + '/' + field + '): ' + e.message); }
+          catch (e) { sendQA(localizedMessage('bindingError', [name + '/' + field, errorDetail(e)])); }
         };
         bind('fontFamily', ffVar);
         bind('fontStyle', fwVar);
@@ -800,7 +837,7 @@ async function createStyles(parsed, options) {
         if (lhObj.unit === 'PIXELS') bind('lineHeight', lv);
         if (String(t.ls).indexOf('%') === -1) bind('letterSpacing', sv);
       } catch (e) {
-        sendQA("Binding Error (" + name + "): " + e.message);
+        sendQA(localizedMessage('bindingError', [name, errorDetail(e)]));
       }
       results.text++;
       if (!existingText) results.textNew++;
@@ -817,7 +854,7 @@ async function createStyles(parsed, options) {
       if (!tokenOwners.has(r.token)) tokenOwners.set(r.token, new Set());
       tokenOwners.get(r.token).add(r.collection);
     });
-    if (colorRows.length > 0) sendLog('info', 'Creating Color styles...');
+    if (colorRows.length > 0) sendLog('info', localizedMessage('creating', [localizedMessage('color')]));
     colorRows.forEach(row => {
       const key = JSON.stringify([row.collection, row.token]);
       if (seen.has(key)) return;
@@ -825,7 +862,7 @@ async function createStyles(parsed, options) {
       const col = collections.find(c => c.name === row.collection);
       const variable = col && allVars.find(v => v.variableCollectionId === col.id && v.name === row.token && v.resolvedType === 'COLOR');
       if (!variable) {
-        sendQA('Color Style skipped: ' + row.collection + '/' + row.token + '의 컬러 변수가 없습니다. Colors Variables도 선택하거나 기존 변수를 확인해 주세요.');
+        sendQA(localizedMessage('colorMissing', [row.collection, row.token]));
         return;
       }
       // One style per variable, not per mode. The bound variable resolves the
@@ -834,14 +871,14 @@ async function createStyles(parsed, options) {
         s.paints[0].boundVariables.color && s.paints[0].boundVariables.color.id === variable.id;
       const name = row.token;
       if (tokenOwners.get(row.token).size > 1) {
-        sendQA('Color Style skipped: ' + name + ' 이름이 여러 컬렉션에 있습니다. MD 토큰에 그룹 경로를 명시해 주세요.');
+        sendQA(localizedMessage('colorAmbiguous', [name]));
         return;
       }
       const existing = paintStyles.find(s => s.name === name && boundTo(s)) ||
         paintStyles.find(s => s.name === row.collection + '/' + row.token && boundTo(s)) ||
         paintStyles.find(s => s.name === row.token && boundTo(s));
       if (paintStyles.some(s => s.name === name && s !== existing)) {
-        sendQA('Color Style skipped: ' + name + ' 이름의 다른 스타일이 이미 있습니다.');
+        sendQA(localizedMessage('colorCollision', [name]));
         return;
       }
       let style;
@@ -855,11 +892,11 @@ async function createStyles(parsed, options) {
         if (!existing) { results.colorNew++; paintStyles.push(style); }
       } catch (e) {
         if (style && !existing) style.remove();
-        sendQA('Color Style skipped: ' + name + ': ' + e.message);
+        sendQA(localizedMessage('styleSkip', [localizedMessage('color'), name, errorDetail(e)]));
       }
     });
   } else if (options.color && parsed.colors.semantic.length > 0) {
-    sendLog('info', "Creating Color styles...");
+    sendLog('info', localizedMessage('creating', [localizedMessage('color')]));
     const existingPaintStyles = await figma.getLocalPaintStylesAsync();
     const paintStyleMap = new Map();
     existingPaintStyles.forEach(s => paintStyleMap.set(s.name, s));
@@ -877,7 +914,7 @@ async function createStyles(parsed, options) {
   }
 
   if (options.effect && parsed.effects.length > 0) {
-    sendLog('info', "Creating Effect styles...");
+    sendLog('info', localizedMessage('creating', [localizedMessage('effect')]));
     const existingEffectStyles = await figma.getLocalEffectStylesAsync();
     const effectStyleMap = new Map();
     existingEffectStyles.forEach(s => effectStyleMap.set(s.name, s));
@@ -885,7 +922,7 @@ async function createStyles(parsed, options) {
       const e = parsed.effects[i];
       const typeKey = e.type.toLowerCase().replace(/_/g, '-');
       const type = effectTypes[typeKey];
-      if (!type) { sendQA('Effect skipped: ' + e.token + ': ' + (typeKey === 'shader' ? 'Shader는 추후 지원 예정입니다.' : '지원하지 않는 효과 종류입니다.')); continue; }
+      if (!type) { sendQA(localizedMessage('styleSkip', [localizedMessage('effect'), e.token, localizedMessage('unsupportedEffect')])); continue; }
       const name = groupedName(typeKey, e.token);
       const existingEffect = effectStyleMap.get(name) || effectStyleMap.get(e.token);
       let es;
@@ -898,8 +935,8 @@ async function createStyles(parsed, options) {
         if (e.settings) effects = Array.isArray(e.settings) ? e.settings : [Object.assign({}, e.settings, { type: type })];
         else if (type === 'DROP_SHADOW' || type === 'INNER_SHADOW') effects = [effect];
         else if (type === 'LAYER_BLUR' || type === 'BACKGROUND_BLUR') effects = [{ type: type, radius: parseFloat(e.blur), visible: true, blurType: 'NORMAL' }];
-        else throw new Error('Settings JSON에 종류별 속성을 명시해 주세요.');
-        if (effects.some(item => !Object.keys(effectTypes).some(key => effectTypes[key] === item.type))) throw new Error('Shader 또는 미지원 효과가 포함되어 있습니다.');
+        else throw messageError('settings', []);
+        if (effects.some(item => !Object.keys(effectTypes).some(key => effectTypes[key] === item.type))) throw messageError('unsupportedEffect', []);
         effects = effects.map(item => applyExplicitBindings(item,
           item.type === 'DROP_SHADOW' || item.type === 'INNER_SHADOW' ? ['color', 'radius', 'spread', 'offsetX', 'offsetY'] :
           item.type === 'LAYER_BLUR' || item.type === 'BACKGROUND_BLUR' ? ['radius'] : [], name));
@@ -923,7 +960,7 @@ async function createStyles(parsed, options) {
           });
           if (!compatible) throw validationError;
           es.effects = adjusted;
-          sendLog('info', 'Noise compatibility: ' + name + '의 기본 혼합 모드를 현재 Figma API 형식에 맞춰 등록했습니다.');
+          sendLog('info', localizedMessage('noise', [name]));
         }
         es.name = name;
         effectStyleMap.set(name, es);
@@ -931,13 +968,13 @@ async function createStyles(parsed, options) {
         if (!existingEffect) results.effectNew++;
       } catch (err) {
         if (es && !existingEffect && es.remove) es.remove();
-        sendQA('Effect skipped: ' + name + ': ' + err.message);
+        sendQA(localizedMessage('styleSkip', [localizedMessage('effect'), name, errorDetail(err)]));
       }
     }
   }
 
   if (options.grid && parsed.grid.length > 0) {
-    sendLog('info', "Creating Grid styles...");
+    sendLog('info', localizedMessage('creating', [localizedMessage('grid')]));
     var existingGridStyles = await figma.getLocalGridStylesAsync();
     var gridStyleMap = new Map();
     for (var i = 0; i < existingGridStyles.length; i++) {
@@ -946,7 +983,7 @@ async function createStyles(parsed, options) {
     for (var i = 0; i < parsed.grid.length; i++) {
       var g = parsed.grid[i];
       var gridType = g.type.toLowerCase();
-      if (['columns', 'rows', 'grid'].indexOf(gridType) === -1) { sendQA('Grid skipped: ' + g.token + ': 지원하지 않는 종류입니다.'); continue; }
+      if (['columns', 'rows', 'grid'].indexOf(gridType) === -1) { sendQA(localizedMessage('styleSkip', [localizedMessage('grid'), g.token, localizedMessage('gridType')])); continue; }
       var gridName = groupedName(gridType, g.token);
       var existingGrid = gridStyleMap.get(gridName) || gridStyleMap.get(g.token);
       var gs = existingGrid || figma.createGridStyle();
@@ -973,7 +1010,7 @@ async function createStyles(parsed, options) {
       if (g.settings) {
         const entries = Array.isArray(g.settings) ? g.settings : [Object.assign({}, g.settings, { pattern: gridType.toUpperCase() })];
         gs.layoutGrids = entries.map(item => {
-          if (['GRID', 'ROWS', 'COLUMNS'].indexOf(item.pattern) === -1) throw new Error('지원하지 않는 가이드 종류');
+          if (['GRID', 'ROWS', 'COLUMNS'].indexOf(item.pattern) === -1) throw messageError('gridType', []);
           const fields = item.pattern === 'GRID' ? ['sectionSize'] : item.alignment === 'CENTER' ? ['sectionSize', 'count', 'gutterSize'] : item.alignment === 'STRETCH' ? ['count', 'offset', 'gutterSize'] : ['sectionSize', 'count', 'offset', 'gutterSize'];
           return applyExplicitBindings(item, fields, gridName);
         });
@@ -985,10 +1022,10 @@ async function createStyles(parsed, options) {
   }
   if (options.motion && parsed.motionStyles.length > 0) {
     try {
-      if (!figma.motion || typeof figma.motion.figmaAnimationStyles !== 'function' || typeof figma.createCustomAnimationStyle !== 'function' || typeof figma.getLocalCustomAnimationStylesAsync !== 'function') throw new Error('이 Figma 환경은 Motion Styles API를 지원하지 않습니다.');
+      if (!figma.motion || typeof figma.motion.figmaAnimationStyles !== 'function' || typeof figma.createCustomAnimationStyle !== 'function' || typeof figma.getLocalCustomAnimationStylesAsync !== 'function') throw messageError('motionAPI', []);
       const presets = figma.motion.figmaAnimationStyles();
       const existingStyles = await figma.getLocalCustomAnimationStylesAsync();
-      sendLog('info', 'Creating Motion styles...');
+      sendLog('info', localizedMessage('creating', [localizedMessage('motion')]));
       for (var mi = 0; mi < parsed.motionStyles.length; mi++) {
         const row = parsed.motionStyles[mi];
         let target;
@@ -996,10 +1033,10 @@ async function createStyles(parsed, options) {
         let oldEntries = [];
         let added = [];
         try {
-          if (!Array.isArray(row.entries) || row.entries.length === 0) throw new Error('Entries는 비어 있지 않은 JSON 배열이어야 합니다.');
+          if (!Array.isArray(row.entries) || row.entries.length === 0) throw messageError('entries', []);
           const entries = row.entries.map(entry => {
             const preset = entry.preset === '@first' ? presets[0] : presets.find(p => p.name === entry.preset || p.styleId === entry.styleId);
-            if (!preset) throw new Error('프리셋을 찾을 수 없습니다: ' + entry.preset + '. 사용 가능: ' + presets.map(p => p.name).join(', '));
+            if (!preset) throw messageError('preset', [entry.preset, presets.map(p => p.name).join(', ')]);
             return { styleId: preset.styleId, props: restoreEffectAliases(entry.props || {}) };
           });
           existing = existingStyles.find(s => s.name === row.token);
@@ -1013,10 +1050,10 @@ async function createStyles(parsed, options) {
         } catch (err) {
           if (target && !existing) target.remove();
           else if (target) added.forEach(entry => target.removeAnimationEntry(entry.id));
-          sendQA('Motion Style skipped: ' + row.token + ': ' + err.message);
+          sendQA(localizedMessage('styleSkip', [localizedMessage('motion'), row.token, errorDetail(err)]));
         }
       }
-    } catch (err) { sendQA('Motion Styles skipped: ' + err.message); }
+    } catch (err) { sendQA(localizedMessage('motionSkip', [errorDetail(err)])); }
   }
   return results;
 }
@@ -1048,7 +1085,7 @@ async function generateExportMD() {
       if (value && value.type === 'VARIABLE_ALIAS') {
         const target = varMapById.get(value.id);
         const targetCol = target && collections.find(c => c.id === target.variableCollectionId);
-        if (!targetCol) throw new Error('Cannot export unresolved alias: ' + v.name);
+        if (!targetCol) throw messageError('aliasExport', [v.name]);
         value = { alias: { collection: targetCol.name, token: target.name } };
       }
       md += '| ' + category + ' | ' + cell(col.name) + ' | ' + cell(v.name) + ' | ' + v.resolvedType + ' | ' + cell(mode.name) + ' | ' + cell(value) + ' | ' + cell(v.description || '') + ' |\n';
@@ -1340,7 +1377,7 @@ async function generateExportMD() {
       if (value.type === 'VARIABLE_ALIAS') {
         const target = varMapById.get(value.id);
         const col = target && collections.find(c => c.id === target.variableCollectionId);
-        if (!col) throw new Error('Cannot export effect alias: ' + value.id);
+        if (!col) throw messageError('aliasExport', [value.id]);
         return { alias: { collection: col.name, token: target.name } };
       }
       if (Array.isArray(value)) return value.map(portableEffect);
@@ -1354,7 +1391,7 @@ async function generateExportMD() {
     eStyles.forEach(s => {
       if (s.effects.length > 0) {
         const e = s.effects[0];
-        if (s.effects.some(item => item.type === 'SHADER')) { sendQA('Effect export skipped: ' + s.name + ': Shader는 추후 지원 예정입니다.'); return; }
+        if (s.effects.some(item => item.type === 'SHADER')) { sendQA(localizedMessage('effectExport', [s.name, localizedMessage('unsupportedEffect')])); return; }
         md += '| ' + s.name + ' | ' + e.type.toLowerCase().replace(/_/g, '-') + ' | ' + JSON.stringify(portableEffect(s.effects)).replace(/\|/g, '&#124;') + ' |\n';
       }
     });
@@ -1382,36 +1419,53 @@ async function generateExportMD() {
           md += '| ' + s.name + ' | ' + JSON.stringify(entries).replace(/\|/g, '&#124;') + ' |\n';
         });
       }
-    } catch (err) { sendQA('Motion Styles export skipped: ' + err.message); }
+    } catch (err) { sendQA(localizedMessage('motionExport', [errorDetail(err)])); }
   }
   return { mdContent: md };
 }
 
+// Serialize preference writes so rapid language changes persist in selection order.
+var languageSaveQueue = Promise.resolve();
 figma.ui.onmessage = async (msg) => {
+  if (msg.type === 'get_language') {
+    var savedLanguage = 'auto';
+    try { savedLanguage = await figma.clientStorage.getAsync('ui-language') || 'auto'; } catch (e) { /* Automatic detection remains usable without storage. */ }
+    figma.ui.postMessage({ type: 'language', language: savedLanguage });
+    return;
+  }
+  if (msg.type === 'set_language') {
+    if (msg.language !== 'auto' && I18N_LANGUAGES.indexOf(msg.language) === -1) return;
+    languageSaveQueue = languageSaveQueue.then(async () => {
+      try { await figma.clientStorage.setAsync('ui-language', msg.language); }
+      catch (e) { figma.ui.postMessage({ type: 'language_save_failed' }); }
+    });
+    await languageSaveQueue;
+    return;
+  }
   if (msg.type === "open_skill") {
     figma.openExternal('https://www.figma.com/community/skill/142125/md-to-figma');
     return;
   }
   if (msg.type === "generate") {
     try {
-      sendLog("info", "MD parsing and generation started...");
+      sendLog("info", localizedMessage('start', []));
       const parsed = parseMD(msg.content);
       
       if (parsed.variableModes !== null) {
-        sendLog('info', 'Variable Modes: 컬렉션과 모드 이름을 기준으로 배리어블을 동기화합니다.');
+        sendLog('info', localizedMessage('modeSync', []));
       }
       const vRes = await createAllVariables(parsed, msg.options.variables);
       const sRes = await createStyles(parsed, msg.options.styles);
       figma.ui.postMessage({ type: "complete", results: { variables: vRes, styles: sRes } });
-      sendLog("success", "All systems synced successfully!");
-    } catch (e) { sendError("Sync failed", e.message); }
+      sendLog("success", localizedMessage('finished', []));
+    } catch (e) { sendError(localizedMessage('syncFailed', []), errorDetail(e)); }
   }
   if (msg.type === "export") {
     try {
-      sendLog("info", "Analyzing and exporting Figma data...");
+      sendLog("info", localizedMessage('exportStart', []));
       const exportData = await generateExportMD();
       figma.ui.postMessage({ type: "export_complete", mdContent: exportData.mdContent });
-    } catch (e) { sendError("Export failed", e.message); }
+    } catch (e) { sendError(localizedMessage('exportFailed', []), errorDetail(e)); }
   }
   if (msg.type === "cancel") figma.closePlugin();
 };

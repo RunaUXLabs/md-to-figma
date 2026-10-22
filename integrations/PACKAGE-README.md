@@ -1,6 +1,6 @@
 # MD to Figma Assistant
 
-디자인 토큰과 기존 Export MD를 MD to Figma v2.1.0이 읽을 수 있는 문서로 정리하는 AI 스킬 패키지입니다. 패키지 버전은 0.1.1이며 Figma 플러그인 버전과 별도로 관리합니다.
+디자인 토큰과 기존 Export MD를 MD to Figma v2.1.0이 읽을 수 있는 문서로 정리하는 AI 스킬 패키지입니다. 패키지 버전은 0.1.2이며 Figma 플러그인 버전과 별도로 관리합니다.
 
 ## 사용하기
 
